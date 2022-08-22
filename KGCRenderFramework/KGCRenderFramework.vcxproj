@@ -200,7 +200,7 @@
     <ClCompile Include="Framework\TextureLoader.cpp" />
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\Vertex.cpp" />
-    <ClCompile Include="KDRenderFramework.cpp" />
+    <ClCompile Include="KGCRenderFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PixelShader.hlsl">
@@ -227,6 +227,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

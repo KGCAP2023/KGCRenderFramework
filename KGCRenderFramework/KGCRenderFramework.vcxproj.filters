@@ -144,7 +144,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="KDRenderFramework.cpp">
+    <ClCompile Include="KGCRenderFramework.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Framework\GraphicManager.cpp">
@@ -218,5 +218,10 @@
     <FxCompile Include="Shader\VertexShader2.hlsl">
       <Filter>리소스 파일\Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

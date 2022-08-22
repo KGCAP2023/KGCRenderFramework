@@ -1,11 +1,16 @@
 # KGCRenderFramework
 
-Lib,Resource ÀÚ·á´Â ÃßÈÄ NAS¿¡¼­ Á¦°øÇÒ°Í
+Lib,Resource ìë£ŒëŠ” ì¶”í›„ NASì—ì„œ ì œê³µí• ê²ƒ
 
 DirectX11
+
 DirectXTK	https://github.com/microsoft/DirectXTK
+
 DirectXTex	https://github.com/microsoft/DirectXTex
+
 assimp		https://github.com/assimp/assimp
-imgui(¿¹Á¤)	https://github.com/ocornut/imgui
-FMOD(¿¹Á¤)	https://www.fmod.com/
+
+imgui(ì˜ˆì •)	https://github.com/ocornut/imgui
+
+FMOD(ì˜ˆì •)	https://www.fmod.com/
 

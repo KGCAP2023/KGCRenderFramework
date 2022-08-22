@@ -46,6 +46,9 @@
     <Filter Include="헤더 파일\Test">
       <UniqueIdentifier>{9e8a322a-d6e7-4dd4-8f34-7ea374ee6ba4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="리소스 파일\Git">
+      <UniqueIdentifier>{bce09d7a-0932-4c7a-9ab8-a0fcd5e35ee9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\KGCRenderFramework.ico">
@@ -222,6 +225,12 @@
   <ItemGroup>
     <None Include="..\README.md">
       <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="..\.gitattributes">
+      <Filter>리소스 파일\Git</Filter>
+    </None>
+    <None Include="..\.gitignore">
+      <Filter>리소스 파일\Git</Filter>
     </None>
   </ItemGroup>
 </Project>

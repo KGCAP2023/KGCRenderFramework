@@ -18,7 +18,7 @@ protected:
 	ConstantBuffer<CB_VS_1>* constantBuffer;
 	ID3D11DeviceContext* deviceContext;
 
-	virtual void Update() override;
+	virtual void UpdateMatrix() override;
 
 	XMMATRIX worldMatrix = XMMatrixIdentity();
 

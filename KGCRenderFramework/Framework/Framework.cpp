@@ -45,7 +45,7 @@ void Framework::Update()
 			this->xPosRelative.pop();
 
 			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
-			this->graphics.camera.Rotate((float)yPosRelative * 0.001f, (float)xPosRelative * 0.001f, 0);
+			this->graphics.camera->transform.Rotate((float)yPosRelative * 0.001f, (float)xPosRelative * 0.001f, 0);
 		}
 
 	}
@@ -59,7 +59,7 @@ void Framework::Update()
 
 	if(mouse.leftButton)
 	{
-		this->graphics.camera.SetLookAtPos(XMFLOAT3(0.0f, 0.0f, 0.0f));
+		this->graphics.camera->transform.SetLookAtPos(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 		
 	
@@ -76,18 +76,18 @@ void Framework::Update()
 
 	if (kb.C) // Backspace key is down
 	{
-		this->graphics.camera.Translate(0, -speed * dt,0);
+		this->graphics.camera->transform.Translate(0, -speed * dt,0);
 	}
 
 	if (kb.Space) // Backspace key is down
 	{
-		this->graphics.camera.Translate(0, +speed * dt, 0);
+		this->graphics.camera->transform.Translate(0, +speed * dt, 0);
 	}
 
 	if (kb.W) // W key is down
 	{
 		//std::cout << "w" << std::endl;
-		this->graphics.camera.Translate(this->graphics.camera.GetForward() * speed * dt);
+		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 		
 			
@@ -95,7 +95,7 @@ void Framework::Update()
 	if (kb.A) // A key is down
 	{
 		//std::cout << "a" << std::endl;
-		this->graphics.camera.Translate(this->graphics.camera.GetLeft() * speed * dt);
+		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
 	
@@ -105,13 +105,13 @@ void Framework::Update()
 	if (kb.S) // S key is down
 	{
 		//std::cout << "s" << std::endl;
-		this->graphics.camera.Translate(this->graphics.camera.GetBackward() * speed * dt);
+		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
 	if (kb.D) // D key is down
 	{
 		//std::cout << "d" << std::endl;
-		this->graphics.camera.Translate(this->graphics.camera.GetRight() * speed * dt);
+		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}
 		
 	//if (kb.LeftShift)
@@ -132,11 +132,10 @@ void Framework::Update()
 	
 	//this->graphics.obj->Translate(0, 0, 0.008 * dt);
 	
-	this->graphics.obj3->SetPosition(0,-13,-3);
+	//this->graphics.obj3->SetPosition(0,-13,-3);
+	
 	//this->graphics.camera.Translate(0,0,0.008*dt);
 
-
-	
 	
 
 	bool change = true;

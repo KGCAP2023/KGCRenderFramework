@@ -44,7 +44,7 @@ bool SimpleRenderableObject::Init(ID3D11Device* device, ID3D11DeviceContext* dev
 
 	this->SetPosition(2.0f, 2.0f, -5.0f);
 	this->SetRotation(0.0f, 0.0f, 0.0f);
-	this->Update();
+	this->UpdateMatrix();
 	return true;
 }
 
@@ -75,7 +75,7 @@ void SimpleRenderableObject::Draw(const XMMATRIX& viewProjectionMatrix)
 	this->mesh.Draw();
 }
 
-void SimpleRenderableObject::Update()
+void SimpleRenderableObject::UpdateMatrix()
 {
 	this->worldMatrix = XMMatrixRotationRollPitchYaw(this->rotation.x, this->rotation.y, this->rotation.z) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z);
 	this->UpdateDirection();

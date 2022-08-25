@@ -2,8 +2,7 @@
 #include "..\pch.h"
 #include <WICTextureLoader.h>
 #include "Logger.h"
-#include "SimpleRenderableObject.h";
-#include "RenderableObject.h";
+#include "GameObject.h";
 #include "Shaders.h"
 #include "Timer.h"
 #include "Camera.h"
@@ -11,6 +10,7 @@
 #include "ConstantBufferType.h"
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
+#include "ModelRenderer.h"
 
 
 class GraphicManager
@@ -22,9 +22,10 @@ public:
 
 
 	//게임 오브젝트
-	SimpleRenderableObject* obj;
-	RenderableObject* obj3;
-	Camera3D camera;
+	//SimpleRenderableObject* obj;
+	//RenderableObject* obj3;
+	GameObject* camera;
+	Camera3D* cameraComponent;
 	
 
 

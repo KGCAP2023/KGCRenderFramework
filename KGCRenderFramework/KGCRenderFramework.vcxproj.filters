@@ -49,6 +49,12 @@
     <Filter Include="리소스 파일\Git">
       <UniqueIdentifier>{bce09d7a-0932-4c7a-9ab8-a0fcd5e35ee9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Component">
+      <UniqueIdentifier>{b61c325a-8232-49e8-bc79-9cfd116bacb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Component">
+      <UniqueIdentifier>{e3676857-2748-4e33-bc5a-f6c77f52a4d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\KGCRenderFramework.ico">
@@ -68,9 +74,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Framework\GameObject.h">
-      <Filter>헤더 파일\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\GameObject3D.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Logger.h">
@@ -106,9 +109,6 @@
     <ClInclude Include="Framework\Timer.h">
       <Filter>헤더 파일\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Camera.h">
-      <Filter>헤더 파일\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\GraphicManager.h">
       <Filter>헤더 파일\Graphic</Filter>
     </ClInclude>
@@ -120,12 +120,6 @@
     </ClInclude>
     <ClInclude Include="Framework\Protocols.h">
       <Filter>헤더 파일\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\RenderableObject.h">
-      <Filter>헤더 파일\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Component.h">
-      <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Framework\StringUtil.h">
       <Filter>헤더 파일\Util</Filter>
@@ -144,6 +138,33 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Component.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Matrix.h">
+      <Filter>헤더 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Transform.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Camera.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RenderComponent.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshRenderer.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\ModelRenderer.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SpriteRenderer.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Renderer.h">
+      <Filter>헤더 파일\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -168,13 +189,7 @@
     <ClCompile Include="Framework\Camera.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\Component.cpp">
-      <Filter>소스 파일\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\GameObject.cpp">
-      <Filter>소스 파일\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\GameObject3D.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Framework.cpp">
@@ -186,26 +201,41 @@
     <ClCompile Include="Framework\Model.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\RenderableObject.cpp">
-      <Filter>소스 파일\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\TextureLoader.cpp">
       <Filter>소스 파일\Util</Filter>
     </ClCompile>
     <ClCompile Include="Framework\StringUtil.cpp">
       <Filter>소스 파일\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\SimpleMesh.cpp">
-      <Filter>소스 파일\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\SimpleRenderableObject.cpp">
-      <Filter>소스 파일\Test</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Logger.cpp">
       <Filter>소스 파일\Util</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Timer.cpp">
       <Filter>소스 파일\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Transform.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\MeshRenderer.cpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\ModelRenderer.cpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SpriteRenderer.cpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Matrix.cpp">
+      <Filter>소스 파일\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\RenderComponent.cpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Renderer.cpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Component.cpp">
+      <Filter>소스 파일\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

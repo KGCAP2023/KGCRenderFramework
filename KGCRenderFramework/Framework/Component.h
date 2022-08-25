@@ -1,19 +1,25 @@
 #pragma once
 #include "..\pch.h"
-//#include "GameObject.h"
+class GameObject;
 
 class Component
 {
-//private:
-//	GameObject* owner;
-//	std::string name;
-
 public:
 	static enum class Type
 	{
-		COLLIDER_RECT, 
+		RENDERER_MESH_,
+		RENDERER_MODEL,
+		RENDERER_SPRITE,
+		CAMERA,
+		COLLIDER_RECT,
 		COLLIDER_SPHERE
 	};
+
+	Component(GameObject* owner) : owner(owner) {}
+
+	virtual void Update();
+
+
 
 	static struct ComponentHash
 	{
@@ -24,5 +30,11 @@ public:
 		}
 	};
 
+	Component::Type GetType();
+
+protected:
+	Component::Type type;
+	GameObject* owner = nullptr;
+	std::string name;
 };
 

@@ -31,6 +31,11 @@ void Model::Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatr
 	}
 }
 
+std::vector<Mesh>& Model::GetMeshes()
+{
+	return this->meshes;
+}
+
 bool Model::loadModel(const std::string & path)
 {
 	Assimp::Importer importer;

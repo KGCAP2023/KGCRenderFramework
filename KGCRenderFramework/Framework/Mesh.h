@@ -23,6 +23,8 @@ public:
 	Mesh(const Mesh& mesh);
 	void Draw();
 	const DirectX::XMMATRIX& GetTransformMatrix();
+
+	void SetTransformMatrix(const DirectX::XMMATRIX& m);
 	
 private:
 

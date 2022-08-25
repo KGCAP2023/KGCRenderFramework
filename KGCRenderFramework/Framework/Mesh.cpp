@@ -52,3 +52,8 @@ const DirectX::XMMATRIX& Mesh::GetTransformMatrix()
 {
     return  this->transformMatrix;
 }
+
+void Mesh::SetTransformMatrix(const DirectX::XMMATRIX& m)
+{
+    this->transformMatrix = m;
+}

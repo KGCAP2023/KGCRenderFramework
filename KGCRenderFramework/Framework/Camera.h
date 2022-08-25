@@ -1,24 +1,23 @@
 #pragma once
 #include "..\pch.h"
-#include "GameObject3D.h"
+#include "GameObject.h"
+using namespace DirectX;
 
-class Camera3D : public GameObject3D
+class Camera3D : public Component
 {
-
 public:
-	Camera3D();
+	Camera3D(GameObject* owner);
+
 	void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
 
 	const XMMATRIX& GetViewMatrix() const;
 	const XMMATRIX& GetProjectionMatrix() const;
 
 private:
-	void Update() override;
+	virtual void Update() override;
 
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-
-
 
 };
 

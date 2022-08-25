@@ -87,11 +87,15 @@ void GraphicManager::RenderFrame()
 
 	
 
-	XMMATRIX vp = camera.GetViewMatrix() * camera.GetProjectionMatrix();
+	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 
-	{
-		this->obj->Draw(vp);
-	}
+	//{
+	//	this->obj->Draw(vp);
+	//}
+
+	//{
+	//	this->obj3->Draw(camera.GetViewMatrix() * camera.GetProjectionMatrix());
+	//}
 
 	deviceContext->IASetInputLayout(vs_2.GetInputLayout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -100,14 +104,8 @@ void GraphicManager::RenderFrame()
 	deviceContext->PSSetShader(ps_2.GetShader(), NULL, 0);
 
 	{
-		this->obj3->Draw(camera.GetViewMatrix() * camera.GetProjectionMatrix());
-	}
-
-	deviceContext->PSSetShaderResources(0,1,&this->grassTexture);
-
-	{
 		for (const auto& kv : GameObject::gameObjects) {
-			(kv.second)->Draw(camera.GetViewMatrix() * camera.GetProjectionMatrix());
+			(kv.second)->Draw(vp);
 		}
 	}
 
@@ -381,38 +379,56 @@ bool GraphicManager::InitializeScene()
 	// 오브젝트를 파일에서 읽기 & 초기화
 	// -> fbx (게임오브젝트 빛 스프라이트)
 
-	obj = new SimpleRenderableObject();
-	obj->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	obj->SetPosition(1, 1, 1);
+	//obj = new SimpleRenderableObject();
+	//obj->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
+	//obj->SetPosition(1, 1, 1);
 
 
-	SimpleRenderableObject* obj1 = new SimpleRenderableObject();
-	obj1->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	obj1->SetPosition(4, 0, 4);
+	//SimpleRenderableObject* obj1 = new SimpleRenderableObject();
+	//obj1->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
+	//obj1->SetPosition(4, 0, 4);
 
-	SimpleRenderableObject* obj2 = new SimpleRenderableObject();
-	obj2->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	obj2->SetPosition(10, 0, 10);
+	//SimpleRenderableObject* obj2 = new SimpleRenderableObject();
+	//obj2->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
+	//obj2->SetPosition(10, 0, 10);
 
-	RenderableObject* obj4 = new RenderableObject();
-	obj4->Init("Resource\\Objects\\Nanosuit\\Nanosuit.obj", this->device.Get(), this->deviceContext.Get(), this->cb2);
-	obj4->SetPosition(2,0,0);
 
-	obj3 = new RenderableObject();
-	obj3->Init("Resource\\Objects\\Sponza\\sponza.obj", this->device.Get(), this->deviceContext.Get(), this->cb2);
+
+
+
+	//RenderableObject* obj4 = new RenderableObject();
+	//
+	//obj4->SetPosition(2,0,0);
+	this->camera = new GameObject();
+	this->cameraComponent = new Camera3D(camera);
+	camera->AddComponent(cameraComponent);
+
+	GameObject* obj1 = new GameObject();
+	ModelRenderer* render1 = new ModelRenderer(obj1);
+	render1->Init("Resource\\Objects\\ying\\ying.pmx", this->device.Get(), this->deviceContext.Get(), this->cb2);
+	obj1->AddComponent(render1);
+
+	obj1->transform.SetPosition(5,0,5);
+
+	GameObject* obj2 = new GameObject();
+	ModelRenderer* render2 = new ModelRenderer(obj2);
+	render2->Init("Resource\\Objects\\Nanosuit\\Nanosuit.obj", this->device.Get(), this->deviceContext.Get(), this->cb2);
+	obj2->AddComponent(render2);
+
+	GameObject* obj3 = new GameObject();
+	ModelRenderer* render3 = new ModelRenderer(obj3);
+	render3->Init("Resource\\Objects\\Sponza\\sponza.obj", this->device.Get(), this->deviceContext.Get(), this->cb2);
+	obj3->AddComponent(render3);
 	
-	//obj3 = new RenderableObject();
-	//obj3->Init("Data\\Objects\\ying\\ying.pmx", this->device.Get(), this->deviceContext.Get(), this->cb2);
-
 
 	GameObject::gameObjects.insert(std::make_pair("hello1", obj1));
 	GameObject::gameObjects.insert(std::make_pair("hello2", obj2));
-	GameObject::gameObjects.insert(std::make_pair("hello4", obj4));
+	GameObject::gameObjects.insert(std::make_pair("hello4", obj3));
 
 
 	//카메라 
-	camera.SetPosition(0.0f, 0.0f, -10.0f);
-	camera.SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f);
+	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
+	this->cameraComponent->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f);
 
 	/**********************************************/
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "..\pch.h"
-#include "..\Framework\Logger.h"
+#include "pch.h"
+#include "Logger.h"
 
 template<class T>
 class ConstantBuffer 

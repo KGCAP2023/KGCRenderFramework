@@ -1,5 +1,5 @@
 #pragma once
-#include "..\pch.h"
+#include "pch.h"
 #include <WICTextureLoader.h>
 #include "Logger.h"
 #include "GameObject.h";

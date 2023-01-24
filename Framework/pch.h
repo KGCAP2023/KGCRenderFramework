@@ -45,4 +45,4 @@
 #pragma comment(lib,"DirectXTex.lib")
 #pragma comment(lib,"assimp-vc143-mtd.lib")
 
-#include "./Framework/Logger.h"
+#include "Logger.h"

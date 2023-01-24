@@ -1,5 +1,5 @@
 #pragma once
-#include "..\pch.h"
+#include "pch.h"
 #include "Texture.h"
 #include "Vertex.h"
 #include "VertexBuffer.h"

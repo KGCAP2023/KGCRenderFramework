@@ -1,5 +1,5 @@
 #pragma once
-#include "..\pch.h"
+#include "pch.h"
 #define MAX_BONES 500
 
 struct CB_VS_1

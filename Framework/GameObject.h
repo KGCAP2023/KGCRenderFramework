@@ -1,5 +1,5 @@
 #pragma once
-#include "..\pch.h"
+#include "pch.h"
 #include "Component.h"
 #include "Transform.h"
 #include "Renderer.h"

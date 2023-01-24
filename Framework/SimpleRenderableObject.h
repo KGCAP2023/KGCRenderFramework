@@ -1,5 +1,5 @@
 #pragma once
-#include "..\pch.h"
+#include "pch.h"
 #include "GameObject3D.h"
 #include "SimpleMesh.h"
 

@@ -1,6 +1,5 @@
 // dear imgui, v1.88 WIP
 // (widgets code)
-
 /*
 
 Index of this file:
@@ -33,6 +32,7 @@ Index of this file:
 #endif
 
 #include "imgui.h"
+
 #ifndef IMGUI_DISABLE
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS

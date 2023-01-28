@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "GameObject.h"
+
 using namespace DirectX;
 //XMLoad XMVECTOR로 탑재
 //XMSTORE XMFLOAT로 만듬

@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "Vertex.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"

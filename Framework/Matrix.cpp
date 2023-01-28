@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Matrix.h"
+
 
 void Matrix::print(const DirectX::XMMATRIX& matrix)
 {

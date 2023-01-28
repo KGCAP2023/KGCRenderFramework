@@ -1,6 +1,4 @@
 #pragma once
-#include "pch.h"
-#include "Protocols.h"
 
 class GameObject;
 using namespace DirectX;

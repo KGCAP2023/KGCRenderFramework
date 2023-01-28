@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "GraphicManager.h"
 #include "Timer.h"
 #include <Keyboard.h>

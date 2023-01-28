@@ -819,6 +819,7 @@ CODE
 #include "imgui_internal.h"
 
 // System includes
+
 #include <ctype.h>      // toupper
 #include <stdio.h>      // vsnprintf, sscanf, printf
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier

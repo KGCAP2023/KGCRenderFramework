@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "BoundingBoxRenderer.h"
+
 
 void BoundingBoxRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 {

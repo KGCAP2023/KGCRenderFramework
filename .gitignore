@@ -30,8 +30,14 @@
 *.exe
 *.out
 *.app
+
 /.vs/Framework
 /.vs/KGCRenderFramework
-/Framework/Resource
+
+/Client/x64
+/Client/Resource
+
 /Framework/x64
+/Framework/Resource
+
 /x64

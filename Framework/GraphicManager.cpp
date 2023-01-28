@@ -1,4 +1,5 @@
-﻿#include "GraphicManager.h"
+﻿#include "pch.h"
+#include "GraphicManager.h"
 
 //imgui / 타이머
 bool GraphicManager::Initialize(HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard)

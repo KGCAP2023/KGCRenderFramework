@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "SpriteRenderer.h"
+
 
 void SpriteRenderer::Update()
 {

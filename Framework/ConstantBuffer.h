@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "Logger.h"
 
 template<class T>

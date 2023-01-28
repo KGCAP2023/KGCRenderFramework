@@ -1,5 +1,7 @@
+#include "pch.h"
 #include "Logger.h"
 #include <comdef.h>
+
 
 //MessageBoxA ¿Í MessageBoxW
 

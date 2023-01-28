@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "SkinnedMesh.h"
+
 
 SkinnedMesh::~SkinnedMesh()
 {
@@ -109,7 +111,9 @@ void SkinnedMesh::InitAnimations(const aiScene* pScene)
 	{
 		for (UINT i = 0; i < pScene->mNumAnimations; i++)
 		{
-			this->animations.push_back(pScene->mAnimations[i]);
+			Animation3D* animation = new Animation3D(pScene);
+			animation->loadAnimation(pScene->mAnimations[i]);
+			this->animations.push_back(animation);
 		}
 	}
 }
@@ -418,7 +422,7 @@ void SkinnedMesh::GetBoneTransforms(float TimeInSeconds, std::vector<XMMATRIX>& 
 {
 	Transforms.resize(m_BoneInfo.size());
 	XMMATRIX Identity = XMMatrixIdentity();
-
+	
 	if (!this->animations.empty())
 	{
 		float TicksPerSecond = (float)(pScene->mAnimations[0]->mTicksPerSecond != 0 ? pScene->mAnimations[0]->mTicksPerSecond : 25.0f);
@@ -432,7 +436,6 @@ void SkinnedMesh::GetBoneTransforms(float TimeInSeconds, std::vector<XMMATRIX>& 
 	}
 
 	Transforms.resize(m_BoneInfo.size());
-
 	for (UINT i = 0; i < m_BoneInfo.size(); i++) {
 		Transforms[i] = m_BoneInfo[i].FinalTransformation;
 	}
@@ -457,12 +460,14 @@ const aiScene* SkinnedMesh::GetAiScene()
 void SkinnedMesh::ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNode, const XMMATRIX& ParentTransform, const aiAnimation* pAnimation)
 {
 	std::string NodeName(pNode->mName.data);
+	
 	XMMATRIX NodeTransformation(XMMatrixTranspose(XMMATRIX(&pNode->mTransformation.a1)));
 	XMMATRIX GlobalTransformation;
 
 	if (pAnimation != nullptr)
 	{
-		const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
+		const aiNodeAnim* pNodeAnim = this->animations[0]->findAnimNode(NodeName);
+		//const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 
 		if (pNodeAnim)
 		{
@@ -489,6 +494,8 @@ void SkinnedMesh::ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNod
 			aiMatrix4x4 temp = TranslationM * RotationM * ScalingM;
 			NodeTransformation = XMMatrixTranspose(XMMATRIX(&temp.a1));
 		}
+
+
 	}
 
 	GlobalTransformation = NodeTransformation * ParentTransform;
@@ -510,8 +517,23 @@ void SkinnedMesh::ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNod
 
 }
 
+//const aiNodeAnim* SkinnedMesh::FindNodeAnim(const aiAnimation* pAnimation, const std::string& NodeName)
+//{
+//
+//	for (UINT i = 0; i < pAnimation->mNumChannels; i++) {
+//		const aiNodeAnim* pNodeAnim = pAnimation->mChannels[i];
+//
+//		if (std::string(pNodeAnim->mNodeName.data) == NodeName) {
+//			return pNodeAnim;
+//		}
+//	}
+//
+//	return NULL;
+//}
+
 const aiNodeAnim* SkinnedMesh::FindNodeAnim(const aiAnimation* pAnimation, const std::string& NodeName)
 {
+
 	for (UINT i = 0; i < pAnimation->mNumChannels; i++) {
 		const aiNodeAnim* pNodeAnim = pAnimation->mChannels[i];
 

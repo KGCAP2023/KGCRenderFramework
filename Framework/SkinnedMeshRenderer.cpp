@@ -1,5 +1,7 @@
+#include "pch.h"
 #include "SkinnedMeshRenderer.h"
 #include <time.h>
+
 
 long long GetCurrentTimeMillis()
 {
@@ -41,16 +43,16 @@ void SkinnedMeshRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 
 	if (this->isStart)
 	{
+
 		long long CurrentTimeMillis = GetCurrentTimeMillis();
 		float AnimationTimeSec = ((float)(CurrentTimeMillis - StartTimeMillis)) / 1000.0f;
 		model.GetBoneTransforms(AnimationTimeSec, this->matrix);
+
 	}
 	else
 	{
 
 	}
-
-
 	model.Draw(owner->transform.worldMatrix, viewProjectionMatrix);
 }
 

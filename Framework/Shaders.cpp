@@ -1,5 +1,6 @@
+#include "pch.h"
 #include "Shaders.h"
-#include "Logger.h"
+
 
 /*
 ¿¹½Ã: CompileShaderFromFile( L"Tutorial04.fx", "VS", "vs_4_0", &pVSBlob );

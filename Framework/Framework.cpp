@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Framework.h"
+
 
 
 void Framework::run()

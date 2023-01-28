@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "GameObject.h"
 #include "Renderer.h"
 #include "ModelRenderer.h"

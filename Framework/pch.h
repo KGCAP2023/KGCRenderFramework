@@ -46,3 +46,5 @@
 #pragma comment(lib,"assimp-vc143-mtd.lib")
 
 #include "Logger.h"
+
+using namespace DirectX;

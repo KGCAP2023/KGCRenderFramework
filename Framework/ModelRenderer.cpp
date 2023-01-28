@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "ModelRenderer.h"
+
 
 bool ModelRenderer::Init(const std::string& filePath, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_2>& cb_vs_vertexshader, VertexShader* vertexShader, PixelShader* pixelShader)
 {

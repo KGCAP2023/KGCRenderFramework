@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "Texture.h"
 #include "Vertex.h"
 #include "VertexBuffer.h"
@@ -8,6 +7,7 @@
 #include "ConstantBuffer.h"
 #include "ConstantBufferType.h"
 #include "Matrix.h"
+#include "Animation3D.h"
 #include <assimp\Importer.hpp>
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
@@ -59,7 +59,9 @@ private:
     const aiScene* pScene = nullptr;
 
     bool _isDefaultPose = true;
-    std::vector<aiAnimation*> animations;
+    //std::vector<aiAnimation*> animations;
+    std::vector<Animation3D*> animations;
+
 
     XMMATRIX world = XMMatrixIdentity();
     XMMATRIX m_GlobalInverseTransform;
@@ -146,6 +148,9 @@ private:
     void ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNode, const XMMATRIX& ParentTransform, const aiAnimation* pAnimation);
    
     void PopulateBuffers();
+
+    //Animation
+
 
     const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const std::string& NodeName);
     void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTimeTicks, const aiNodeAnim* pNodeAnim);

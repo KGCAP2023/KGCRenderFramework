@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "StringUtil.h"
+
 
 std::wstring StringUtil::StringToWide(std::string str)
 {

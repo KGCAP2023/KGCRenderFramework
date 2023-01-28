@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Renderer.h"
+
 
 void Renderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 {

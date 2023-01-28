@@ -1,5 +1,7 @@
+#include "pch.h"
 #include "Transform.h"
 #include "GameObject.h"
+
 
 void Transform::SetLookAtPos(XMFLOAT3 lookAtPos)
 {

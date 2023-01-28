@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "Client.h"
+#include <StaticLib1.h>
 
 #define MAX_LOADSTRING 100
 

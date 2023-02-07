@@ -49,10 +49,7 @@ void SkinnedMeshRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 		model.GetBoneTransforms(AnimationTimeSec, this->matrix);
 
 	}
-	else
-	{
 
-	}
 	model.Draw(owner->transform.worldMatrix, viewProjectionMatrix);
 }
 

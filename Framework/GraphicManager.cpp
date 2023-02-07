@@ -45,9 +45,6 @@ bool GraphicManager::Initialize(HWND hwnd, int width, int height, std::shared_pt
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX11_Init(this->device.Get(), this->deviceContext.Get());
 
-
-	
-
 	return true;
 
 }
@@ -70,7 +67,7 @@ void GraphicManager::RenderFrame()
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	deviceContext->RSSetState(rasterizerState.Get()); //레스터라이저 설정한 옵션을 가져온다
 	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0); //뎁스 스텐실 뷰
-	deviceContext->OMSetBlendState(NULL, NULL, 0xFFFFFFFF); //블렌딩
+	deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
 	/*
@@ -118,7 +115,6 @@ void GraphicManager::RenderFrame()
 	if (fps.getDeltaTime() > 1000.0)
 	{
 		std::cout << "FPS:" << fpsCounter << std::endl;
-
 		fpsCounter = 0;
 		fps.ReStart();
 	}
@@ -445,14 +441,41 @@ void GraphicManager::RenderFrame()
 
 			}
 
+
+
 		}
 		else
 		{
 
 			const wchar_t* output = L"모델을선택하세요";
 
+			
+			animation->Draw(DirectX::SimpleMath::Vector2(500, 500),this->spriteBatch.get());
+
+			spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+
+
+			spriteBatch->Draw(sp2.Get(), DirectX::SimpleMath::Vector2(50, 300), nullptr,
+				Colors::White, 0.f, DirectX::SimpleMath::Vector2(0, 0), 1.f);
+
+			spriteBatch->End();
+			
+
 			spriteBatch->Begin();
+
+			//std::cout << sp.GetWidth() << " " << sp.GetHeight() << std::endl;
+
+			//RECT sourceRect;
+			//sourceRect.left = 0;
+			//sourceRect.top = 0;
+			//sourceRect.right = 500;
+			//sourceRect.bottom = 500;
+
+			//spriteBatch->Draw(sp.Get(), DirectX::SimpleMath::Vector2(50, 0), &sourceRect,
+			//	Colors::White, 0.f, DirectX::SimpleMath::Vector2(0, 0), 1.f);
+			
 			spriteFont->DrawString(spriteBatch.get(), output, XMFLOAT2(600, 400), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
+			
 			spriteBatch->End();
 
 			if (inspector)
@@ -625,20 +648,26 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	if (FAILED(hr)) return false;
 
 	////Create Blend State
-	//D3D11_RENDER_TARGET_BLEND_DESC rtbd = { 0 };
-	//rtbd.BlendEnable = true;
-	//rtbd.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
-	//rtbd.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
-	//rtbd.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-	//rtbd.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
-	//rtbd.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
-	//rtbd.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-	//rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+	D3D11_RENDER_TARGET_BLEND_DESC rtbd = { 0 };
+	rtbd.BlendEnable = true;
+	rtbd.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	rtbd.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
 
-	//D3D11_BLEND_DESC blendDesc = { 0 };
-	//blendDesc.RenderTarget[0] = rtbd;
+	rtbd.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+	rtbd.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
 
-	//hr = this->device->CreateBlendState(&blendDesc, this->blendState.GetAddressOf());
+	rtbd.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	rtbd.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+
+	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	D3D11_BLEND_DESC blendDesc = { 0 };
+	blendDesc.RenderTarget[0] = rtbd;
+
+	hr = this->device->CreateBlendState(&blendDesc, this->blendState.GetAddressOf());
+
+	if (FAILED(hr)) return false;
+
 	//COM_ERROR_IF_FAILED(hr, "Failed to create blend state.");
 
 	//폰트 초기화
@@ -653,6 +682,9 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	hr = this->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
 	if (FAILED(hr)) return false;
 
+
+	m_states = std::make_unique<CommonStates>(this->device.Get());
+	
 
 	std::cout << "[O] Successfully Completed DirectX Initialize!" << std::endl;
 	return true;
@@ -802,6 +834,11 @@ bool GraphicManager::InitializeScene()
 	//obj2->transform.SetPosition(0, 5, 0);
 	//obj2->transform.SetScale(0.2f, 0.2f, 0.2f);
 	//obj2->SetActive(true);
+
+	sp.Init(this->device.Get(), this->deviceContext.Get(), "Resource\\a.jpg");
+	animation = new Animation2D(200,200,100,100,4,sp,1000.f,DirectX::Colors::Magenta);
+
+	sp2.Init(this->device.Get(), this->deviceContext.Get(), "Resource\\a2.gif");
 
 	//assimp 자체에 fbx 애니메이션 버그가 있다.
 	//GameObject* obj2 = CreateGameObject_2("spin", "Resource\\Objects\\spin\\spin.dae");

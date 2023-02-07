@@ -2,7 +2,7 @@
 #include "pch.h"
 #define MAX_BONES 500
 
-struct CB_VS_1
+struct CB_VS_1 //2D
 {
     DirectX::XMMATRIX WVP;
 };
@@ -17,6 +17,7 @@ struct CB_VS_3
 {
 	DirectX::XMMATRIX g_bones[MAX_BONES];
 };
+
 
 struct CB_PS_light
 {

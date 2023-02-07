@@ -67,6 +67,9 @@
     <Filter Include="헤더 파일\GUI">
       <UniqueIdentifier>{b49c244e-735e-4352-923c-464b1ceaf989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Api">
+      <UniqueIdentifier>{25a164d7-93bd-48a3-b36d-314e1c93918f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\KGCRenderFramework.ico">
@@ -90,9 +93,6 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TextureLoader.h">
       <Filter>헤더 파일\Util</Filter>
@@ -183,6 +183,15 @@
     </ClInclude>
     <ClInclude Include="Animation3D.h">
       <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation2D.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework.h">
+      <Filter>헤더 파일\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +296,12 @@
     </ClCompile>
     <ClCompile Include="Animation3D.cpp">
       <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation2D.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

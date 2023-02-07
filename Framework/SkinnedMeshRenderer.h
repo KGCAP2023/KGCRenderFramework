@@ -7,6 +7,7 @@
 class SkinnedMeshRenderer : public Component, public Renderer
 {
 public:
+
 	SkinnedMeshRenderer(GameObject* owner) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_MODEL;

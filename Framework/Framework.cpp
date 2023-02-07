@@ -33,10 +33,14 @@ void Framework::Update()
 	auto kb = this->keyboard->GetState();
 	auto mouse = this->mouse->GetState();
 
+	GameObject* walk = GameObject::gameObjects["walk"];
+
+	this->graphics.animation->Update(dt);
 
 	if (mouse.rightButton)
 	{
-		
+		std::cout << mouse.x << " " << mouse.y << std::endl;
+
 		while (!this->yPosRelative.empty())
 		{
 			
@@ -88,6 +92,7 @@ void Framework::Update()
 	if (kb.W) // W key is down
 	{
 		//std::cout << "w" << std::endl;
+		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 		
@@ -99,13 +104,10 @@ void Framework::Update()
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
-	
-		
-			
-
 	if (kb.S) // S key is down
 	{
 		//std::cout << "s" << std::endl;
+		//walk->transform.Translate(walk->transform.GetBackward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
@@ -120,8 +122,6 @@ void Framework::Update()
 
 	//if (kb.RightShift)
 			// Right shift key is down
-
-		
 
 	if (kb.IsKeyDown(Keyboard::Keys::Enter) == true) // Keyboard::Keys
 			std::cout << "Enter" << std::endl;

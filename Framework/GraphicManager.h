@@ -8,6 +8,8 @@
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "ConstantBufferType.h"
+#include "Sprite.h"
+#include "Animation2D.h"
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include "ModelRenderer.h"
@@ -21,6 +23,8 @@
 #include <shobjidl.h>
 #include <Keyboard.h>
 #include <Mouse.h>
+#include <SimpleMath.h>
+#include <CommonStates.h>
 
 class GraphicManager
 {
@@ -36,7 +40,10 @@ public:
 	GameObject* camera;
 	Camera3D* cameraComponent;
 	
-	
+	//스프라이트
+	Sprite sp;
+	Sprite sp2;
+	Animation2D* animation;
 
 private:
 	bool InitializeDirectX(HWND hwnd);
@@ -66,6 +73,8 @@ private:
 
 	//윈도우 핸들
 	HWND hwnd;
+
+
 
 	//쉐이더
 	VertexShader vs_1;
@@ -105,7 +114,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState_CullFront;
 
+	//블렌드
+	Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 
+	std::unique_ptr<DirectX::CommonStates> m_states;
 	std::unique_ptr<SpriteBatch> spriteBatch;
 	std::unique_ptr<SpriteFont> spriteFont;
 

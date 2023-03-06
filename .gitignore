@@ -34,10 +34,16 @@
 /.vs/Framework
 /.vs/KGCRenderFramework
 
+/Resource
+
 /Client/x64
 /Client/Resource
 
+/External/Libs
+
 /Framework/x64
 /Framework/Resource
+
+/Framework-lib/x64
 
 /x64

@@ -670,9 +670,13 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 
 	//COM_ERROR_IF_FAILED(hr, "Failed to create blend state.");
 
-	//폰트 초기화
-	spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
-	spriteFont = std::make_unique<DirectX::SpriteFont>(this->device.Get(), L"Resource\\Fonts\\nanum.spritefont");
+	//Font 초기화
+	{
+		std::cout << "[=] Starting Font Initialize....." << std::endl;
+		spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
+		spriteFont = std::make_unique<DirectX::SpriteFont>(this->device.Get(), L"..\\Resource\\Fonts\\nanum.spritefont");
+		std::cout << "[O] Successfully Completed Font Initialize!" << std::endl;
+	}
 
 	//샘플러 스테이트를 생성합니다.
 	CD3D11_SAMPLER_DESC sampDesc(D3D11_DEFAULT);
@@ -774,11 +778,15 @@ bool GraphicManager::InitializeShaders()
 
 bool GraphicManager::InitializeScene()
 {
+	std::cout << "[=] Starting Scene Initialize....." << std::endl;
 
 	//텍스쳐를 파일에서 읽어옵니다.
 	// DIRECTX TEX 깃허브 참고 
 	//-> DirectX::CreateWICTextureFromFile
-	HRESULT hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"Resource\\Textures\\seamless_grass.jpg", nullptr, grassTexture.GetAddressOf());
+
+
+
+	HRESULT hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"..\\Resource\\Textures\\seamless_grass.jpg", nullptr, grassTexture.GetAddressOf());
 	if (FAILED(hr)) Logger::Log(hr,L"흙 텍스쳐 로드 실패");
 
 	//상수버퍼 초기화 & 생성
@@ -825,58 +833,57 @@ bool GraphicManager::InitializeScene()
 	//obj4->SetPosition(2,0,0);
 
 
-
-
-	//GameObject* obj1 = CreateGameObject_1("ying", "Resource\\Objects\\ying\\ying.pmx");
+	//GameObject* obj1 = CreateGameObject_1("ying", "..\\Resource\\Objects\\ying\\ying.pmx");
 	//obj1->transform.SetPosition(0, 5, 0);
 
-	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
+	//GameObject* obj2 = CreateGameObject_2("boblampclean", "..\\Resource\\Objects\\boblamp\\boblampclean.md5mesh");
 	//obj2->transform.SetPosition(0, 5, 0);
 	//obj2->transform.SetScale(0.2f, 0.2f, 0.2f);
 	//obj2->SetActive(true);
 
-	sp.Init(this->device.Get(), this->deviceContext.Get(), "Resource\\a.jpg");
+	sp.Init(this->device.Get(), this->deviceContext.Get(), "..\\Resource\\a.jpg");
 	animation = new Animation2D(200,200,100,100,4,sp,1000.f,DirectX::Colors::Magenta);
 
-	sp2.Init(this->device.Get(), this->deviceContext.Get(), "Resource\\a2.gif");
+	sp2.Init(this->device.Get(), this->deviceContext.Get(), "..\\Resource\\a2.gif");
 
 	//assimp 자체에 fbx 애니메이션 버그가 있다.
 	//GameObject* obj2 = CreateGameObject_2("spin", "Resource\\Objects\\spin\\spin.dae");
-	GameObject* obj2 = CreateGameObject_2("walk", "Resource\\Objects\\walking\\walk.fbx");
+
+	GameObject* obj2 = CreateGameObject_2("walk", "..\\Resource\\Objects\\walking\\walk.fbx");
 	obj2->transform.SetPosition(0, 5, 0);
 	obj2->transform.SetScale(0.05f, 0.05f, 0.05f);
 	obj2->SetActive(true);
 
-	GameObject* obj5 = CreateGameObject_2("walk2", "Resource\\Objects\\walking\\walk.fbx");
-	obj5->transform.SetPosition(0, 5, 0);
-	obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	obj5->SetActive(true);
+	//GameObject* obj5 = CreateGameObject_2("walk2", "Resource\\Objects\\walking\\walk.fbx");
+	//obj5->transform.SetPosition(0, 5, 0);
+	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
+	//obj5->SetActive(true);
 
-	GameObject* obj6 = CreateGameObject_2("walk3", "Resource\\Objects\\walking\\walk.fbx");
-	obj5->transform.SetPosition(0, 5, 0);
-	obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	obj5->SetActive(true);
+	//GameObject* obj6 = CreateGameObject_2("walk3", "Resource\\Objects\\walking\\walk.fbx");
+	//obj5->transform.SetPosition(0, 5, 0);
+	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
+	//obj5->SetActive(true);
 
-	GameObject* obj7 = CreateGameObject_2("walk4", "Resource\\Objects\\walking\\walk.fbx");
-	obj5->transform.SetPosition(0, 5, 0);
-	obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	obj5->SetActive(true);
+	//GameObject* obj7 = CreateGameObject_2("walk4", "Resource\\Objects\\walking\\walk.fbx");
+	//obj5->transform.SetPosition(0, 5, 0);
+	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
+	//obj5->SetActive(true);
 
-	GameObject* obj3 = CreateGameObject_1("Nanosuit", "Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-	obj3->transform.SetPosition(0, 5, 0);
+	//GameObject* obj3 = CreateGameObject_1("Nanosuit", "Resource\\Objects\\Nanosuit\\Nanosuit.obj");
+	//obj3->transform.SetPosition(0, 5, 0);
 
 
-	//GameObject* obj8 = CreateGameObject_1("steve", "Resource\\Objects\\steve\\source\\steve.fbx");
+	////GameObject* obj8 = CreateGameObject_1("steve", "Resource\\Objects\\steve\\source\\steve.fbx");
+	////obj8->transform.SetPosition(0, 5, 0);
+
+	//GameObject* obj8 = CreateGameObject_1("grass", "Resource\\Objects\\grass\\Grass_Block.obj");
 	//obj8->transform.SetPosition(0, 5, 0);
+	//obj8->transform.SetScale(0.5,0.5,0.5);
 
-	GameObject* obj8 = CreateGameObject_1("grass", "Resource\\Objects\\grass\\Grass_Block.obj");
-	obj8->transform.SetPosition(0, 5, 0);
-	obj8->transform.SetScale(0.5,0.5,0.5);
-
-	GameObject* obj9 = CreateGameObject_1("grass2", "Resource\\Objects\\grass\\Grass_Block.obj");
-	obj9->transform.SetPosition(1, 5, 0);
-	obj9->transform.SetScale(0.5, 0.5, 0.5);
-	
+	//GameObject* obj9 = CreateGameObject_1("grass2", "Resource\\Objects\\grass\\Grass_Block.obj");
+	//obj9->transform.SetPosition(1, 5, 0);
+	//obj9->transform.SetScale(0.5, 0.5, 0.5);
+	//
 
 	//GameObject* obj3 = CreateGameObject_1("sponza", "Resource\\Objects\\Sponza\\sponza.obj");
 	//obj2->transform.SetPosition(0, 5, 0);

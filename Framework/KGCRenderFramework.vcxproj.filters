@@ -43,9 +43,6 @@
     <Filter Include="리소스 파일\Shader">
       <UniqueIdentifier>{422f27c1-3511-4472-9b82-443d39393c2f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\Test">
-      <UniqueIdentifier>{9e8a322a-d6e7-4dd4-8f34-7ea374ee6ba4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="리소스 파일\Git">
       <UniqueIdentifier>{bce09d7a-0932-4c7a-9ab8-a0fcd5e35ee9}</UniqueIdentifier>
     </Filter>
@@ -57,18 +54,6 @@
     </Filter>
     <Filter Include="소스 파일\imgui">
       <UniqueIdentifier>{4c44acc5-cb46-4ab4-8e9b-c82fa3eb6658}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Mesh">
-      <UniqueIdentifier>{3029c621-e4c9-4d73-b17d-366e2c8086e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Physics">
-      <UniqueIdentifier>{6ac68164-99cc-4f82-b0d6-d467bdba3c92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\GUI">
-      <UniqueIdentifier>{b49c244e-735e-4352-923c-464b1ceaf989}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Api">
-      <UniqueIdentifier>{25a164d7-93bd-48a3-b36d-314e1c93918f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

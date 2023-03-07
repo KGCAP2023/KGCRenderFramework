@@ -38,11 +38,6 @@ public:
 	//RenderableObject* obj3;
 	GameObject* camera;
 	Camera3D* cameraComponent;
-	
-	//스프라이트
-	Sprite sp;
-	Sprite sp2;
-	Animation2D* animation;
 
 private:
 	bool InitializeDirectX(HWND hwnd);

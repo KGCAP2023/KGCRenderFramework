@@ -9,6 +9,7 @@
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
 
+
 class BoundingBoxRenderer : public Component, public Renderer
 {
 public:

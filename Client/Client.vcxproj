@@ -81,6 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)External\Includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)External\Libs\Any;$(SolutionDir)External\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)External\Includes;$(IncludePath)</IncludePath>

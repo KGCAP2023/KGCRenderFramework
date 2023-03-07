@@ -33,17 +33,11 @@ public:
 	bool Initialize(HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard);
 	void RenderFrame();
 
-
 	//게임 오브젝트
 	//SimpleRenderableObject* obj;
 	//RenderableObject* obj3;
 	GameObject* camera;
 	Camera3D* cameraComponent;
-	
-	//스프라이트
-	Sprite sp;
-	Sprite sp2;
-	Animation2D* animation;
 
 private:
 	bool InitializeDirectX(HWND hwnd);

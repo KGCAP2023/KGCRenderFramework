@@ -35,7 +35,7 @@ void Framework::Update()
 
 	//GameObject* walk = GameObject::gameObjects["walk"];
 
-	this->graphics.animation->Update(dt);
+	//this->graphics.animation->Update(dt);
 
 	if (mouse.rightButton)
 	{

@@ -19,6 +19,7 @@ public:
 	virtual void Update() override;
 	virtual std::string GetPath() override;
 	virtual const aiScene* GetAiScene() override;
+
 	bool isStart = false;
 private:
 	SkinnedMesh model;

@@ -449,34 +449,6 @@ void GraphicManager::RenderFrame()
 
 			const wchar_t* output = L"모델을선택하세요";
 
-			
-			animation->Draw(DirectX::SimpleMath::Vector2(500, 500),this->spriteBatch.get());
-
-			spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
-
-
-			spriteBatch->Draw(sp2.Get(), DirectX::SimpleMath::Vector2(50, 300), nullptr,
-				Colors::White, 0.f, DirectX::SimpleMath::Vector2(0, 0), 1.f);
-
-			spriteBatch->End();
-			
-
-			spriteBatch->Begin();
-
-			//std::cout << sp.GetWidth() << " " << sp.GetHeight() << std::endl;
-
-			//RECT sourceRect;
-			//sourceRect.left = 0;
-			//sourceRect.top = 0;
-			//sourceRect.right = 500;
-			//sourceRect.bottom = 500;
-
-			//spriteBatch->Draw(sp.Get(), DirectX::SimpleMath::Vector2(50, 0), &sourceRect,
-			//	Colors::White, 0.f, DirectX::SimpleMath::Vector2(0, 0), 1.f);
-			
-			spriteFont->DrawString(spriteBatch.get(), output, XMFLOAT2(600, 400), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
-			
-			spriteBatch->End();
 
 			if (inspector)
 			{
@@ -842,11 +814,6 @@ bool GraphicManager::InitializeScene()
 	//obj2->transform.SetPosition(0, 5, 0);
 	//obj2->transform.SetScale(0.2f, 0.2f, 0.2f);
 	//obj2->SetActive(true);
-
-	sp.Init(this->device.Get(), this->deviceContext.Get(), "..\\Resource\\a.jpg");
-	animation = new Animation2D(200,200,100,100,4,sp,1000.f,DirectX::Colors::Magenta);
-
-	sp2.Init(this->device.Get(), this->deviceContext.Get(), "..\\Resource\\a2.gif");
 
 	//assimp 자체에 fbx 애니메이션 버그가 있다.
 	//GameObject* obj2 = CreateGameObject_2("spin", "Resource\\Objects\\spin\\spin.dae");

@@ -2,6 +2,7 @@
 #include "Gameobject.h"
 #include "Renderer.h"
 
+
 class MeshRenderer : public Component , public Renderer
 {
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;

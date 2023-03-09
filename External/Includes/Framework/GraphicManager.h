@@ -39,6 +39,21 @@ public:
 	GameObject* camera;
 	Camera3D* cameraComponent;
 
+	//디바이스
+	Microsoft::WRL::ComPtr<ID3D11Device> device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+
+	//뎁스 스텐실
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
+
+	//윈도우 크기
+	int width;
+	int height;
+
 private:
 	bool InitializeDirectX(HWND hwnd);
 	bool InitializeShaders();
@@ -46,6 +61,8 @@ private:
 
 	bool openFile();
 	bool openFile2();
+
+	ImGuiIO* io_;
 
 	std::shared_ptr<DirectX::Keyboard> keyboard;
 
@@ -61,9 +78,7 @@ private:
 	bool doTreeNode(GameObject* obj, int index);
 	Timer fps;
 
-	//윈도우 크기
-	int width;
-	int height;
+
 
 	//윈도우 핸들
 	HWND hwnd;
@@ -91,18 +106,6 @@ private:
 	//텍스쳐
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> grassTexture;
-
-
-	//디바이스
-	Microsoft::WRL::ComPtr<ID3D11Device> device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
-
-	//뎁스 스텐실
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
 
 	//레스터라이저
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState;

@@ -201,7 +201,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 	this->handle = CreateWindowEx( 0 , //Extended Windows style - we are using the default. For other options, see: https://msdn.microsoft.com/en-us/library/windows/desktop/ff700543(v=vs.85).aspx
 		this->window_class_wide.c_str(), //Window class name
 		this->window_title_wide.c_str(), //Window Title
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, //Windows style - See: https://msdn.microsoft.com/en-us/library/windows/desktop/ms632600(v=vs.85).aspx
+		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_SIZEBOX, //Windows style - See: https://msdn.microsoft.com/en-us/library/windows/desktop/ms632600(v=vs.85).aspx
 		rect.left, //Window X Position
 		rect.top, //Window Y Position
 		rect.right - rect.left, //Window Width
@@ -307,6 +307,80 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			// This is where you'd implement the classic ALT+ENTER hotkey for fullscreen toggle
 		}
 		break;
+	case WM_DPICHANGED:
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
+		{
+			//const int dpi = HIWORD(wParam);
+			//printf("WM_DPICHANGED to %d (%.0f%%)\n", dpi, (float)dpi / 96.0f * 100.0f);
+			const RECT* suggested_rect = (RECT*)lParam;
+			::SetWindowPos(hwnd, NULL, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+		break;
+	case WM_SIZE:
+		if (this->graphics.swapchain.Get() != nullptr)
+		{
+			INT nWidth = LOWORD(lParam);
+			INT nHeight = HIWORD(lParam);
+
+			this->width = nWidth;
+			this->height = nHeight;
+
+			this->graphics.width = nWidth;
+			this->graphics.height = nHeight;
+
+			this->graphics.deviceContext->OMSetRenderTargets(0, 0, 0);
+
+			// Release all outstanding references to the swap chain's buffers.
+			this->graphics.renderTargetView->Release();
+			this->graphics.depthStencilView->Release();
+			this->graphics.depthStencilBuffer->Release();
+
+			HRESULT hr;
+			// Preserve the existing buffer count and format.
+			// Automatically choose the width and height to match the client rect for HWNDs.
+			hr = this->graphics.swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			
+			// Perform error handling here!
+
+			// Get buffer and create a render-target-view.
+			ID3D11Texture2D* pBuffer;
+			hr = this->graphics.swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+				(void**)&pBuffer);
+			// Perform error handling here!
+
+			hr = this->graphics.device->CreateRenderTargetView(pBuffer, NULL,
+				this->graphics.renderTargetView.GetAddressOf());
+			// Perform error handling here!
+			pBuffer->Release();
+
+
+			//µª½º/½ºÅÙ½Ç ¹öÆÛ µð½ºÅ©¸³ÅÍ
+			CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
+			depthStencilTextureDesc.MipLevels = 1;
+			depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+			depthStencilTextureDesc.SampleDesc.Count = 4; //MSAA 4¹è »ùÇÃ¸µ
+			depthStencilTextureDesc.SampleDesc.Quality = 0;
+
+			hr = this->graphics.device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->graphics.depthStencilBuffer.GetAddressOf());
+
+
+			hr = this->graphics.device->CreateDepthStencilView(this->graphics.depthStencilBuffer.Get(), NULL, this->graphics.depthStencilView.GetAddressOf());
+			if (FAILED(hr)) return false;
+
+
+			this->graphics.deviceContext->OMSetRenderTargets(1, this->graphics.renderTargetView.GetAddressOf(), this->graphics.depthStencilView.Get());
+
+			// Set up the viewport.
+			D3D11_VIEWPORT vp;
+			vp.Width = nWidth;
+			vp.Height = nHeight;
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;
+			vp.TopLeftX = 0;
+			vp.TopLeftY = 0;
+			this->graphics.deviceContext->RSSetViewports(1, &vp);
+		}
+		return 1;
 	default:
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}

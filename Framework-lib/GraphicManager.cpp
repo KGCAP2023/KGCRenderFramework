@@ -37,13 +37,56 @@ bool GraphicManager::Initialize(HWND hwnd, int width, int height, std::shared_pt
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\malgun.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+
+
+	//io.ConfigViewportsNoAutoMerge = true;
+	//io.ConfigViewportsNoTaskBarIcon = true;
+	//io.ConfigViewportsNoDefaultParent = true;
+	//io.ConfigDockingAlwaysTabBar = true;
+	//io.ConfigDockingTransparentPayload = true;
+	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;     // FIXME-DPI: Experimental. THIS CURRENTLY DOESN'T WORK AS EXPECTED. DON'T USE IN USER APP!
+	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // FIXME-DPI: Experimental.
+
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
+	//ImGui::StyleColorsLight();
+
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+
+	this->io_ = &io;
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX11_Init(this->device.Get(), this->deviceContext.Get());
+
+	//{
+	//	// Setup Dear ImGui context
+	//	IMGUI_CHECKVERSION();
+	//	ImGui::CreateContext();
+	//	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\malgun.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+	//	// Setup Dear ImGui style
+	//	ImGui::StyleColorsDark();
+	//	//ImGui::StyleColorsClassic();
+
+	//	// Setup Platform/Renderer backends
+	//	ImGui_ImplWin32_Init(hwnd);
+	//	ImGui_ImplDX11_Init(this->device.Get(), this->deviceContext.Get());
+	//}
+
+
+
+
 
 	return true;
 
@@ -52,9 +95,8 @@ bool GraphicManager::Initialize(HWND hwnd, int width, int height, std::shared_pt
 void GraphicManager::RenderFrame()
 {
 
-
 	/*
-	렌더 초기 설정 
+	렌더 초기 설정
 	ClearRenderTargetView 기존 렌더타켓뷰 정리		deviceContext
 	ClearDepthStencilView 기존 뎁스스텐실뷰 정리		deviceContext
 	RSSetState 레스터라이저 셋팅						deviceContext
@@ -69,6 +111,8 @@ void GraphicManager::RenderFrame()
 	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0); //뎁스 스텐실 뷰
 	deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
+
+
 
 	/*
 	//DRAW CALL (3D 도형 그리기)
@@ -95,12 +139,11 @@ void GraphicManager::RenderFrame()
 
 	*/
 
-
-
 	deviceContext->IASetInputLayout(vs_3.GetInputLayout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
+	cameraComponent->SetProjectionValues(90.0f, static_cast<float>(this->width) / static_cast<float>(this->height), 0.1f, 3000.0f);
 
 	{
 		for (const auto& kv : GameObject::gameObjects) {
@@ -108,9 +151,9 @@ void GraphicManager::RenderFrame()
 		}
 	}
 
+
 	static int fpsCounter = 0;
 	fpsCounter += 1;
-
 
 	if (fps.getDeltaTime() > 1000.0)
 	{
@@ -128,8 +171,8 @@ void GraphicManager::RenderFrame()
 	spriteBatch->End();
 
 	/**
-	
-	 IMGUI 
+
+	 IMGUI
 
 	**/
 	static bool inspector = true;
@@ -142,348 +185,17 @@ void GraphicManager::RenderFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	//ImGui::ShowDemoWindow(&show_demo_window);
-
-
-	{
-		ImGui::BeginMainMenuBar();
-
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("import"))
-			{
-				openFile();
-
-				std::cout << "출력 sFilePath : " << this->sFilePath << std::endl;
-				this->sSelectedFile = sSelectedFile.substr(0, sSelectedFile.find_last_of("."));
-				std::cout << "출력 sSelectedFile : " << this->sSelectedFile << std::endl;
-
-				if(this->sFilePath != "")
-					this->CreateGameObject_1(this->sSelectedFile, this->sFilePath);
-			}
-
-			//if (ImGui::BeginMenu("hello"))
-			//{
-			//	if (ImGui::MenuItem("ying"))
-			//	{
-			//		//Do something
-			//	}
-
-			//	ImGui::EndMenu();
-			//}
-
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Windows"))
-		{
-			ImGui::Checkbox("Inspector##window", &inspector);
-			ImGui::Checkbox("Mesh Inspector##window", &ppp);
-
-			ImGui::EndMenu();
-		}
-
-		//if (ImGui::BeginMenu("Help"))
-		//{
-
-
-		//	ImGui::EndMenu();
-		//}
-
-		ImGui::EndMainMenuBar();
-	}
-
-
-	{
-		bool main_menu = true;
-
-		ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
-		ImGui::Begin(u8"정보창");
-		ImGui::Text(u8"201713725 구동혁");
-		ImGui::Text("Model Viewer Version 1.0");
-		ImGui::Text(u8"평균 %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Separator();
-
-	
-		ImGui::Text(u8"카메라"); ImGui::SameLine();
-
-		if (ImGui::Button("Reset##camera"))
-		{
-			this->camera->transform.SetPosition(0.0f, 12.0f, -10.0f);
-			this->camera->transform.SetRotation(0.0f, 0.0f, 0.0f);
-		}
-
-		ImGui::Text(u8"X:%.3f\tY:%.3f\tZ:%.3f", this->camera->transform.position.x, this->camera->transform.position.y, this->camera->transform.position.z);
-		ImGui::Text(u8"X:%.3f\tY:%.3f\tZ:%.3f", this->camera->transform.rotation.x, this->camera->transform.rotation.y, this->camera->transform.rotation.z);
-
-		ImGui::Separator();
-
-		ImGui::Text(u8"키보드");
-
-		auto kb = this->keyboard->GetState();
-		
-		if (kb.W) // W key is down
-		{
-			ImGui::Text("W: 1\t"); ImGui::SameLine();
-		}
-		else
-		{
-			ImGui::Text("W: 0\t"); ImGui::SameLine();
-		}
-
-		if (kb.A) // A key is down
-		{
-			ImGui::Text("A: 1\t"); ImGui::SameLine();
-		}	
-		else
-		{
-			ImGui::Text("A: 0\t"); ImGui::SameLine();
-		}
-			
-
-		if (kb.S) // S key is down
-		{
-			ImGui::Text("S: 1\t"); ImGui::SameLine();
-		}
-		else
-		{
-			ImGui::Text("S: 0\t"); ImGui::SameLine();
-		}
-
-		if (kb.D) // D key is down
-		{
-			ImGui::Text("D: 1\t");
-		}	
-		else
-		{
-			ImGui::Text("D: 0\t");
-		}
-			
-
-		ImGui::Separator();
-
-		
-
-		ImGui::End();
-	}
-
-
-	{
-
-		ImGuiWindowFlags window_flags = 0;
-
-		const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowSize(ImVec2(550, 130), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
-		
-		//ImVec2(550, 300) height / width
-
-		if(GameObject::gameObjects.find(this->target) != GameObject::gameObjects.end())
-		{
-
-			GameObject *object = GameObject::gameObjects.at(this->target);
-			object->SetActive(true);
-
-			if (inspector)
-			{
-				ImGui::Begin("Inspector", &inspector, window_flags);
-
-				/*
-
-				Transform 구현
-
-				*/
-				ImGui::Text("TransForm");
-
-				ImGui::Separator();
-
-				Transform t = object->transform;
-
-				float f0 = t.position.x, f1 = t.position.y, f2 = t.position.z;
-				float f3 = t.scale.x, f4 = t.scale.y, f5 = t.scale.z;
-				float f6 = t.rotation.x, f7 = t.rotation.y, f8 = t.rotation.z;
-
-
-				ImGui::PushItemWidth(120);
-				std::string text = "Reset";
-				ImGui::Text("Position		"); ImGui::SameLine();
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x
-					- ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
-				if (ImGui::Button("Reset##1"))
-				{
-					f0 = 1.0f;
-					f1 = 1.0f;
-					f2 = 1.0f;
-				}
-				ImGui::Text("X"); ImGui::SameLine();
-				ImGui::SliderFloat("##X", &f0, -20.0f, 20.0f); ImGui::SameLine();
-				ImGui::Text("Y"); ImGui::SameLine();
-				ImGui::SliderFloat("##Y", &f1, -20.0f, 20.0f); ImGui::SameLine();
-				ImGui::Text("Z"); ImGui::SameLine();
-				ImGui::SliderFloat("##Z", &f2, -20.0f, 20.0f);
-				ImGui::PopItemWidth();
-
-
-
-				ImGui::PushItemWidth(120);
-				ImGui::Text("Scale		"); ImGui::SameLine();
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x
-					- ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
-				if (ImGui::Button("Reset##2"))
-				{
-					f3 = 1.0f;
-					f4 = 1.0f;
-					f5 = 1.0f;
-				}
-				ImGui::Text("X"); ImGui::SameLine();
-				ImGui::SliderFloat("##X2", &f3, -20.0f, 20.0f); ImGui::SameLine();
-				ImGui::Text("Y"); ImGui::SameLine();
-				ImGui::SliderFloat("##Y2", &f4, -20.0f, 20.0f); ImGui::SameLine();
-				ImGui::Text("Z"); ImGui::SameLine();
-				ImGui::SliderFloat("##Z2", &f5, -20.0f, 20.0f);
-				ImGui::PopItemWidth();
-
-				ImGui::PushItemWidth(120);
-				ImGui::Text("Rotation	"); ImGui::SameLine();
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x
-					- ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
-				if (ImGui::Button("Reset##3"))
-				{
-					f6 = 0.0f;
-					f7 = 0.0f;
-					f8 = 0.0f;
-				}
-				ImGui::Text("X"); ImGui::SameLine();
-				ImGui::SliderFloat("##X3", &f6, -20.0f, 20.0f); ImGui::SameLine();
-				ImGui::Text("Y"); ImGui::SameLine();
-				ImGui::SliderFloat("##Y3", &f7, -20.0f, 20.0f); ImGui::SameLine();
-				ImGui::Text("Z"); ImGui::SameLine();
-				ImGui::SliderFloat("##Z3", &f8, -20.0f, 20.0f);
-				ImGui::PopItemWidth();
-
-				ImGui::Separator();
-
-				object->transform.SetPosition(f0, f1, f2);
-				object->transform.SetScale(f3, f4, f5);
-				object->transform.SetRotation(f6, f7, f8);
-
-				BoundingBoxRenderer* bbox = (BoundingBoxRenderer*)object->GetComponent(Component::Type::BOUNDING_BOX);
-				if (bbox != nullptr)
-					ImGui::Checkbox("Bounding box", &bbox->isActive);
-
-				if (SkinnedMeshRenderer* v = dynamic_cast<SkinnedMeshRenderer*>(object->GetComponent(Component::Type::RENDERER_MODEL)))
-				{
-					ImGui::Text("Animation");
-
-					ImGui::Separator();
-
-					if (ImGui::Button(u8"시작##animation"))
-					{
-						v->isStart = true;
-					}
-
-					ImGui::SameLine();
-
-					if (ImGui::Button(u8"정지##animation"))
-					{
-						v->isStart = false;
-					}
-
-				}
-
-				ImGui::End();
-			}
-
-
-
-
-			{
-				if (ppp)
-				{
-					if (ImGui::Begin("Mesh Inspector", &ppp))
-					{
-
-
-
-						if (Renderer* v = dynamic_cast<Renderer*>(object->GetComponent(Component::Type::RENDERER_MODEL)))
-						{
-							const aiScene* scene = v->GetAiScene();
-
-							for (int i = 0; i < scene->mNumMeshes; i++)
-							{
-								aiMesh* pai = scene->mMeshes[i];
-
-								std::string nodeName = pai->mName.C_Str();
-
-								nodeName = "Node [" + std::to_string(i) + "] : " + nodeName;
-
-								ImGui::Text(nodeName.c_str());
-
-								//if (pai->HasBones())
-								//{
-								//	for (int j = 0; j < pai->mNumBones; j++)
-								//	{
-								//		ImGui::Text(pai->mBones[j]->mName.C_Str());
-								//	}
-								//}
-
-							}
-
-
-						}
-
-
-						ImGui::End();
-					}
-					else
-						ImGui::End();
-				}
-
-			}
-
-
-
-		}
-		else
-		{
-
-			const wchar_t* output = L"모델을선택하세요";
-
-
-			if (inspector)
-			{
-				ImGui::Begin("Inspector", &inspector, window_flags);
-				ImGui::Text("There is no Selected GameObject");
-				ImGui::End();
-			}
-
-			if (ppp)
-			{
-				if (ImGui::Begin("Mesh Inspector", &ppp))
-				{
-
-					ImGui::Text("There is no Selected GameObject");
-					ImGui::End();
-				}
-				else
-				{
-
-					ImGui::End();
-				}
-			}
-		}
-
-
-		
-	}
-
-
-	{
-		SceneHierarchyWindow();
-	}
+	ImGui::ShowDemoWindow(&show_demo_window);
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+	// Update and Render additional Platform Windows
+	if (io_->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
 
 	//V-Sync on = 1   // 0.3
 	//V-Sync off = 0  // 1.8 0.8

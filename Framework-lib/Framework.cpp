@@ -37,6 +37,12 @@ void Framework::Update()
 
 	//this->graphics.animation->Update(dt);
 
+
+	auto& io = ImGui::GetIO();
+	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
+		return;
+	}
+
 	if (mouse.rightButton)
 	{
 		std::cout << mouse.x << " " << mouse.y << std::endl;
@@ -53,6 +59,8 @@ void Framework::Update()
 		}
 
 	}
+
+
 
 
 	while (!this->yPosRelative.empty())
@@ -95,8 +103,6 @@ void Framework::Update()
 		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
-		
-			
 
 	if (kb.A) // A key is down
 	{

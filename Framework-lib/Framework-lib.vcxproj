@@ -30,8 +30,11 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicManager.h" />
     <ClInclude Include="IFramework.h" />
+    <ClInclude Include="ILayer.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />
+    <ClInclude Include="IScript.h" />
+    <ClInclude Include="LayerManager.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
@@ -63,7 +66,11 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GraphicManager.cpp" />
+    <ClCompile Include="IFramework.cpp" />
+    <ClCompile Include="ILayer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
+    <ClCompile Include="IScript.cpp" />
+    <ClCompile Include="LayerManager.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />

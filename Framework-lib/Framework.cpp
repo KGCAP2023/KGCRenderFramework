@@ -36,7 +36,7 @@ void Framework::Update()
 	//GameObject* walk = GameObject::gameObjects["walk"];
 
 	//this->graphics.animation->Update(dt);
-
+	this->layerManager.Update();
 
 	auto& io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
@@ -173,6 +173,21 @@ void Framework::RenderFrame()
 	graphics.RenderFrame();
 }
 
+void Framework::RegisterLayer(const std::string& key, ILayer* layer)
+{
+	this->layerManager.RegisterLayer(key,layer);
+}
+
+void Framework::DeleteLayer(const std::string& key)
+{
+	this->layerManager.DeleteLayer(key);
+}
+
+ILayer* Framework::FindLayer(const std::string& key)
+{
+	return this->layerManager.FindLayer(key);
+}
+
 bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
 {
 
@@ -234,20 +249,19 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 	this->mouse = std::make_unique<Mouse>();
 	this->mouse->SetWindow(this->handle);
 
-	
-
 	std::cout << "[O] Successfully Completed KeyBoard/Mouse Initialize!" << std::endl;
 
 
+	this->layerManager.Init();
+
+	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 
 	//DIRECTX 그래픽스 초기화
-	if (!this->graphics.Initialize(this->handle, this->width, this->height,this->keyboard))
+	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height,this->keyboard))
 	{
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
 	}
-
-
 
 	return true;
 }

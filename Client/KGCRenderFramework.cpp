@@ -3,13 +3,46 @@
 #include <Framework/Framework.h>
 #pragma comment(lib, "Framework-lib.lib")
 
+class Example : public ILayer
+{
+public:
+	Example(const std::string name) : ILayer(name) {}
+	virtual ~Example() {};
+
+	virtual void Init() 
+	{
+
+
+	};
+
+	virtual void Update() 
+	{
+		std::cout << "test" << std::endl;
+
+	};
+
+	virtual void Render() 
+	{
+		ImGui::Begin(u8"정보창");
+		ImGui::Text(u8"TEST");
+		ImGui::End();
+	};
+
+};
+
+
+
 int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
                        _In_opt_ HINSTANCE hPrevInstance,
                        _In_ LPWSTR    lpCmdLine,
                        _In_ int       nCmdShow )
 {
 	Framework rw;
-	rw.Initialize(hInstance, "Model Viewer 1.0", "Framework", 1600, 900);
+	rw.Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
+
+	Example* temp = new Example("example");
+    rw.RegisterLayer("example", temp);
+
 	rw.run();
     return 0;
 }

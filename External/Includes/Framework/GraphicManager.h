@@ -26,11 +26,13 @@
 #include <SimpleMath.h>
 #include <CommonStates.h>
 
+class Framework;
+
 class GraphicManager
 {
 public:
 
-	bool Initialize(HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard);
+	bool Initialize(Framework* framework,HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard);
 	void RenderFrame();
 
 	//게임 오브젝트
@@ -38,6 +40,8 @@ public:
 	//RenderableObject* obj3;
 	GameObject* camera;
 	Camera3D* cameraComponent;
+
+	Framework* framework;
 
 	//디바이스
 	Microsoft::WRL::ComPtr<ID3D11Device> device;

@@ -31,6 +31,9 @@
     <Filter Include="헤더 파일\Util">
       <UniqueIdentifier>{5ce537d8-0f6f-4a11-8d37-bd2596fc8a9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Manager">
+      <UniqueIdentifier>{f565d208-7870-4979-b51f-801bd9dd7e51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBoxRenderer.h">
@@ -132,8 +135,17 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="IScript.h">
+      <Filter>헤더 파일\API</Filter>
+    </ClInclude>
     <ClInclude Include="IFramework.h">
       <Filter>헤더 파일\API</Filter>
+    </ClInclude>
+    <ClInclude Include="ILayer.h">
+      <Filter>헤더 파일\API</Filter>
+    </ClInclude>
+    <ClInclude Include="LayerManager.h">
+      <Filter>헤더 파일\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +228,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LayerManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IFramework.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ILayer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IScript.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

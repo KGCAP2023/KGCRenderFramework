@@ -13,3 +13,12 @@ ILayer* IFramework::FindLayer(const std::string& key)
 {
     return nullptr;
 }
+
+bool IFramework::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
+{
+    return false;
+}
+
+void IFramework::run()
+{
+}

@@ -24,16 +24,16 @@ public:
 	virtual void DeleteLayer(const std::string& key) override;
 	virtual ILayer* FindLayer(const std::string& key) override;
 
-
+	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height) override;
+	virtual void run() override;
 
 //INTERNAL
 public:
 
-	bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);\
 	void RegisterWindow(HINSTANCE hInstance); // WindowClassEX를 초기화 한다.
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool ProcessMsg();
-	void run();
+	
 	void Update();
 	void RenderFrame();
 

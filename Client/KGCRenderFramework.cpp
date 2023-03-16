@@ -1,6 +1,9 @@
 ﻿// KGCRenderFramework.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 #include "pch.h"
-#include <Framework/Framework.h>
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
+#include <Framework/IFrameworkFactory.h>
 #pragma comment(lib, "Framework-lib.lib")
 
 class Example : public ILayer
@@ -37,13 +40,14 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
                        _In_ LPWSTR    lpCmdLine,
                        _In_ int       nCmdShow )
 {
-	Framework rw;
-	rw.Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
+	IFramework* rw = IFrameworkFactory::createFramework();
+
+	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
 
 	Example* temp = new Example("example");
-    rw.RegisterLayer("example", temp);
+    rw->RegisterLayer("example", temp);
 
-	rw.run();
+	rw->run();
     return 0;
 }
 

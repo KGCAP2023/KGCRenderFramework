@@ -30,6 +30,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicManager.h" />
     <ClInclude Include="IFramework.h" />
+    <ClInclude Include="IFrameworkFactory.h" />
     <ClInclude Include="ILayer.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />

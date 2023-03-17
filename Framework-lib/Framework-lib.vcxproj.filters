@@ -150,6 +150,9 @@
     <ClInclude Include="IFrameworkFactory.h">
       <Filter>헤더 파일\API</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>헤더 파일\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp">
@@ -243,6 +246,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="IScript.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

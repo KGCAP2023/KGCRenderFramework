@@ -523,8 +523,8 @@ bool GraphicManager::InitializeScene()
 
 
 
-	GameObject* obj1 = CreateGameObject_1("ying", "..\\Resource\\Objects\\ying\\ying.pmx");
-	obj1->transform.SetPosition(0, 5, 0);
+	//GameObject* obj1 = CreateGameObject_1("ying", "..\\Resource\\Objects\\ying\\ying.pmx");
+	//obj1->transform.SetPosition(0, 5, 0);
 
 	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
 	//obj2->transform.SetPosition(0, 5, 0);

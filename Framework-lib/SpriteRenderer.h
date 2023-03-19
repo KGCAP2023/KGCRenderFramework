@@ -4,4 +4,6 @@
 class SpriteRenderer : public Component
 {
 	virtual void Update() override;
+
+
 };

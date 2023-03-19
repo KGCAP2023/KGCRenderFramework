@@ -16,6 +16,7 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 
 	this->hwnd = hwnd;
 	this->framework = framework;
+	this->res = &framework->resourceManager;
 
 	//DIRECTX 초기화
 	if (!InitializeDirectX(hwnd)) return false;
@@ -138,8 +139,8 @@ void GraphicManager::RenderFrame()
 	swapchain->Present() 스왑체인 호출				swapchain
 
 	*/
-
-	deviceContext->IASetInputLayout(vs_3.GetInputLayout());
+	VertexShader* vs_3 = res->FindVertexShader("vs_3");
+	deviceContext->IASetInputLayout(vs_3->GetInputLayout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
@@ -162,13 +163,13 @@ void GraphicManager::RenderFrame()
 		fps.ReStart();
 	}
 
+	const wchar_t* output = L"캡스톤_프로젝트";
+	res->spriteBatch->Begin();
+	res->spriteFont->DrawString(res->spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
+	res->spriteBatch->End();
 
-
-	const wchar_t* output = L"모델뷰어_ver_1.0";
-
-	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0),1.0f);
-	spriteBatch->End();
+	//Sprite* sp = res->FindSprite("ani");
+	//sp->Draw(DirectX::SimpleMath::Vector2(0, 0), res->spriteBatch.get());
 
 	/**
 
@@ -356,13 +357,8 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 
 	//COM_ERROR_IF_FAILED(hr, "Failed to create blend state.");
 
-	//Font 초기화
-	{
-		std::cout << "[=] Starting Font Initialize....." << std::endl;
-		spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
-		spriteFont = std::make_unique<DirectX::SpriteFont>(this->device.Get(), L"..\\Resource\\Fonts\\nanum.spritefont");
-		std::cout << "[O] Successfully Completed Font Initialize!" << std::endl;
-	}
+	this->res->Init(this->framework);
+	this->res->InitFont(L"..\\Resource\\Fonts\\nanum.spritefont");
 
 	//샘플러 스테이트를 생성합니다.
 	CD3D11_SAMPLER_DESC sampDesc(D3D11_DEFAULT);
@@ -371,10 +367,6 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	hr = this->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
 	if (FAILED(hr)) return false;
-
-
-	m_states = std::make_unique<CommonStates>(this->device.Get());
-	
 
 	std::cout << "[O] Successfully Completed DirectX Initialize!" << std::endl;
 	return true;
@@ -395,15 +387,15 @@ bool GraphicManager::InitializeShaders()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	UINT numElements2D = ARRAYSIZE(layout);
+	UINT numElements = ARRAYSIZE(layout);
 
-	if (!vs_1.Initialize(L"..\\Shader\\VertexShader.hlsl","main", "vs_4_0_level_9_3", layout, numElements2D, device))
+	if (!res->LoadVertexShader("vs_1", L"..\\Shader\\VertexShader.hlsl", layout, numElements))
 	{
 		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
-	if (!ps_1.Initialize(L"..\\Shader\\PixelShader.hlsl", "main", "ps_4_0_level_9_3", device))
+	if (!res->LoadPixelShader("ps_1", L"..\\Shader\\PixelShader.hlsl"))
 	{
 		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
@@ -418,14 +410,13 @@ bool GraphicManager::InitializeShaders()
 
 	UINT numElements3D = ARRAYSIZE(layout3D);
 
-	if (!vs_2.Initialize(L"..\\Shader\\VertexShader2.hlsl", "main", "vs_4_0_level_9_3", layout3D, numElements3D, device))
+	if (!res->LoadVertexShader("vs_2", L"..\\Shader\\VertexShader2.hlsl", layout3D, numElements3D))
 	{
 		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
-		
 
-	if (!ps_2.Initialize(L"..\\Shader\\PixelShader2.hlsl", "main", "ps_4_0_level_9_3", device))
+	if (!res->LoadPixelShader("ps_2", L"..\\Shader\\PixelShader2.hlsl"))
 	{
 		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
@@ -452,7 +443,7 @@ bool GraphicManager::InitializeShaders()
 
 	UINT numElementsw = ARRAYSIZE(layoutw);
 
-	if (!vs_3.Initialize(L"..\\Shader\\VertexShader3.hlsl", "main", "vs_5_0", layoutw, numElementsw, device))
+	if (!res->LoadVertexShader("vs_3", L"..\\Shader\\VertexShader3.hlsl", layoutw, numElementsw))
 	{
 		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
@@ -478,25 +469,29 @@ bool GraphicManager::InitializeScene()
 	//상수버퍼 초기화 & 생성
 	//-> 버텍스쉐이더
 	//-> 픽셀 쉐이더 
-	hr = this->cb1.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb1.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"상수버퍼1 로드 실패");
 
-	hr = this->cb2.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb2.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"상수버퍼2 로드 실패");
 
-	hr = this->cb_skinning_1.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb_skinning_1.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"cb_skinning_1 로드 실패");
 
-	hr = this->cb_skinning_2.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb_skinning_2.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"cb_skinning_2 로드 실패");
 
-	hr = this->cb_light.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb_light.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"상수버퍼3 로드 실패");
 
-	this->cb_light.data.ambientLightColor = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	this->cb_light.data.ambientLightStrength = 1.0f;
+	res->cb_light.data.ambientLightColor = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	res->cb_light.data.ambientLightStrength = 1.0f;
 
-
+	
+	//Sprite* sp = res->LoadSprite("ani", "..\\Resource\\a.jpg");
+	//sp->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
+	//sp->SelectAnimation("motion1");
+	
 	// 오브젝트를 파일에서 읽기 & 초기화
 	// -> fbx (게임오브젝트 빛 스프라이트)
 
@@ -586,12 +581,16 @@ bool GraphicManager::InitializeScene()
 
 GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const std::string& path)
 {
+	PixelShader* ps_1 = res->FindPixelShader("ps_1");
+	PixelShader* ps_2 = res->FindPixelShader("ps_2");
+	VertexShader* vs_2 = res->FindVertexShader("vs_2");
+
 	GameObject* obj = new GameObject(name);
 	//obj->SetActive(false);
 	ModelRenderer* render1 = new ModelRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), this->cb2, &this->vs_2, &this->ps_2);
+	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb2, vs_2, ps_2);
 	obj->AddComponent(render1);
-	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
+	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1));
 
 	GameObject::gameObjects.insert(std::make_pair(name, obj));
 
@@ -603,11 +602,13 @@ GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const st
 */
 GameObject* GraphicManager::CreateGameObject_2(const std::string& name, const std::string& path)
 {
-	
+	PixelShader* ps_2 = res->FindPixelShader("ps_2");
+	VertexShader* vs_3 = res->FindVertexShader("vs_3");
+
 	GameObject* obj = new GameObject(name);
 	obj->SetActive(false);
 	SkinnedMeshRenderer* render1 = new SkinnedMeshRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), this->cb_skinning_1, this->cb_skinning_2, &this->vs_3, &this->ps_2);
+	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb_skinning_1, res->cb_skinning_2, vs_3, ps_2);
 	obj->AddComponent(render1);
 	//obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
 

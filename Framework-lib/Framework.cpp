@@ -36,9 +36,10 @@ void Framework::Update()
 	auto& mouse = this->InputManager.GetMouseState();
 	auto& xPosRelative = this->InputManager.GetXPoseRelative();
 	auto& yPosRelative = this->InputManager.GetYPoseRelative();
-	//GameObject* walk = GameObject::gameObjects["walk"];
 
-	//this->graphics.animation->Update(dt);
+	//Sprite* sp = resourceManager.FindSprite("ani");
+	//sp->Update(dt);
+
 	this->layerManager.Update();
 
 	auto& io = ImGui::GetIO();
@@ -253,6 +254,8 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 
 	this->layerManager.Init();
+
+
 
 	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 

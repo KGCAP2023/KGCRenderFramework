@@ -44,8 +44,6 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
-    <ClInclude Include="MouseUpObserver.h" />
-    <ClInclude Include="Observer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Protocols.h" />
     <ClInclude Include="RenderComponent.h" />
@@ -84,7 +82,6 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
-    <ClCompile Include="MouseUpObserver.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shaders.cpp" />

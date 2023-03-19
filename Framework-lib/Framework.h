@@ -60,7 +60,6 @@ private:
 	static float dt;
 	Timer timer;
 	
-	static bool isMouseRightDown;
 };
 
 static Framework* framework;

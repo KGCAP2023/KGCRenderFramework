@@ -5,12 +5,13 @@
 class IFrameworkFactory
 {
 private:
-    static IFramework* f;
+    static Framework* f;
 public:
-    static IFramework* createFramework() {
-        if (f != nullptr) return f;
-        else return new Framework;
+    static Framework* createFramework() {
+
+
+        return new Framework;
     }
 };
 
-IFramework* IFrameworkFactory::f;
+Framework* IFrameworkFactory::f;

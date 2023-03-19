@@ -1,12 +1,8 @@
 #include "pch.h"
 #include "Framework.h"
-#include "Observer.h"
-#include "MouseUpObserver.h"
 
 
 float Framework::dt;
-bool Framework::isMouseRightDown;
-MouseUpObserver& mUpObserver = GetMouseUpObserver::GetInstance();
 
 void Framework::run()
 {
@@ -15,6 +11,7 @@ void Framework::run()
 	{
 
 		Update();
+
 		RenderFrame();
 	}
 
@@ -42,25 +39,8 @@ void Framework::Update()
 		return;
 	}
 
-
-	if (isMouseRightDown) {
-		if (!mouse.rightButton) {//떼는순간
-			isMouseRightDown = false;
-			mUpObserver.OnNotify();
-		}
-	}
-	else {
-		if (mouse.rightButton) {//클릭하는 순간
-			isMouseRightDown = true;
-		}
-	}
-
-	
-
 	if (mouse.rightButton)
 	{
-
-
 		std::cout << mouse.x << " " << mouse.y << std::endl;
 
 		while (!yPosRelative.empty())

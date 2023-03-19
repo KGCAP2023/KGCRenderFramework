@@ -2,7 +2,7 @@
 #include "GraphicManager.h"
 #include "Framework.h"
 //imgui / 타이머
-bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard)
+bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height)
 {
 	/*
 	
@@ -15,8 +15,6 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 	this->height = height;
 
 	this->hwnd = hwnd;
-	this->keyboard = keyboard;
-
 	this->framework = framework;
 
 	//DIRECTX 초기화
@@ -189,7 +187,7 @@ void GraphicManager::RenderFrame()
 
 
 	framework->layerManager.Render();
-	//ImGui::ShowDemoWindow(&show_demo_window);
+	ImGui::ShowDemoWindow(&show_demo_window);
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

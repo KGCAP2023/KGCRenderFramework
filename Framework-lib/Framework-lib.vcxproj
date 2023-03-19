@@ -35,6 +35,7 @@
     <ClInclude Include="ILayer.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="IScript.h" />
     <ClInclude Include="LayerManager.h" />
     <ClInclude Include="Logger.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="IFramework.cpp" />
     <ClCompile Include="ILayer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="IScript.cpp" />
     <ClCompile Include="LayerManager.cpp" />
     <ClCompile Include="Logger.cpp" />

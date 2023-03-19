@@ -32,7 +32,7 @@ class GraphicManager
 {
 public:
 
-	bool Initialize(Framework* framework,HWND hwnd, int width, int height);
+	bool Initialize(Framework* framework,HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard);
 	void RenderFrame();
 
 	//게임 오브젝트

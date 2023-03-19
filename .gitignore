@@ -33,9 +33,7 @@
 
 /.vs/Framework
 /.vs/KGCRenderFramework
-/.vs
 
-/External/Includes/Framework
 /Resource
 
 /Client/x64
@@ -50,4 +48,4 @@
 
 /x64
 /packages/Microsoft.Windows.CppWinRT.2.0.210806.1
-
+/.vs

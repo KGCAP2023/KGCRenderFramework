@@ -2,16 +2,13 @@
 #include "Framework.h"
 
 
-float Framework::dt;
 
 void Framework::run()
 {
 
 	while (ProcessMsg() == true)
 	{
-
 		Update();
-
 		RenderFrame();
 	}
 
@@ -20,15 +17,22 @@ void Framework::run()
 void Framework::Update()
 {
 
-	this->dt = timer.getDeltaTime();
+	float dt = timer.getDeltaTime();
 	timer.ReStart();
 
+	//std::async([&]
+	//{
+	//	std::cout << dt << std::endl;
+	//});
+
+	//콘솔출력 시스템콜 -> 성능저하
+	//std::cout << dt << std::endl;
+
 	float speed = 0.006f;
-	
-	auto& kb = this->InputManager.GetKeyboardState();
-	auto& mouse = this->InputManager.GetMouseState();
-	auto& xPosRelative = this->InputManager.GetXPoseRelative();
-	auto& yPosRelative = this->InputManager.GetYPoseRelative();
+
+	auto kb = this->keyboard->GetState();
+	auto mouse = this->mouse->GetState();
+
 	//GameObject* walk = GameObject::gameObjects["walk"];
 
 	//this->graphics.animation->Update(dt);
@@ -43,24 +47,28 @@ void Framework::Update()
 	{
 		std::cout << mouse.x << " " << mouse.y << std::endl;
 
-		while (!yPosRelative.empty())
+		while (!this->yPosRelative.empty())
 		{
 			
-			int yPosRelative2 = yPosRelative.front();
-			int xPosRelative2 = xPosRelative.front();
-			yPosRelative.pop();
-			xPosRelative.pop();
+			int yPosRelative = this->yPosRelative.front();
+			int xPosRelative = this->xPosRelative.front();
+			this->yPosRelative.pop();
+			this->xPosRelative.pop();
 			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
-			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
+			this->graphics.camera->transform.Rotate((float)yPosRelative * 0.001f, (float)xPosRelative * 0.001f, 0);
 		}
 
 	}
 
-	while (!yPosRelative.empty())
+
+
+
+	while (!this->yPosRelative.empty())
 	{
-		yPosRelative.pop();
-		xPosRelative.pop();
+		this->yPosRelative.pop();
+		this->xPosRelative.pop();
 	}
+
 
 	//if(mouse.leftButton)
 	//{
@@ -236,11 +244,10 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	std::cout << "[O] Successfully Completed Window Initialize!" << std::endl;
 
-	this->InputManager.Init(this);
-
-	//this->keyboard = std::make_shared<Keyboard>();
-	//this->mouse = std::make_unique<Mouse>();
-	//this->mouse->SetWindow(this->handle);
+	//this->keyboard = std::make_unique<Keyboard>();
+	this->keyboard = std::make_shared<Keyboard>();
+	this->mouse = std::make_unique<Mouse>();
+	this->mouse->SetWindow(this->handle);
 
 	std::cout << "[O] Successfully Completed KeyBoard/Mouse Initialize!" << std::endl;
 
@@ -250,7 +257,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 
 	//DIRECTX 그래픽스 초기화
-	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height))
+	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height,this->keyboard))
 	{
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
@@ -287,7 +294,8 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			if (raw->header.dwType == RIM_TYPEMOUSE)
 			{
-				this->InputManager.PushRawInputData(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
+				this->xPosRelative.push(raw->data.mouse.lLastX);
+				this->yPosRelative.push(raw->data.mouse.lLastY);
 			}
 		}
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -344,10 +352,8 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			// Release all outstanding references to the swap chain's buffers.
 			this->graphics.renderTargetView->Release();
-			if (this->graphics.depthStencilView.Get() != nullptr)
-				this->graphics.depthStencilView->Release();
-			if (this->graphics.depthStencilBuffer.Get() != nullptr)
-				this->graphics.depthStencilBuffer->Release();
+			this->graphics.depthStencilView->Release();
+			this->graphics.depthStencilBuffer->Release();
 
 			HRESULT hr;
 			// Preserve the existing buffer count and format.

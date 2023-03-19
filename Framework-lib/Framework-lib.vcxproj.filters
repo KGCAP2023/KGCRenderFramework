@@ -34,6 +34,9 @@
     <Filter Include="헤더 파일\Manager">
       <UniqueIdentifier>{f565d208-7870-4979-b51f-801bd9dd7e51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Observer">
+      <UniqueIdentifier>{87f7b842-8e9c-4fe7-baf0-0f3047e75fb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBoxRenderer.h">
@@ -156,6 +159,12 @@
     <ClInclude Include="InputManager.h">
       <Filter>헤더 파일\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>헤더 파일\Observer</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseUpObserver.h">
+      <Filter>헤더 파일\Observer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp">
@@ -255,6 +264,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseUpObserver.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

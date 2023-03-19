@@ -6,8 +6,6 @@
 #include <Framework/IFrameworkFactory.h>
 #pragma comment(lib, "Framework-lib.lib")
 
-#include <Framework/Observer.h>
-
 class Example : public ILayer
 {
 public:
@@ -32,12 +30,6 @@ public:
 		ImGui::Text(u8"TEST");
 		ImGui::End();
 	};
-
-};
-
-class extest : public IDefaultObserver {
-
-
 
 };
 

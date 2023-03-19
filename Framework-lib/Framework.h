@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "InputManager.h"
 #include "LayerManager.h"
+#include "GameObjectManager.h"
 /*
 * 프레임 워크 입니다.
 */
@@ -26,6 +27,9 @@ public:
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height) override;
 	virtual void run() override;
 
+
+	virtual IGameObjectManager* GetGameObjectManager() override;
+
 //INTERNAL
 public:
 
@@ -41,6 +45,8 @@ public:
 	InputManager InputManager;
 	LayerManager layerManager;
 	GraphicManager graphics;
+
+	IGameObjectManager* gameObjManager;
 
 	~Framework();
 

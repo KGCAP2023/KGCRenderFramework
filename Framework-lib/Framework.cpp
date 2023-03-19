@@ -17,6 +17,13 @@ void Framework::run()
 
 }
 
+IGameObjectManager* Framework::GetGameObjectManager()
+{
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager;
+
+	return gameObjManager;
+}
+
 void Framework::Update()
 {
 
@@ -255,6 +262,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
 	}
+
 
 	return true;
 }

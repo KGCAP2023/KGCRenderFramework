@@ -15,13 +15,21 @@ public:
 	ResourceManager() {};
 
 	void Init(Framework *framework);
+
+	//Font
 	void InitFont(const std::wstring& path);
+
+	//Sprite
 	Sprite* LoadSprite(const std::string& name, const std::string& spritePath);
+	Sprite* FindSprite(const std::string& name);
+
+	//Shader
 	bool LoadVertexShader(const std::string& name, const std::wstring& path, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements2D);
 	bool LoadPixelShader(const std::string& name, const std::wstring& path);
-	Sprite* FindSprite(const std::string& name);
+
 	VertexShader* FindVertexShader(const std::string& key);
 	PixelShader* FindPixelShader(const std::string& key);
+
 
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;

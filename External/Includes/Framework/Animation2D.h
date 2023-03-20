@@ -1,5 +1,9 @@
 #pragma once
-#include "Sprite.h"
+#include "pch.h"
+#include <SimpleMath.h>
+#include <SpriteBatch.h>
+
+class Sprite;
 class Animation2D
 {
 public:

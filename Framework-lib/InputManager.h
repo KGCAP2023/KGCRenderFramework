@@ -12,8 +12,8 @@ public:
 	
 	static DirectX::Keyboard* GetKeyboard() { return keyboard; }
 	static DirectX::Mouse* GetMouse() { return mouse; }
-	static const DirectX::Keyboard::State& GetKeyboardState() { return keyboard->GetState();}
-	static const DirectX::Mouse::State& GetMouseState() { return mouse->GetState();}
+	static DirectX::Keyboard::State GetKeyboardState() { return keyboard->GetState();}
+	static DirectX::Mouse::State GetMouseState() { return mouse->GetState();}
 	
 	static std::queue<int>& GetXPoseRelative() {return xPosRelative;}
 	static std::queue<int>& GetYPoseRelative() {return yPosRelative;}

@@ -5,6 +5,7 @@
 #include "InputManager.h"
 #include "LayerManager.h"
 #include "GameObjectManager.h"
+#include "ResourceManager.h"
 /*
 * 프레임 워크 입니다.
 */
@@ -45,7 +46,7 @@ public:
 	InputManager InputManager;
 	LayerManager layerManager;
 	GraphicManager graphics;
-
+	ResourceManager resourceManager;
 	IGameObjectManager* gameObjManager;
 
 	~Framework();

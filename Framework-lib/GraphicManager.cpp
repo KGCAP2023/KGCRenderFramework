@@ -105,7 +105,7 @@ void GraphicManager::RenderFrame()
 	OMSetBlendState 블렌딩 셋팅						deviceContext
 	*/
 
-	float bgcolor[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+	float bgcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	deviceContext->RSSetState(rasterizerState.Get()); //레스터라이저 설정한 옵션을 가져온다
@@ -113,6 +113,11 @@ void GraphicManager::RenderFrame()
 	deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
+	
+	
+
+
+	
 
 
 	/*
@@ -171,6 +176,8 @@ void GraphicManager::RenderFrame()
 	//Sprite* sp = res->FindSprite("ani");
 	//sp->Draw(DirectX::SimpleMath::Vector2(0, 0), res->spriteBatch.get());
 
+	deviceContext->CopyResource(refTex, backBuffer.Get());
+
 	/**
 
 	 IMGUI
@@ -186,9 +193,10 @@ void GraphicManager::RenderFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
 	framework->layerManager.Render();
 	ImGui::ShowDemoWindow(&show_demo_window);
+
+	//DockingSpaceTest();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -239,7 +247,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
     sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-    sd.SampleDesc.Count = 4; //MSAA 4배 샘플링
+    sd.SampleDesc.Count = 1; //MSAA 4배 샘플링
     sd.SampleDesc.Quality = 0;
 
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -278,7 +286,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
     }
 
     //ID3D11Texture2D* pBackBuffer = NULL;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
+    
     hr = this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)backBuffer.GetAddressOf());
     if (FAILED(hr)) return false;
 
@@ -291,7 +299,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
 	depthStencilTextureDesc.MipLevels = 1;
 	depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilTextureDesc.SampleDesc.Count = 4; //MSAA 4배 샘플링
+	depthStencilTextureDesc.SampleDesc.Count = 1; //MSAA 4배 샘플링
 	depthStencilTextureDesc.SampleDesc.Quality = 0;
 
 	hr = this->device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->depthStencilBuffer.GetAddressOf());
@@ -323,7 +331,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	//rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK; 
 	//rasterizerDesc.FrontCounterClockwise = TRUE; 이거하면 반시계로 버텍스 그려야됨 
 
-	rasterizerDesc.MultisampleEnable = true; //MSAA 4배 샘플링
+	//rasterizerDesc.MultisampleEnable = true; //MSAA 4배 샘플링
 
 	hr = this->device->CreateRasterizerState(&rasterizerDesc, this->rasterizerState.GetAddressOf());
 	if (FAILED(hr)) return false;
@@ -367,6 +375,29 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	hr = this->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
 	if (FAILED(hr)) return false;
+
+	D3D11_TEXTURE2D_DESC descTex;
+	ZeroMemory(&descTex, sizeof(descTex));
+	descTex.Width = 1600;
+	descTex.Height = 900;
+	descTex.MipLevels = 1;
+	descTex.ArraySize = 1;
+	descTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descTex.SampleDesc.Count = 1;
+	descTex.Usage = D3D11_USAGE_DEFAULT;
+	descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	descTex.CPUAccessFlags = 0;
+
+	device->CreateTexture2D(&descTex, nullptr, &refTex);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
+	ZeroMemory(&descSRV, sizeof(descSRV));
+	descSRV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	descSRV.Texture2D.MipLevels = 1;
+	descSRV.Texture2D.MostDetailedMip = 0;
+
+	device->CreateShaderResourceView(refTex, &descSRV, &refRes);
 
 	std::cout << "[O] Successfully Completed DirectX Initialize!" << std::endl;
 	return true;
@@ -516,8 +547,8 @@ bool GraphicManager::InitializeScene()
 
 
 
-	//GameObject* obj1 = CreateGameObject_1("ying", "..\\Resource\\Objects\\ying\\ying.pmx");
-	//obj1->transform.SetPosition(0, 5, 0);
+	GameObject* obj1 = CreateGameObject_1("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
+	obj1->transform.SetPosition(0, 5, 0);
 
 	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
 	//obj2->transform.SetPosition(0, 5, 0);
@@ -727,6 +758,93 @@ bool GraphicManager::openFile2()
 		int a = 0;
 	}
 	return true;
+}
+
+void GraphicManager::DockingSpaceTest()
+{
+	static bool opt_fullscreen = true;
+	static bool opt_padding = false;
+	static bool is_open = true;
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+	// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+	// because it would be confusing to have two docking targets within each others.
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+	if (opt_fullscreen)
+	{
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	}
+	// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+	// and handle the pass-thru hole, so we ask Begin() to not render a background.
+	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+		window_flags |= ImGuiWindowFlags_NoBackground;
+
+	// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+	// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+	// all active windows docked into it will lose their parent and become undocked.
+	// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+	// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+	if (!opt_padding)
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::Begin("DockSpace Demo", &is_open, window_flags);
+	if (!opt_padding)		ImGui::PopStyleVar();
+
+	if (opt_fullscreen)
+		ImGui::PopStyleVar(2);
+
+	// Submit the DockSpace
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+	}
+	ImGui::End();
+
+	//===========================================================================
+
+	static bool zzz = true;
+	ImGui::Begin(u8"GameView", &zzz, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
+
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	windowSize.x -= 10;
+	windowSize.y -= 32;
+
+	ImVec2 vMin = ImGui::GetWindowContentRegionMin();  // 8/8
+	ImVec2 vMax;
+
+	vMax.x = vMin.x + windowSize.x;
+	vMax.y = vMin.y + windowSize.y;
+
+	//로컬 좌표
+	vMin.x += ImGui::GetWindowPos().x;
+	vMin.y += ImGui::GetWindowPos().y;
+	vMax.x += ImGui::GetWindowPos().x;
+	vMax.y += ImGui::GetWindowPos().y;
+
+	float view_x = vMax.x - vMin.x;
+	float view_y = vMax.y - vMin.y;
+
+	const auto& mouse = InputManager::GetMouse()->GetState();
+
+	ImVec2 temp;
+	temp.x = mouse.x - vMin.x;
+	temp.y = mouse.y - vMin.y;
+
+	float normalX = temp.x * (this->width / view_x);
+	float normalY = temp.y * (this->height / view_y);
+
+	//std::cout <<"좌표:  " << normalX << "/" << normalY << std::endl;
+
+	ImGui::Image((void*)refRes, windowSize);
+	ImGui::End();
 }
 
 bool GraphicManager::openFile()

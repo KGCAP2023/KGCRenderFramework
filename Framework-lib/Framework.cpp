@@ -32,10 +32,10 @@ void Framework::Update()
 
 	float speed = 0.006f;
 	
-	auto& kb = this->InputManager.GetKeyboardState();
-	auto& mouse = this->InputManager.GetMouseState();
-	auto& xPosRelative = this->InputManager.GetXPoseRelative();
-	auto& yPosRelative = this->InputManager.GetYPoseRelative();
+	const auto& kb = this->InputManager.GetKeyboard()->GetState();
+	const auto& mouse = this->InputManager.GetMouse()->GetState();
+	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
+	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
 
 	//Sprite* sp = resourceManager.FindSprite("ani");
 	//sp->Update(dt);
@@ -49,7 +49,7 @@ void Framework::Update()
 
 	if (mouse.rightButton)
 	{
-		std::cout << mouse.x << " " << mouse.y << std::endl;
+		//std::cout << mouse.x << " " << mouse.y << std::endl;
 
 		while (!yPosRelative.empty())
 		{
@@ -99,27 +99,27 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		//std::cout << "w" << std::endl;
+		std::cout << "w" << std::endl;
 		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 
 	if (kb.A) // A key is down
 	{
-		//std::cout << "a" << std::endl;
+		std::cout << "a" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
 	if (kb.S) // S key is down
 	{
-		//std::cout << "s" << std::endl;
+		std::cout << "s" << std::endl;
 		//walk->transform.Translate(walk->transform.GetBackward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
 	if (kb.D) // D key is down
 	{
-		//std::cout << "d" << std::endl;
+		std::cout << "d" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}
 		
@@ -360,6 +360,9 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if (this->graphics.depthStencilBuffer.Get() != nullptr)
 				this->graphics.depthStencilBuffer->Release();
 
+			this->graphics.backBuffer->Release();
+
+
 			HRESULT hr;
 			// Preserve the existing buffer count and format.
 			// Automatically choose the width and height to match the client rect for HWNDs.
@@ -368,22 +371,21 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			// Perform error handling here!
 
 			// Get buffer and create a render-target-view.
-			ID3D11Texture2D* pBuffer;
 			hr = this->graphics.swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-				(void**)&pBuffer);
+				(LPVOID*)this->graphics.backBuffer.GetAddressOf());
 			// Perform error handling here!
 
-			hr = this->graphics.device->CreateRenderTargetView(pBuffer, NULL,
+
+
+			hr = this->graphics.device->CreateRenderTargetView(this->graphics.backBuffer.Get(), NULL,
 				this->graphics.renderTargetView.GetAddressOf());
 			// Perform error handling here!
-			pBuffer->Release();
-
-
+			
 			//µª½º/½ºÅÙ½Ç ¹öÆÛ µð½ºÅ©¸³ÅÍ
 			CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
 			depthStencilTextureDesc.MipLevels = 1;
 			depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-			depthStencilTextureDesc.SampleDesc.Count = 4; //MSAA 4¹è »ùÇÃ¸µ
+			depthStencilTextureDesc.SampleDesc.Count = 1; //MSAA 4¹è »ùÇÃ¸µ
 			depthStencilTextureDesc.SampleDesc.Quality = 0;
 
 			hr = this->graphics.device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->graphics.depthStencilBuffer.GetAddressOf());
@@ -391,6 +393,30 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			hr = this->graphics.device->CreateDepthStencilView(this->graphics.depthStencilBuffer.Get(), NULL, this->graphics.depthStencilView.GetAddressOf());
 			if (FAILED(hr)) return false;
+
+
+			D3D11_TEXTURE2D_DESC descTex;
+			ZeroMemory(&descTex, sizeof(descTex));
+			descTex.Width = nWidth;
+			descTex.Height = nHeight;
+			descTex.MipLevels = 1;
+			descTex.ArraySize = 1;
+			descTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			descTex.SampleDesc.Count = 1;
+			descTex.Usage = D3D11_USAGE_DEFAULT;
+			descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			descTex.CPUAccessFlags = 0;
+
+			this->graphics.device->CreateTexture2D(&descTex, nullptr, &this->graphics.refTex);
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
+			ZeroMemory(&descSRV, sizeof(descSRV));
+			descSRV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			descSRV.Texture2D.MipLevels = 1;
+			descSRV.Texture2D.MostDetailedMip = 0;
+
+			this->graphics.device->CreateShaderResourceView(this->graphics.refTex, &descSRV, &this->graphics.refRes);
 
 
 			this->graphics.deviceContext->OMSetRenderTargets(1, this->graphics.renderTargetView.GetAddressOf(), this->graphics.depthStencilView.Get());

@@ -44,6 +44,9 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
+
+
 
 	//뎁스 스텐실
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
@@ -54,6 +57,10 @@ public:
 	int width;
 	int height;
 
+	//백버퍼 텍스처
+	ID3D11Texture2D* refTex;
+	ID3D11ShaderResourceView* refRes;
+
 private:
 	bool InitializeDirectX(HWND hwnd);
 	bool InitializeShaders();
@@ -61,6 +68,8 @@ private:
 
 	bool openFile();
 	bool openFile2();
+
+	void DockingSpaceTest();
 
 	ImGuiIO* io_;
 

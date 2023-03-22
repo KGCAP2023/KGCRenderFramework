@@ -144,7 +144,9 @@ void GraphicManager::RenderFrame()
 	swapchain->Present() 스왑체인 호출				swapchain
 
 	*/
-	VertexShader* vs_3 = res->FindVertexShader("vs_3");
+
+
+	VertexShader* vs_3 = res->FindVertexShader("vs_1");
 	deviceContext->IASetInputLayout(vs_3->GetInputLayout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -544,9 +546,6 @@ bool GraphicManager::InitializeScene()
 	//
 	//obj4->SetPosition(2,0,0);
 
-
-
-
 	GameObject* obj1 = CreateGameObject_1("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 	obj1->transform.SetPosition(0, 5, 0);
 
@@ -612,17 +611,27 @@ bool GraphicManager::InitializeScene()
 
 GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const std::string& path)
 {
+	//리소스매니저에서 쉐이더를 가져옵니다.
 	PixelShader* ps_1 = res->FindPixelShader("ps_1");
+	VertexShader* vs_1 = res->FindVertexShader("vs_1");
+
 	PixelShader* ps_2 = res->FindPixelShader("ps_2");
 	VertexShader* vs_2 = res->FindVertexShader("vs_2");
-
+	
+	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(name);
-	//obj->SetActive(false);
+
+	//모델 렌더러를 생성합니다.
 	ModelRenderer* render1 = new ModelRenderer(obj);
 	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb2, vs_2, ps_2);
-	obj->AddComponent(render1);
-	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1));
 
+	//모델 렌더러를 등록합니다.
+	obj->AddComponent(render1);
+
+	//바운딩 박스 렌더러를 생성&등록합니다.
+	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
+
+	//게임오브젝트를 등록합니다.
 	GameObject::gameObjects.insert(std::make_pair(name, obj));
 
 	return obj;

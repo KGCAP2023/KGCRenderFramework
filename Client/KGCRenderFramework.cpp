@@ -31,8 +31,36 @@ public:
 		ImGui::End();
 	};
 
+
 };
 
+class Example1 : public ILayer
+{
+public:
+	Example1(const std::string name) : ILayer(name) {}
+	virtual ~Example1() {};
+
+	virtual void Init()
+	{
+
+
+	};
+
+	virtual void Update()
+	{
+		std::cout << "test" << std::endl;
+
+	};
+
+	virtual void Render()
+	{
+		ImGui::Begin(u8"정보창");
+		ImGui::Text(u8"TEST1");
+		ImGui::End();
+	};
+
+
+};
 
 
 int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
@@ -41,11 +69,18 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
                        _In_ int       nCmdShow )
 {
 	IFramework* rw = IFrameworkFactory::createFramework();
+	IFramework* rw1 = IFrameworkFactory::createFramework();
 
 	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
 
 	Example* temp = new Example("example");
     rw->RegisterLayer("example", temp);
+
+	Example1* temp1 = new Example1("example1");
+	rw1->RegisterLayer("example1", temp1);
+
+
+
 
 	rw->run();
     return 0;

@@ -8,9 +8,8 @@ private:
     static Framework* f;
 public:
     static Framework* createFramework() {
-
-
-        return new Framework;
+        if (f != nullptr) return f;
+        else return new Framework;
     }
 };
 

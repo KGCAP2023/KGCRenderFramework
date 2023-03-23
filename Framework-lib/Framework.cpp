@@ -60,6 +60,22 @@ void Framework::Update()
 
 	}
 
+	if (mouse.leftButton)
+	{
+		std::cout << mouse.x << " " << mouse.y << std::endl;
+
+		while (!this->yPosRelative.empty())
+		{
+
+			int yPosRelative = this->yPosRelative.front();
+			int xPosRelative = this->xPosRelative.front();
+			this->yPosRelative.pop();
+			this->xPosRelative.pop();
+			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
+		}
+
+	}
+
 
 
 

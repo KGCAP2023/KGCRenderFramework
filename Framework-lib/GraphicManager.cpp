@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "GraphicManager.h"
 #include "Framework.h"
+#include "GameObjectManager.h"
 //imgui / 타이머
 bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height)
 {
@@ -18,6 +19,9 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 	this->framework = framework;
 	this->res = &framework->resourceManager;
 
+	//오브젝트 매니져 생성
+	gameObjectManager = this->framework->GetGameObjectManagerInstance();
+
 	//DIRECTX 초기화
 	if (!InitializeDirectX(hwnd)) return false;
 
@@ -26,6 +30,9 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 
 	//씬 초기화
 	if (!InitializeScene()) return false;
+
+
+
 
 	/*
 	
@@ -154,7 +161,7 @@ void GraphicManager::RenderFrame()
 	cameraComponent->SetProjectionValues(90.0f, static_cast<float>(this->width) / static_cast<float>(this->height), 0.1f, 3000.0f);
 
 	{
-		for (const auto& kv : GameObject::gameObjects) {
+		for (const auto& kv : gameObjectManager->gameObjects) {
 			(kv.second)->Draw(vp);
 		}
 	}
@@ -632,7 +639,7 @@ GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const st
 	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
 
 	//게임오브젝트를 등록합니다.
-	GameObject::gameObjects.insert(std::make_pair(name, obj));
+	gameObjectManager->gameObjects.insert(std::make_pair<>(name, obj));
 
 	return obj;
 }
@@ -652,7 +659,7 @@ GameObject* GraphicManager::CreateGameObject_2(const std::string& name, const st
 	obj->AddComponent(render1);
 	//obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
 
-	GameObject::gameObjects.insert(std::make_pair(name, obj));
+	gameObjectManager->gameObjects.insert(std::make_pair(name, obj));
 
 	return obj;
 }
@@ -673,11 +680,10 @@ bool GraphicManager::doTreeNode(GameObject* obj, int index) {
 	{
 		std::cout << "SceneHierarchy: " << obj->ObjectName << "Clicked!" << std::endl;
 
-		if (GameObject::gameObjects.find(this->target) != GameObject::gameObjects.end())
-		{
-			GameObject* before = GameObject::gameObjects.at(this->target);
-			//before->SetActive(false);
+		GameObject* before = gameObjectManager->FindGameObject(this->target);
 
+		if (before != nullptr)
+		{
 			this->target = obj->ObjectName;
 			//obj->SetActive(true);
 		}
@@ -713,7 +719,7 @@ void GraphicManager::SceneHierarchyWindow()
 
 	int index = 0;
 
-	for (const auto& kv : GameObject::gameObjects) {
+	for (const auto& kv : gameObjectManager->gameObjects) {
 
 
 		bool treeNodeOpen = doTreeNode(kv.second, index);

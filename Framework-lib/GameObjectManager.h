@@ -45,8 +45,6 @@ public:
 	
 	virtual std::string GetObjectNames() override;
 
-
-private:
 	std::unordered_map<std::string, GameObject*> gameObjects;
 
 };

@@ -28,8 +28,17 @@ public:
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height) override;
 	virtual void run() override;
 
-
+	/// <summary>
+	/// 프론트 기능 제공용 인터페이스 반환
+	/// </summary>
+	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() override;
+
+	/// <summary>
+	/// 백엔드 개발용 인스턴스 반환
+	/// </summary>
+	/// <returns></returns>
+	GameObjectManager* GetGameObjectManagerInstance();
 
 //INTERNAL
 public:
@@ -47,7 +56,7 @@ public:
 	LayerManager layerManager;
 	GraphicManager graphics;
 	ResourceManager resourceManager;
-	IGameObjectManager* gameObjManager;
+	GameObjectManager* gameObjManager;
 
 	~Framework();
 

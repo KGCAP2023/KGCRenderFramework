@@ -5,8 +5,6 @@ using namespace DirectX;
 //XMLoad XMVECTOR로 탑재
 //XMSTORE XMFLOAT로 만듬
 
-std::unordered_map<std::string, GameObject*> GameObject::gameObjects;
-
 void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 	if (isActive)

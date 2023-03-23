@@ -24,6 +24,13 @@ IGameObjectManager* Framework::GetGameObjectManager()
 	return gameObjManager;
 }
 
+GameObjectManager* Framework::GetGameObjectManagerInstance()
+{
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager;
+
+	return gameObjManager;
+}
+
 void Framework::Update()
 {
 

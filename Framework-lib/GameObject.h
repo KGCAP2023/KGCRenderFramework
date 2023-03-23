@@ -50,7 +50,6 @@ public:
 	GameObject* GetParent() { return parent; }
 	void AddChild(GameObject* pParent);
 
-	static std::unordered_map<std::string, GameObject*> gameObjects;
 
 	//콜라이더 추가해야됨 
 	Component::Type colliderType;
@@ -58,9 +57,6 @@ public:
 	std::vector<GameObject*> child;
 };
 
-// 전역변수는 다른곳에서 가져다 쓸때 #include 없이 순수 extern 만 있어야됨
-// 그래야 여러번 선언 오류가 안뜸
-// std::unordered_map<std::string, GameObject*> gameObjects;
 
 
 

@@ -18,6 +18,7 @@
 #include <Keyboard.h>
 #include <Mouse.h>
 #include <SimpleMath.h>
+#include "GameObjectManager.h"
 
 
 class Framework;
@@ -104,6 +105,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 
 
+	//오브젝트 메니저
+	GameObjectManager* gameObjectManager;
 
 };
 

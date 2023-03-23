@@ -63,6 +63,12 @@ void Framework::Update()
 
 	this->layerManager.Update();
 
+	for (auto& kv : this->gameObjManager->gameObjects) {
+		kv.second->Update();
+	}
+
+	//=========================================
+
 	auto& io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
 		return;
@@ -96,8 +102,6 @@ void Framework::Update()
 	//	this->graphics.camera->transform.SetLookAtPos(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	//}
 		
-	
-
 	if (kb.Back) // Backspace key is down
 	{
 		std::cout << "Back" << std::endl;
@@ -154,8 +158,7 @@ void Framework::Update()
 			std::cout << "Enter" << std::endl;
 
 
-
-
+	
 	
 	
 	//this->graphics.obj->Translate(0, 0, 0.008 * dt);

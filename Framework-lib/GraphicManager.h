@@ -9,6 +9,7 @@
 #include "ModelRenderer.h"
 #include "BoundingBoxRenderer.h"
 #include "SkinnedMeshRenderer.h"
+#include "SpriteRenderer.h"
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>

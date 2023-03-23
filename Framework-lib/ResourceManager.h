@@ -46,7 +46,7 @@ public:
 	ConstantBuffer<CB_PS_light> cb_light;
 
 	std::unique_ptr<DirectX::CommonStates> m_states;
-	std::unique_ptr<SpriteBatch> spriteBatch;
+	std::shared_ptr<SpriteBatch> spriteBatch;
 	std::unique_ptr<SpriteFont> spriteFont;
 
 	Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;

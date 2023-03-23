@@ -15,9 +15,12 @@ public:
     void Update();
     void Render();
     void SetImGuiDemo(bool value);
+    void SetDockingSpace(bool value);
     void DockingSpace();
 private:
+
     bool _isActiveDemo = false;
+    bool _isActiveDockingSpace = false;
 
     Framework* framework;
     std::unordered_map<std::string, ILayer*> _layerMap;

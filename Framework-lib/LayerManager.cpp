@@ -39,6 +39,9 @@ void LayerManager::Update()
 
 void LayerManager::Render()
 {
+	if (_isActiveDockingSpace)
+		this->DockingSpace();
+
 	if(_isActiveDemo)
 		ImGui::ShowDemoWindow();
 
@@ -51,6 +54,11 @@ void LayerManager::Render()
 void LayerManager::SetImGuiDemo(bool value)
 {
 	this->_isActiveDemo = value;
+}
+
+void LayerManager::SetDockingSpace(bool value)
+{
+	this->_isActiveDockingSpace = value;
 }
 
 void LayerManager::DockingSpace()

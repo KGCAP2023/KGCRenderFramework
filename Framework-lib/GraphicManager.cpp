@@ -509,10 +509,9 @@ bool GraphicManager::InitializeScene()
 	res->cb_light.data.ambientLightColor = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	res->cb_light.data.ambientLightStrength = 1.0f;
 
-	
-	//Sprite* sp = res->LoadSprite("ani", "..\\Resource\\a.jpg");
-	//sp->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
-	//sp->SelectAnimation("motion1");
+	res->LoadSprite("ani", "..\\Resource\\a.jpg");
+
+
 	
 	// 오브젝트를 파일에서 읽기 & 초기화
 	// -> fbx (게임오브젝트 빛 스프라이트)
@@ -606,7 +605,8 @@ GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const st
 
 	PixelShader* ps_2 = res->FindPixelShader("ps_2");
 	VertexShader* vs_2 = res->FindVertexShader("vs_2");
-	
+	Sprite* sp = res->FindSprite("ani");
+
 	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(name);
 
@@ -619,6 +619,12 @@ GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const st
 
 	//바운딩 박스 렌더러를 생성&등록합니다.
 	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
+
+	//SpriteRenderer* render2 = new SpriteRenderer(obj);
+	//render2->AddSprite(sp);
+	//render2->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
+	//render2->SelectAnimation("motion1");
+	//obj->AddComponent(render2);
 
 	//게임오브젝트를 등록합니다.
 	gameObjectManager->gameObjects.insert(std::make_pair<>(name, obj));

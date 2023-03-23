@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Sprite.h"
 
-bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::string spritePath)
+bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::string spritePath,SpriteBatch* spriteBatch)
 {
-	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+	this->spriteBatch = spriteBatch;
 	Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 
 	HRESULT hr = DirectX::CreateWICTextureFromFile(device, StringUtil::StringToWide(spritePath).c_str(),
@@ -41,4 +41,9 @@ ID3D11ShaderResourceView* Sprite::Get()
 ID3D11ShaderResourceView** Sprite::GetTextureResourceViewAddress()
 {
 	return this->view.GetAddressOf();
+}
+
+SpriteBatch* Sprite::GetSpriteBatch()
+{
+	return this->spriteBatch;
 }

@@ -47,8 +47,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 
-
-
 	//µª½º ½ºÅÙ½Ç
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer;
@@ -69,8 +67,6 @@ private:
 
 	bool openFile();
 	bool openFile2();
-
-	void DockingSpaceTest();
 
 	ImGuiIO* io_;
 

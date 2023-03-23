@@ -6,13 +6,27 @@ float Framework::dt;
 
 void Framework::run()
 {
-
+	/*
+	* FRAMEWORK GAME LOOP
+	* 
+	* ProcessMsg() : Win32창에대한 이벤트를 감지합니다. 
+	* 마우스, 키보드에 대한 입력이 후킹되어있습니다.
+	* 해상도 변경에 대한 처리로직이 등록 되어있습니다.
+	* 
+	* Update() : 업데이트 함수입니다. 
+	* 해당 함수는 게임루프에 돌아가는 최상위 함수로
+	* 이 함수내에서 매니저들이 다른 인터페이스의 Update()문을 
+	* 옵저버 패턴등을 통해 전파(Propagate)합니다. 
+	* 
+	* RenderFrame() : 렌더링 작업을 하는 함수입니다.
+	* 1프레임당 화면에 그릴 로직(DrawCall)이 포함됩니다.
+	* 게임오브젝트의 Draw()가 호출됩니다.
+	* 
+	*/
 	while (ProcessMsg() == true)
 	{
-
-		Update();
-
-		RenderFrame();
+		Update(); //업데이트 문입니다.
+		RenderFrame(); //프레임을 렌더링 합니다. 
 	}
 
 }
@@ -251,28 +265,24 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	std::cout << "[O] Successfully Completed Window Initialize!" << std::endl;
 
+	/*
+		<매니저 클래스는 여기서 초기화 해주세요> 
+	*/
+
+	//인풋 매니저 초기화
 	this->InputManager.Init(this);
+	//레이어 매니저 초기화
+	this->layerManager.Init(this);
+	this->layerManager.SetImGuiDemo(true);
 
-	//this->keyboard = std::make_shared<Keyboard>();
-	//this->mouse = std::make_unique<Mouse>();
-	//this->mouse->SetWindow(this->handle);
-
-	std::cout << "[O] Successfully Completed KeyBoard/Mouse Initialize!" << std::endl;
-
-
-	this->layerManager.Init();
-
-
-
-	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
-
-	//DIRECTX 그래픽스 초기화
+	//그래픽스 매니저 초기화
 	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height))
 	{
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
 	}
 
+	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 
 	return true;
 }

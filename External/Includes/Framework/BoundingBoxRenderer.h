@@ -34,7 +34,7 @@ public:
 			const aiScene* pScene = importer.ReadFile(model->GetPath(),
 				aiProcess_Triangulate |
 				aiProcess_ConvertToLeftHanded);
-
+			
 			processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
 
 		}

@@ -7,7 +7,6 @@
 #include "Timer.h"
 #include "Camera.h"
 #include "ModelRenderer.h"
-#include "BoundingBoxRenderer.h"
 #include "SkinnedMeshRenderer.h"
 #include "SpriteRenderer.h"
 #include <imgui.h>

@@ -6,6 +6,7 @@
 #include "LayerManager.h"
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
+#include "Ray.h"
 /*
 * 프레임 워크 입니다.
 */
@@ -57,6 +58,7 @@ public:
 	GraphicManager graphics;
 	ResourceManager resourceManager;
 	GameObjectManager* gameObjManager;
+	Ray* ray;
 
 	~Framework();
 

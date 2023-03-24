@@ -1,7 +1,7 @@
 #pragma once
 #include "Gameobject.h"
-#include "Renderer.h"
 #include "Shaders.h"
+#include "Renderer.h"
 #include "Model.h"
 
 class ModelRenderer : public Component, public Renderer
@@ -16,8 +16,7 @@ public:
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual void Update() override;
 	std::vector<Mesh>& GetMeshes();
-	virtual std::string GetPath() override;
-	virtual const aiScene* GetAiScene() override;
+	std::string GetPath();
 private:
 	Model model;
 	

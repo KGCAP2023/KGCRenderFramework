@@ -618,7 +618,7 @@ GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const st
 	obj->AddComponent(render1);
 
 	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
+	obj->AddComponent(new BoundingBox3D(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
 
 	//SpriteRenderer* render2 = new SpriteRenderer(obj);
 	//render2->AddSprite(sp);

@@ -8,11 +8,13 @@ public:
 	Component(GameObject* owner) : owner(owner) {}
 
 	virtual void Update();
+	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 
 	static enum class Type
 	{
 		RENDERER_MESH_,
 		RENDERER_MODEL,
+		RENDERER_SKINNED_MODEL,
 		RENDERER_SPRITE,
 		BOUNDING_BOX,
 		CAMERA,
@@ -31,6 +33,7 @@ public:
 	};
 
 	Component::Type GetType();
+	GameObject* GetOwner();
 
 protected:
 	Component::Type type;

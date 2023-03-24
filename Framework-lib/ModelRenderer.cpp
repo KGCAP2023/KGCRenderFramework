@@ -15,7 +15,6 @@ bool ModelRenderer::Init(const std::string& filePath, ID3D11Device* device, ID3D
 
 void ModelRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-
 	model.Draw(owner->transform.worldMatrix,viewProjectionMatrix);
 }
 
@@ -36,7 +35,7 @@ std::string ModelRenderer::GetPath()
 	return this->model.GetPath();
 }
 
-const aiScene* ModelRenderer::GetAiScene()
-{
-	return this->model.getAiScene();
-}
+//const aiScene* ModelRenderer::GetAiScene()
+//{
+//	return this->model.getAiScene();
+//}

@@ -8,6 +8,5 @@ class Renderer
 public:
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 	virtual std::string GetPath();
-	virtual const aiScene* GetAiScene();
 };
 

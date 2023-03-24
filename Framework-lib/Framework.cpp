@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Framework.h"
 
-
 float Framework::dt;
 
 void Framework::run()
@@ -72,6 +71,14 @@ void Framework::Update()
 	auto& io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
 		return;
+	}
+
+	if (mouse.leftButton)
+	{
+		this->ray->CalculatePicking(mouse.x, mouse.y);
+		for (auto& kv : this->gameObjManager->gameObjects) {
+			this->ray->isPicked(dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox()));
+		}
 	}
 
 	if (mouse.rightButton)
@@ -284,6 +291,8 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
 	}
+
+	ray = new Ray(this);
 
 	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 

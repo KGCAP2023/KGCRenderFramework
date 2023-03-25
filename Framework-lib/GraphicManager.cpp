@@ -517,7 +517,7 @@ bool GraphicManager::InitializeScene()
 	#pragma region 테스트용
 		if (gameObjectManager->FindGameObject("Nanosuit") == nullptr)
 		{
-			GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit");
+			GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit","..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 			obj1->transform.SetPosition(0, 0, 0);
 		}
 	#pragma endregion

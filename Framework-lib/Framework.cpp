@@ -32,14 +32,14 @@ void Framework::run()
 
 IGameObjectManager* Framework::GetGameObjectManager()
 {
-	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this,&graphics,&resourceManager);
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
 	return gameObjManager;
 }
 
 GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
-	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this, &graphics, &resourceManager);
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
 	return gameObjManager;
 }

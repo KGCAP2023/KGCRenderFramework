@@ -9,11 +9,18 @@ class GraphicManager;
 class IGameObjectManager {
 
 public:
-	
 	/// <summary>
 	/// 오브젝트 리스트에 새 오브젝트를 생성하여 추가
 	/// </summary>
 	/// <param name="_name">추가할 오브젝트 이름</param>
+	/// <returns>생성된 오브젝트</returns>
+	virtual GameObject* CreateGameObject(const std::string& _name) { return nullptr; };
+
+	/// <summary>
+	/// 오브젝트 리스트에 새 오브젝트를 생성하여 추가
+	/// </summary>
+	/// <param name="_name">추가할 오브젝트 이름</param>
+	/// <param name="path">추가할 오브젝트 파일의 경로</param>
 	/// <returns>생성된 오브젝트</returns>
 	virtual GameObject* CreateGameObject(const std::string& _name, const std::string& path) { return nullptr; };
 
@@ -50,19 +57,16 @@ public:
 	/// <param name="framework">Framework* 형식으로 현재 Framework를 전달반습니다.</param>
 	/// <param name="graphicManager">GraphicManager* 형식으로 현재 GraphicManager를 전달반습니다.</param>
 	/// <param name="res">ResourceManager* 형식으로 현재 ResourceManager를 전달반습니다.</param>
-	GameObjectManager(Framework* framework,GraphicManager* graphicManager, ResourceManager* res)
-	{
-		this->framework = framework;
-		this->graphicManager = graphicManager;
-		this->res = res;
-	}
+	GameObjectManager(Framework* framework);
 	
-	Framework* framework;
+	
+	Framework* framework; 
 
 	ResourceManager* res;
 
 	GraphicManager* graphicManager;
 	
+	virtual GameObject* CreateGameObject(const std::string& _name) override;
 
 	virtual GameObject* CreateGameObject(const std::string& _name, const std::string& path) override;
 

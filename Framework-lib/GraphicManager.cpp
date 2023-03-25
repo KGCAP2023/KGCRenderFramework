@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "GraphicManager.h"
 #include "Framework.h"
-#include "GameObjectManager.h"
+
 //imgui / 타이머
 bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height)
 {
@@ -102,11 +102,6 @@ void GraphicManager::RenderFrame()
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
 	
-	if(gameObjectManager->FindGameObject("Nanosuit")==nullptr)
-	{
-		GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-		obj1->transform.SetPosition(0, 5, 0);
-	}
 
 	
 
@@ -516,80 +511,23 @@ bool GraphicManager::InitializeScene()
 
 	
 	// 오브젝트를 파일에서 읽기 & 초기화
-	// -> fbx (게임오브젝트 빛 스프라이트)
-
-	//obj = new SimpleRenderableObject();
-	//obj->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	//obj->SetPosition(1, 1, 1);
+	// -> fbx (게임오브젝트 및 스프라이트)
 
 
-	//SimpleRenderableObject* obj1 = new SimpleRenderableObject();
-	//obj1->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	//obj1->SetPosition(4, 0, 4);
+	#pragma region 테스트용
+		if (gameObjectManager->FindGameObject("Nanosuit") == nullptr)
+		{
+			GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit");
+			obj1->transform.SetPosition(0, 0, 0);
+		}
+	#pragma endregion
 
-	//SimpleRenderableObject* obj2 = new SimpleRenderableObject();
-	//obj2->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	//obj2->SetPosition(10, 0, 10);
-
-
-	//RenderableObject* obj4 = new RenderableObject();
-	//
-	//obj4->SetPosition(2,0,0);
-
-	
-
-	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
-	//obj2->transform.SetPosition(0, 5, 0);
-	//obj2->transform.SetScale(0.2f, 0.2f, 0.2f);
-	//obj2->SetActive(true);
-
-	//assimp 자체에 fbx 애니메이션 버그가 있다.
-	//GameObject* obj2 = CreateGameObject_2("spin", "Resource\\Objects\\spin\\spin.dae");
-
-	//GameObject* obj2 = CreateGameObject_2("walk", "Resource\\Objects\\walking\\walk.fbx");
-	//obj2->transform.SetPosition(0, 5, 0);
-	//obj2->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj2->SetActive(true);
-
-	//GameObject* obj5 = CreateGameObject_2("walk2", "Resource\\Objects\\walking\\walk.fbx");
-	//obj5->transform.SetPosition(0, 5, 0);
-	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj5->SetActive(true);
-
-	//GameObject* obj6 = CreateGameObject_2("walk3", "Resource\\Objects\\walking\\walk.fbx");
-	//obj5->transform.SetPosition(0, 5, 0);
-	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj5->SetActive(true);
-
-	//GameObject* obj7 = CreateGameObject_2("walk4", "Resource\\Objects\\walking\\walk.fbx");
-	//obj5->transform.SetPosition(0, 5, 0);
-	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj5->SetActive(true);
-
-	//GameObject* obj3 = CreateGameObject_1("Nanosuit", "Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-	//obj3->transform.SetPosition(0, 5, 0);
-
-
-	////GameObject* obj8 = CreateGameObject_1("steve", "Resource\\Objects\\steve\\source\\steve.fbx");
-	////obj8->transform.SetPosition(0, 5, 0);
-
-	//GameObject* obj8 = CreateGameObject_1("grass", "Resource\\Objects\\grass\\Grass_Block.obj");
-	//obj8->transform.SetPosition(0, 5, 0);
-	//obj8->transform.SetScale(0.5,0.5,0.5);
-
-	//GameObject* obj9 = CreateGameObject_1("grass2", "Resource\\Objects\\grass\\Grass_Block.obj");
-	//obj9->transform.SetPosition(1, 5, 0);
-	//obj9->transform.SetScale(0.5, 0.5, 0.5);
-	//
-
-	//GameObject* obj3 = CreateGameObject_1("sponza", "Resource\\Objects\\Sponza\\sponza.obj");
-	//obj2->transform.SetPosition(0, 5, 0);
 
 	//카메라 
 	this->camera = new GameObject("camera");
 	this->cameraComponent = new Camera3D(camera);
 	camera->AddComponent(cameraComponent);
-	camera->transform.SetPosition(0.0f, 12.0f, -10.0f);
+	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
 	this->cameraComponent->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f);
 
 	/**********************************************/

@@ -10,8 +10,7 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11Devi
 	this->vs = vs;
 	this->constantBuffer = &constantBuffer;
 
-	min = { 0,0,0 };
-	max = { 0,0,0 };
+
 
 	XMMATRIX worldMatrix = owner->transform.worldMatrix;
 
@@ -20,6 +19,8 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11Devi
 
 	if (com != nullptr)
 	{
+		min = { 0,0,0 };
+		max = { 0,0,0 };
 		render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL));
 	}
 	else
@@ -28,6 +29,8 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11Devi
 
 		if (com != nullptr)
 		{
+			min = { 0,0,0 };
+			max = { 0,0,0 };
 			render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_MODEL));
 		}
 	}

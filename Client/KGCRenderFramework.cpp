@@ -43,7 +43,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	IFramework* rw = IFrameworkFactory::createFramework();
 
 	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
-
+	
 	Example* temp = new Example("example");
     rw->RegisterLayer("example", temp);
 

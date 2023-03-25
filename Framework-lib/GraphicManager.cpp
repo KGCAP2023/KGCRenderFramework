@@ -137,7 +137,6 @@ void GraphicManager::RenderFrame()
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
-	cameraComponent->SetProjectionValues(90.0f, static_cast<float>(this->width) / static_cast<float>(this->height), 0.1f, 3000.0f);
 
 	{
 		for (const auto& kv : gameObjectManager->gameObjects) {
@@ -528,10 +527,11 @@ bool GraphicManager::InitializeScene()
 	this->cameraComponent = new Camera3D(camera);
 	camera->AddComponent(cameraComponent);
 	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
-	this->cameraComponent->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f);
+	this->cameraComponent->initViewMatrix(
+		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
+		100, 100, -1, INFINITE);
 
 	/**********************************************/
-
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;
 }

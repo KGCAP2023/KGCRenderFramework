@@ -27,7 +27,7 @@ void Framework::run()
 		Update(); //업데이트 문입니다.
 		RenderFrame(); //프레임을 렌더링 합니다. 
 	}
-
+	
 }
 
 IGameObjectManager* Framework::GetGameObjectManager()
@@ -42,6 +42,13 @@ GameObjectManager* Framework::GetGameObjectManagerInstance()
 	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
 	return gameObjManager;
+}
+
+void Framework::ChangeCameraViewType(viewType _viewType)
+{
+
+	if(this->graphics.cameraComponent != nullptr) this->graphics.cameraComponent->ChangeProjectionValues(_viewType);
+
 }
 
 void Framework::Update()
@@ -77,6 +84,7 @@ void Framework::Update()
 			for (auto& kv : this->gameObjManager->gameObjects) {
 				this->ray->isPicked(dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox()));
 			}
+
 		}
 		MOUSE_LEFT_BUTTON_PRESSED = true;
 	}
@@ -173,8 +181,8 @@ void Framework::Update()
 	//if (kb.RightShift)
 			// Right shift key is down
 
-	if (kb.IsKeyDown(Keyboard::Keys::Enter) == true) // Keyboard::Keys
-			std::cout << "Enter" << std::endl;
+	 // Keyboard::Keys
+			//std::cout << "Enter" << std::endl;
 
 
 	
@@ -208,6 +216,7 @@ void Framework::Update()
 	//}
 
 	//this->graphics.camera.Rotate(0, speed * dt,0);
+
 
 }
 

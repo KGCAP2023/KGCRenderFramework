@@ -3,6 +3,7 @@
 #include "IScript.h"
 #include "ILayer.h"
 #include "GameObjectManager.h"
+#include "Camera.h"
 
 class IFramework
 {
@@ -23,5 +24,6 @@ public:
 	virtual void run();
 
 	virtual IGameObjectManager* GetGameObjectManager() { return nullptr; };
+	virtual void ChangeCameraViewType(viewType);
 
 };

@@ -42,6 +42,12 @@ public:
 	/// <returns></returns>
 	GameObjectManager* GetGameObjectManagerInstance();
 
+	/// <summary>
+	/// 카메라 모드 전환
+	/// </summary>
+	/// <param name="">viewType::_2D 또는 viewType::_3D 전달</param>
+	virtual void ChangeCameraViewType(viewType) override;
+
 //INTERNAL
 public:
 

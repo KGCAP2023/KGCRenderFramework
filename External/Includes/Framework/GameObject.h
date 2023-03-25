@@ -22,6 +22,7 @@ public:
 
 	Transform transform;
 
+	std::string GetName() { return ObjectName; };
 	void AddComponent(Component* pComponent);
 	Component* GetComponent(const std::wstring componentID);
 	Component* GetComponent(const Component::Type componentID);

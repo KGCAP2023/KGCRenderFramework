@@ -52,8 +52,8 @@ void Framework::Update()
 
 	float speed = 0.006f;
 	
-	const auto& kb = this->InputManager.GetKeyboard()->GetState();
-	const auto& mouse = this->InputManager.GetMouse()->GetState();
+	auto kb = this->InputManager.GetKeyboardState();
+	auto mouse = this->InputManager.GetMouseState();
 	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
 	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
 
@@ -66,20 +66,26 @@ void Framework::Update()
 		kv.second->Update();
 	}
 
-	//=========================================
-
-	auto& io = ImGui::GetIO();
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
-		return;
-	}
+	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
 
 	if (mouse.leftButton)
 	{
-		this->ray->CalculatePicking(mouse.x, mouse.y);
-		for (auto& kv : this->gameObjManager->gameObjects) {
-			this->ray->isPicked(dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox()));
+		if (!MOUSE_LEFT_BUTTON_PRESSED)
+		{
+			std::cout << "Å¬¸¯µÈÁÂÇ¥:  " << mouse.x << "/" << mouse.y << std::endl;
+			this->ray->CalculatePicking(mouse.x, mouse.y);
+			for (auto& kv : this->gameObjManager->gameObjects) {
+				this->ray->isPicked(dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox()));
+			}
 		}
+		MOUSE_LEFT_BUTTON_PRESSED = true;
 	}
+	else
+	{
+		MOUSE_LEFT_BUTTON_PRESSED = false;
+	}
+
+	//=========================================
 
 	if (mouse.rightButton)
 	{
@@ -103,6 +109,12 @@ void Framework::Update()
 		yPosRelative.pop();
 		xPosRelative.pop();
 	}
+
+	//auto& io = ImGui::GetIO();
+	//if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
+	//	return;
+	//}
+
 
 	//if(mouse.leftButton)
 	//{
@@ -131,27 +143,27 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		std::cout << "w" << std::endl;
+		//std::cout << "w" << std::endl;
 		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 
 	if (kb.A) // A key is down
 	{
-		std::cout << "a" << std::endl;
+		//std::cout << "a" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
 	if (kb.S) // S key is down
 	{
-		std::cout << "s" << std::endl;
+		//std::cout << "s" << std::endl;
 		//walk->transform.Translate(walk->transform.GetBackward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
 	if (kb.D) // D key is down
 	{
-		std::cout << "d" << std::endl;
+		//std::cout << "d" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}
 		

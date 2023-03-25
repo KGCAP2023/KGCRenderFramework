@@ -123,7 +123,7 @@ bool Ray::isPicked(BoundingBox3D* bbox)
 		
 		if (RayIntersectTri(rayOrigin, rayDirection, XMVectorSet(t1.Pos.x, t1.Pos.y, t1.Pos.z, 1.0f), XMVectorSet(t2.Pos.x, t2.Pos.y, t2.Pos.z, 1.0f), XMVectorSet(t3.Pos.x, t3.Pos.y, t3.Pos.z, 1.0f)))
 		{
-			std::cout << "감지" << std::endl;
+			std::cout << bbox->GetOwner()->GetName() << " 감지" << std::endl;
 			return true;
 		}
 	}

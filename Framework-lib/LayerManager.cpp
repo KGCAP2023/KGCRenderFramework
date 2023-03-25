@@ -133,7 +133,10 @@ void LayerManager::DockingSpace()
 	float view_x = vMax.x - vMin.x;
 	float view_y = vMax.y - vMin.y;
 
-	const auto& mouse = InputManager::GetMouse()->GetState();
+
+	InputManager::isDockingSpace = true;
+
+	auto mouse = InputManager::GetRawMouse()->GetState();
 
 	ImVec2 temp;
 	temp.x = mouse.x - vMin.x;
@@ -143,6 +146,9 @@ void LayerManager::DockingSpace()
 	float normalY = temp.y * (this->framework->height / view_y);
 
 	//std::cout <<"ÁÂÇ¥:  " << normalX << "/" << normalY << std::endl;
+
+	InputManager::viewX = normalX;
+	InputManager::viewY = normalY;
 
 	ImGui::Image((void*)framework->graphics.refRes, windowSize);
 	ImGui::End();

@@ -184,8 +184,7 @@ void GraphicManager::RenderFrame()
 	ImGui::NewFrame();
 
 
-	//framework->layerManager.DockingSpace();
-
+	framework->layerManager.DockingSpace();
 	framework->layerManager.Render();
 	
 

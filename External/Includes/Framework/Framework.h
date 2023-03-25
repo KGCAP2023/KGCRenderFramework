@@ -2,9 +2,10 @@
 #include "IFramework.h"
 #include "GraphicManager.h"
 #include "Timer.h"
-#include <Keyboard.h>
-#include <Mouse.h>
+#include "InputManager.h"
 #include "LayerManager.h"
+#include "GameObjectManager.h"
+#include "ResourceManager.h"
 /*
 * 프레임 워크 입니다.
 */
@@ -27,9 +28,23 @@ public:
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height) override;
 	virtual void run() override;
 
+	/// <summary>
+	/// 프론트 기능 제공용 인터페이스 반환
+	/// </summary>
+	/// <returns></returns>
+	virtual IGameObjectManager* GetGameObjectManager() override;
+
+	/// <summary>
+	/// 백엔드 개발용 인스턴스 반환
+	/// </summary>
+	/// <returns></returns>
+	GameObjectManager* GetGameObjectManagerInstance();
+
 //INTERNAL
 public:
 
+	static const float getDeltaTime() { return dt;}
+	
 	void RegisterWindow(HINSTANCE hInstance); // WindowClassEX를 초기화 한다.
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool ProcessMsg();
@@ -37,8 +52,11 @@ public:
 	void Update();
 	void RenderFrame();
 
+	InputManager InputManager;
 	LayerManager layerManager;
 	GraphicManager graphics;
+	ResourceManager resourceManager;
+	GameObjectManager* gameObjManager;
 
 	~Framework();
 
@@ -50,18 +68,12 @@ public:
 	int width = 0; //너비
 	int height = 0; //높이
 
-private:
-
 	HWND handle = NULL; // 윈도우 핸들
 	HINSTANCE hInstance = NULL; // 어플리케이션 인스턴스
 
-	std::shared_ptr<DirectX::Keyboard> keyboard;
-	std::unique_ptr<DirectX::Mouse> mouse;
+private:
 
-	std::queue<int> xPosRelative;
-	std::queue<int> yPosRelative;
-
-	
+	static float dt;
 	Timer timer;
 	
 };

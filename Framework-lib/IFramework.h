@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "IScript.h"
 #include "ILayer.h"
+#include "GameObjectManager.h"
 
 class IFramework
 {
@@ -20,5 +21,7 @@ public:
 
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);
 	virtual void run();
+
+	virtual IGameObjectManager* GetGameObjectManager() { return nullptr; };
 
 };

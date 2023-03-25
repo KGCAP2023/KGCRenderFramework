@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "GraphicManager.h"
 #include "Framework.h"
+#include "GameObjectManager.h"
 //imgui / 타이머
-bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height, std::shared_ptr<DirectX::Keyboard> keyboard)
+bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height)
 {
 	/*
 	
@@ -15,9 +16,11 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 	this->height = height;
 
 	this->hwnd = hwnd;
-	this->keyboard = keyboard;
-
 	this->framework = framework;
+	this->res = &framework->resourceManager;
+
+	//오브젝트 매니져 생성
+	gameObjectManager = this->framework->GetGameObjectManagerInstance();
 
 	//DIRECTX 초기화
 	if (!InitializeDirectX(hwnd)) return false;
@@ -27,6 +30,9 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 
 	//씬 초기화
 	if (!InitializeScene()) return false;
+
+
+
 
 	/*
 	
@@ -71,25 +77,6 @@ bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int h
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX11_Init(this->device.Get(), this->deviceContext.Get());
 
-	//{
-	//	// Setup Dear ImGui context
-	//	IMGUI_CHECKVERSION();
-	//	ImGui::CreateContext();
-	//	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	//	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\malgun.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
-	//	// Setup Dear ImGui style
-	//	ImGui::StyleColorsDark();
-	//	//ImGui::StyleColorsClassic();
-
-	//	// Setup Platform/Renderer backends
-	//	ImGui_ImplWin32_Init(hwnd);
-	//	ImGui_ImplDX11_Init(this->device.Get(), this->deviceContext.Get());
-	//}
-
-
-
-
-
 	return true;
 
 }
@@ -106,7 +93,7 @@ void GraphicManager::RenderFrame()
 	OMSetBlendState 블렌딩 셋팅						deviceContext
 	*/
 
-	float bgcolor[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+	float bgcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	deviceContext->RSSetState(rasterizerState.Get()); //레스터라이저 설정한 옵션을 가져온다
@@ -114,6 +101,11 @@ void GraphicManager::RenderFrame()
 	deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
+	
+	
+
+
+	
 
 
 	/*
@@ -141,14 +133,16 @@ void GraphicManager::RenderFrame()
 
 	*/
 
-	deviceContext->IASetInputLayout(vs_3.GetInputLayout());
+
+	VertexShader* vs_3 = res->FindVertexShader("vs_1");
+	deviceContext->IASetInputLayout(vs_3->GetInputLayout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 	cameraComponent->SetProjectionValues(90.0f, static_cast<float>(this->width) / static_cast<float>(this->height), 0.1f, 3000.0f);
 
 	{
-		for (const auto& kv : GameObject::gameObjects) {
+		for (const auto& kv : gameObjectManager->gameObjects) {
 			(kv.second)->Draw(vp);
 		}
 	}
@@ -164,13 +158,15 @@ void GraphicManager::RenderFrame()
 		fps.ReStart();
 	}
 
+	const wchar_t* output = L"캡스톤_프로젝트";
+	res->spriteBatch->Begin();
+	res->spriteFont->DrawString(res->spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
+	res->spriteBatch->End();
 
+	//Sprite* sp = res->FindSprite("ani");
+	//sp->Draw(DirectX::SimpleMath::Vector2(0, 0), res->spriteBatch.get());
 
-	const wchar_t* output = L"모델뷰어_ver_1.0";
-
-	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0),1.0f);
-	spriteBatch->End();
+	deviceContext->CopyResource(refTex, backBuffer.Get());
 
 	/**
 
@@ -188,8 +184,10 @@ void GraphicManager::RenderFrame()
 	ImGui::NewFrame();
 
 
+	//framework->layerManager.DockingSpace();
+
 	framework->layerManager.Render();
-	//ImGui::ShowDemoWindow(&show_demo_window);
+	
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -240,7 +238,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
     sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-    sd.SampleDesc.Count = 4; //MSAA 4배 샘플링
+    sd.SampleDesc.Count = 1; //MSAA 4배 샘플링
     sd.SampleDesc.Quality = 0;
 
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -279,7 +277,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
     }
 
     //ID3D11Texture2D* pBackBuffer = NULL;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
+    
     hr = this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)backBuffer.GetAddressOf());
     if (FAILED(hr)) return false;
 
@@ -292,7 +290,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
 	depthStencilTextureDesc.MipLevels = 1;
 	depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilTextureDesc.SampleDesc.Count = 4; //MSAA 4배 샘플링
+	depthStencilTextureDesc.SampleDesc.Count = 1; //MSAA 4배 샘플링
 	depthStencilTextureDesc.SampleDesc.Quality = 0;
 
 	hr = this->device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->depthStencilBuffer.GetAddressOf());
@@ -324,7 +322,7 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	//rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK; 
 	//rasterizerDesc.FrontCounterClockwise = TRUE; 이거하면 반시계로 버텍스 그려야됨 
 
-	rasterizerDesc.MultisampleEnable = true; //MSAA 4배 샘플링
+	//rasterizerDesc.MultisampleEnable = true; //MSAA 4배 샘플링
 
 	hr = this->device->CreateRasterizerState(&rasterizerDesc, this->rasterizerState.GetAddressOf());
 	if (FAILED(hr)) return false;
@@ -358,13 +356,8 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 
 	//COM_ERROR_IF_FAILED(hr, "Failed to create blend state.");
 
-	//Font 초기화
-	{
-		std::cout << "[=] Starting Font Initialize....." << std::endl;
-		spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
-		spriteFont = std::make_unique<DirectX::SpriteFont>(this->device.Get(), L"..\\Resource\\Fonts\\nanum.spritefont");
-		std::cout << "[O] Successfully Completed Font Initialize!" << std::endl;
-	}
+	this->res->Init(this->framework);
+	this->res->InitFont(L"..\\Resource\\Fonts\\nanum.spritefont");
 
 	//샘플러 스테이트를 생성합니다.
 	CD3D11_SAMPLER_DESC sampDesc(D3D11_DEFAULT);
@@ -374,9 +367,28 @@ bool GraphicManager::InitializeDirectX(HWND hwnd)
 	hr = this->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
 	if (FAILED(hr)) return false;
 
+	D3D11_TEXTURE2D_DESC descTex;
+	ZeroMemory(&descTex, sizeof(descTex));
+	descTex.Width = 1600;
+	descTex.Height = 900;
+	descTex.MipLevels = 1;
+	descTex.ArraySize = 1;
+	descTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descTex.SampleDesc.Count = 1;
+	descTex.Usage = D3D11_USAGE_DEFAULT;
+	descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	descTex.CPUAccessFlags = 0;
 
-	m_states = std::make_unique<CommonStates>(this->device.Get());
-	
+	device->CreateTexture2D(&descTex, nullptr, &refTex);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
+	ZeroMemory(&descSRV, sizeof(descSRV));
+	descSRV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	descSRV.Texture2D.MipLevels = 1;
+	descSRV.Texture2D.MostDetailedMip = 0;
+
+	device->CreateShaderResourceView(refTex, &descSRV, &refRes);
 
 	std::cout << "[O] Successfully Completed DirectX Initialize!" << std::endl;
 	return true;
@@ -397,15 +409,15 @@ bool GraphicManager::InitializeShaders()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	UINT numElements2D = ARRAYSIZE(layout);
+	UINT numElements = ARRAYSIZE(layout);
 
-	if (!vs_1.Initialize(L"..\\Shader\\VertexShader.hlsl","main", "vs_4_0_level_9_3", layout, numElements2D, device))
+	if (!res->LoadVertexShader("vs_1", L"..\\Shader\\VertexShader.hlsl", layout, numElements))
 	{
 		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
-	if (!ps_1.Initialize(L"..\\Shader\\PixelShader.hlsl", "main", "ps_4_0_level_9_3", device))
+	if (!res->LoadPixelShader("ps_1", L"..\\Shader\\PixelShader.hlsl"))
 	{
 		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
@@ -420,14 +432,13 @@ bool GraphicManager::InitializeShaders()
 
 	UINT numElements3D = ARRAYSIZE(layout3D);
 
-	if (!vs_2.Initialize(L"..\\Shader\\VertexShader2.hlsl", "main", "vs_4_0_level_9_3", layout3D, numElements3D, device))
+	if (!res->LoadVertexShader("vs_2", L"..\\Shader\\VertexShader2.hlsl", layout3D, numElements3D))
 	{
 		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
-		
 
-	if (!ps_2.Initialize(L"..\\Shader\\PixelShader2.hlsl", "main", "ps_4_0_level_9_3", device))
+	if (!res->LoadPixelShader("ps_2", L"..\\Shader\\PixelShader2.hlsl"))
 	{
 		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
@@ -454,7 +465,7 @@ bool GraphicManager::InitializeShaders()
 
 	UINT numElementsw = ARRAYSIZE(layoutw);
 
-	if (!vs_3.Initialize(L"..\\Shader\\VertexShader3.hlsl", "main", "vs_5_0", layoutw, numElementsw, device))
+	if (!res->LoadVertexShader("vs_3", L"..\\Shader\\VertexShader3.hlsl", layoutw, numElementsw))
 	{
 		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
@@ -480,25 +491,28 @@ bool GraphicManager::InitializeScene()
 	//상수버퍼 초기화 & 생성
 	//-> 버텍스쉐이더
 	//-> 픽셀 쉐이더 
-	hr = this->cb1.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb1.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"상수버퍼1 로드 실패");
 
-	hr = this->cb2.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb2.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"상수버퍼2 로드 실패");
 
-	hr = this->cb_skinning_1.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb_skinning_1.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"cb_skinning_1 로드 실패");
 
-	hr = this->cb_skinning_2.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb_skinning_2.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"cb_skinning_2 로드 실패");
 
-	hr = this->cb_light.Init(this->device.Get(), this->deviceContext.Get());
+	hr = res->cb_light.Init(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) Logger::Log(hr, L"상수버퍼3 로드 실패");
 
-	this->cb_light.data.ambientLightColor = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	this->cb_light.data.ambientLightStrength = 1.0f;
+	res->cb_light.data.ambientLightColor = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	res->cb_light.data.ambientLightStrength = 1.0f;
+
+	res->LoadSprite("ani", "..\\Resource\\a.jpg");
 
 
+	
 	// 오브젝트를 파일에서 읽기 & 초기화
 	// -> fbx (게임오브젝트 빛 스프라이트)
 
@@ -520,11 +534,8 @@ bool GraphicManager::InitializeScene()
 	//
 	//obj4->SetPosition(2,0,0);
 
-
-
-
-	//GameObject* obj1 = CreateGameObject_1("ying", "..\\Resource\\Objects\\ying\\ying.pmx");
-	//obj1->transform.SetPosition(0, 5, 0);
+	GameObject* obj1 = CreateGameObject_1("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
+	obj1->transform.SetPosition(0, 5, 0);
 
 	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
 	//obj2->transform.SetPosition(0, 5, 0);
@@ -588,14 +599,35 @@ bool GraphicManager::InitializeScene()
 
 GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const std::string& path)
 {
-	GameObject* obj = new GameObject(name);
-	//obj->SetActive(false);
-	ModelRenderer* render1 = new ModelRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), this->cb2, &this->vs_2, &this->ps_2);
-	obj->AddComponent(render1);
-	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
+	//리소스매니저에서 쉐이더를 가져옵니다.
+	PixelShader* ps_1 = res->FindPixelShader("ps_1");
+	VertexShader* vs_1 = res->FindVertexShader("vs_1");
 
-	GameObject::gameObjects.insert(std::make_pair(name, obj));
+	PixelShader* ps_2 = res->FindPixelShader("ps_2");
+	VertexShader* vs_2 = res->FindVertexShader("vs_2");
+	Sprite* sp = res->FindSprite("ani");
+
+	//오브젝트를 생성합니다.
+	GameObject* obj = new GameObject(name);
+
+	//모델 렌더러를 생성합니다.
+	ModelRenderer* render1 = new ModelRenderer(obj);
+	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb2, vs_2, ps_2);
+
+	//모델 렌더러를 등록합니다.
+	obj->AddComponent(render1);
+
+	//바운딩 박스 렌더러를 생성&등록합니다.
+	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
+
+	//SpriteRenderer* render2 = new SpriteRenderer(obj);
+	//render2->AddSprite(sp);
+	//render2->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
+	//render2->SelectAnimation("motion1");
+	//obj->AddComponent(render2);
+
+	//게임오브젝트를 등록합니다.
+	gameObjectManager->gameObjects.insert(std::make_pair<>(name, obj));
 
 	return obj;
 }
@@ -605,15 +637,17 @@ GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const st
 */
 GameObject* GraphicManager::CreateGameObject_2(const std::string& name, const std::string& path)
 {
-	
+	PixelShader* ps_2 = res->FindPixelShader("ps_2");
+	VertexShader* vs_3 = res->FindVertexShader("vs_3");
+
 	GameObject* obj = new GameObject(name);
 	obj->SetActive(false);
 	SkinnedMeshRenderer* render1 = new SkinnedMeshRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), this->cb_skinning_1, this->cb_skinning_2, &this->vs_3, &this->ps_2);
+	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb_skinning_1, res->cb_skinning_2, vs_3, ps_2);
 	obj->AddComponent(render1);
 	//obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
 
-	GameObject::gameObjects.insert(std::make_pair(name, obj));
+	gameObjectManager->gameObjects.insert(std::make_pair(name, obj));
 
 	return obj;
 }
@@ -634,11 +668,10 @@ bool GraphicManager::doTreeNode(GameObject* obj, int index) {
 	{
 		std::cout << "SceneHierarchy: " << obj->ObjectName << "Clicked!" << std::endl;
 
-		if (GameObject::gameObjects.find(this->target) != GameObject::gameObjects.end())
-		{
-			GameObject* before = GameObject::gameObjects.at(this->target);
-			//before->SetActive(false);
+		GameObject* before = gameObjectManager->FindGameObject(this->target);
 
+		if (before != nullptr)
+		{
 			this->target = obj->ObjectName;
 			//obj->SetActive(true);
 		}
@@ -674,7 +707,7 @@ void GraphicManager::SceneHierarchyWindow()
 
 	int index = 0;
 
-	for (const auto& kv : GameObject::gameObjects) {
+	for (const auto& kv : gameObjectManager->gameObjects) {
 
 
 		bool treeNodeOpen = doTreeNode(kv.second, index);
@@ -729,6 +762,7 @@ bool GraphicManager::openFile2()
 	}
 	return true;
 }
+
 
 bool GraphicManager::openFile()
 {

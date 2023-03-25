@@ -5,8 +5,6 @@ using namespace DirectX;
 //XMLoad XMVECTOR·Î Å¾Àç
 //XMSTORE XMFLOAT·Î ¸¸µë
 
-std::unordered_map<std::string, GameObject*> GameObject::gameObjects;
-
 void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 	if (isActive)
@@ -47,6 +45,7 @@ void GameObject::AddComponent(Component* pComponent)
 	Component::Type type = pComponent->GetType();
 	if (type == Component::Type::RENDERER_MODEL || type == Component::Type::BOUNDING_BOX)
 	{
+		//this->render MapÀ¸·Î ¹Ù²ã¾ßµÊ
 		this->render.push_back(dynamic_cast<Renderer*>(pComponent));
 		//this->render.push_back((Renderer*)pComponent);
 	}

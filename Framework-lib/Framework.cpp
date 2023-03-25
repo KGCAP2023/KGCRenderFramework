@@ -2,41 +2,72 @@
 #include "Framework.h"
 
 
+float Framework::dt;
 
 void Framework::run()
 {
-
+	/*
+	* FRAMEWORK GAME LOOP
+	* 
+	* ProcessMsg() : Win32창에대한 이벤트를 감지합니다. 
+	* 마우스, 키보드에 대한 입력이 후킹되어있습니다.
+	* 해상도 변경에 대한 처리로직이 등록 되어있습니다.
+	* 
+	* Update() : 업데이트 함수입니다. 
+	* 해당 함수는 게임루프에 돌아가는 최상위 함수로
+	* 이 함수내에서 매니저들이 다른 인터페이스의 Update()문을 
+	* 옵저버 패턴등을 통해 전파(Propagate)합니다. 
+	* 
+	* RenderFrame() : 렌더링 작업을 하는 함수입니다.
+	* 1프레임당 화면에 그릴 로직(DrawCall)이 포함됩니다.
+	* 게임오브젝트의 Draw()가 호출됩니다.
+	* 
+	*/
 	while (ProcessMsg() == true)
 	{
-		Update();
-		RenderFrame();
+		Update(); //업데이트 문입니다.
+		RenderFrame(); //프레임을 렌더링 합니다. 
 	}
 
+}
+
+IGameObjectManager* Framework::GetGameObjectManager()
+{
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager;
+
+	return gameObjManager;
+}
+
+GameObjectManager* Framework::GetGameObjectManagerInstance()
+{
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager;
+
+	return gameObjManager;
 }
 
 void Framework::Update()
 {
 
-	float dt = timer.getDeltaTime();
+	this->dt = timer.getDeltaTime();
 	timer.ReStart();
 
-	//std::async([&]
-	//{
-	//	std::cout << dt << std::endl;
-	//});
-
-	//콘솔출력 시스템콜 -> 성능저하
-	//std::cout << dt << std::endl;
-
 	float speed = 0.006f;
+	
+	const auto& kb = this->InputManager.GetKeyboard()->GetState();
+	const auto& mouse = this->InputManager.GetMouse()->GetState();
+	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
+	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
 
-	auto kb = this->keyboard->GetState();
-	auto mouse = this->mouse->GetState();
+	//Sprite* sp = resourceManager.FindSprite("ani");
+	//sp->Update(dt);
 
-	//GameObject* walk = GameObject::gameObjects["walk"];
-
-	//this->graphics.animation->Update(dt);
 	this->layerManager.Update();
+
+	for (auto& kv : this->gameObjManager->gameObjects) {
+		kv.second->Update();
+	}
+
+	//=========================================
 
 	auto& io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
@@ -45,54 +76,32 @@ void Framework::Update()
 
 	if (mouse.rightButton)
 	{
-		std::cout << mouse.x << " " << mouse.y << std::endl;
+		//std::cout << mouse.x << " " << mouse.y << std::endl;
 
-		while (!this->yPosRelative.empty())
+		while (!yPosRelative.empty())
 		{
 			
-			int yPosRelative = this->yPosRelative.front();
-			int xPosRelative = this->xPosRelative.front();
-			this->yPosRelative.pop();
-			this->xPosRelative.pop();
+			int yPosRelative2 = yPosRelative.front();
+			int xPosRelative2 = xPosRelative.front();
+			yPosRelative.pop();
+			xPosRelative.pop();
 			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
-			this->graphics.camera->transform.Rotate((float)yPosRelative * 0.001f, (float)xPosRelative * 0.001f, 0);
+			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
 	}
 
-	if (mouse.leftButton)
+	while (!yPosRelative.empty())
 	{
-		std::cout << mouse.x << " " << mouse.y << std::endl;
-
-		while (!this->yPosRelative.empty())
-		{
-
-			int yPosRelative = this->yPosRelative.front();
-			int xPosRelative = this->xPosRelative.front();
-			this->yPosRelative.pop();
-			this->xPosRelative.pop();
-			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
-		}
-
+		yPosRelative.pop();
+		xPosRelative.pop();
 	}
-
-
-
-
-	while (!this->yPosRelative.empty())
-	{
-		this->yPosRelative.pop();
-		this->xPosRelative.pop();
-	}
-
 
 	//if(mouse.leftButton)
 	//{
 	//	this->graphics.camera->transform.SetLookAtPos(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	//}
 		
-	
-
 	if (kb.Back) // Backspace key is down
 	{
 		std::cout << "Back" << std::endl;
@@ -115,27 +124,27 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		//std::cout << "w" << std::endl;
+		std::cout << "w" << std::endl;
 		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 
 	if (kb.A) // A key is down
 	{
-		//std::cout << "a" << std::endl;
+		std::cout << "a" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
 	if (kb.S) // S key is down
 	{
-		//std::cout << "s" << std::endl;
+		std::cout << "s" << std::endl;
 		//walk->transform.Translate(walk->transform.GetBackward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
 	if (kb.D) // D key is down
 	{
-		//std::cout << "d" << std::endl;
+		std::cout << "d" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}
 		
@@ -149,8 +158,7 @@ void Framework::Update()
 			std::cout << "Enter" << std::endl;
 
 
-
-
+	
 	
 	
 	//this->graphics.obj->Translate(0, 0, 0.008 * dt);
@@ -260,24 +268,24 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	std::cout << "[O] Successfully Completed Window Initialize!" << std::endl;
 
-	//this->keyboard = std::make_unique<Keyboard>();
-	this->keyboard = std::make_shared<Keyboard>();
-	this->mouse = std::make_unique<Mouse>();
-	this->mouse->SetWindow(this->handle);
+	/*
+		<매니저 클래스는 여기서 초기화 해주세요> 
+	*/
 
-	std::cout << "[O] Successfully Completed KeyBoard/Mouse Initialize!" << std::endl;
+	//인풋 매니저 초기화
+	this->InputManager.Init(this);
+	//레이어 매니저 초기화
+	this->layerManager.Init(this);
+	this->layerManager.SetImGuiDemo(true);
 
-
-	this->layerManager.Init();
-
-	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
-
-	//DIRECTX 그래픽스 초기화
-	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height,this->keyboard))
+	//그래픽스 매니저 초기화
+	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height))
 	{
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
 	}
+
+	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 
 	return true;
 }
@@ -310,8 +318,7 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			if (raw->header.dwType == RIM_TYPEMOUSE)
 			{
-				this->xPosRelative.push(raw->data.mouse.lLastX);
-				this->yPosRelative.push(raw->data.mouse.lLastY);
+				this->InputManager.PushRawInputData(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
 			}
 		}
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -368,8 +375,13 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			// Release all outstanding references to the swap chain's buffers.
 			this->graphics.renderTargetView->Release();
-			this->graphics.depthStencilView->Release();
-			this->graphics.depthStencilBuffer->Release();
+			if (this->graphics.depthStencilView.Get() != nullptr)
+				this->graphics.depthStencilView->Release();
+			if (this->graphics.depthStencilBuffer.Get() != nullptr)
+				this->graphics.depthStencilBuffer->Release();
+
+			this->graphics.backBuffer->Release();
+
 
 			HRESULT hr;
 			// Preserve the existing buffer count and format.
@@ -379,22 +391,21 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			// Perform error handling here!
 
 			// Get buffer and create a render-target-view.
-			ID3D11Texture2D* pBuffer;
 			hr = this->graphics.swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-				(void**)&pBuffer);
+				(LPVOID*)this->graphics.backBuffer.GetAddressOf());
 			// Perform error handling here!
 
-			hr = this->graphics.device->CreateRenderTargetView(pBuffer, NULL,
+
+
+			hr = this->graphics.device->CreateRenderTargetView(this->graphics.backBuffer.Get(), NULL,
 				this->graphics.renderTargetView.GetAddressOf());
 			// Perform error handling here!
-			pBuffer->Release();
-
-
+			
 			//뎁스/스텐실 버퍼 디스크립터
 			CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
 			depthStencilTextureDesc.MipLevels = 1;
 			depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-			depthStencilTextureDesc.SampleDesc.Count = 4; //MSAA 4배 샘플링
+			depthStencilTextureDesc.SampleDesc.Count = 1; //MSAA 4배 샘플링
 			depthStencilTextureDesc.SampleDesc.Quality = 0;
 
 			hr = this->graphics.device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->graphics.depthStencilBuffer.GetAddressOf());
@@ -402,6 +413,30 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			hr = this->graphics.device->CreateDepthStencilView(this->graphics.depthStencilBuffer.Get(), NULL, this->graphics.depthStencilView.GetAddressOf());
 			if (FAILED(hr)) return false;
+
+
+			D3D11_TEXTURE2D_DESC descTex;
+			ZeroMemory(&descTex, sizeof(descTex));
+			descTex.Width = nWidth;
+			descTex.Height = nHeight;
+			descTex.MipLevels = 1;
+			descTex.ArraySize = 1;
+			descTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			descTex.SampleDesc.Count = 1;
+			descTex.Usage = D3D11_USAGE_DEFAULT;
+			descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			descTex.CPUAccessFlags = 0;
+
+			this->graphics.device->CreateTexture2D(&descTex, nullptr, &this->graphics.refTex);
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
+			ZeroMemory(&descSRV, sizeof(descSRV));
+			descSRV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			descSRV.Texture2D.MipLevels = 1;
+			descSRV.Texture2D.MostDetailedMip = 0;
+
+			this->graphics.device->CreateShaderResourceView(this->graphics.refTex, &descSRV, &this->graphics.refRes);
 
 
 			this->graphics.deviceContext->OMSetRenderTargets(1, this->graphics.renderTargetView.GetAddressOf(), this->graphics.depthStencilView.Get());

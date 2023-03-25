@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Animation2D.h"
+#include "Sprite.h"
 
 void Animation2D::Draw(DirectX::SimpleMath::Vector2 pos, SpriteBatch* spriteBatch)
 {

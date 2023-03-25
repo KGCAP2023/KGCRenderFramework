@@ -45,7 +45,7 @@ public:
 	/// <summary>
 	/// 카메라 모드 전환
 	/// </summary>
-	/// <param name="">2d 또는 3d</param>
+	/// <param name="">viewType::_2D 또는 viewType::_3D 전달</param>
 	virtual void ChangeCameraViewType(viewType) override;
 
 //INTERNAL

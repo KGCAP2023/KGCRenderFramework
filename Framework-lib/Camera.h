@@ -12,7 +12,7 @@ public:
 	/// <summary>
 	/// 카메라 2d, 3d 모드 변환
 	/// </summary>
-	/// <param name="_type">변경할 모드 종류</param>
+	/// <param name="_type">[viewType::_2D] 또는 [viewType::_3D] 입력</param>
 	void ChangeProjectionValues(viewType _type);
 	
 	/// <summary>

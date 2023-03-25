@@ -46,7 +46,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	
 	Example* temp = new Example("example");
     rw->RegisterLayer("example", temp);
-
+	
 	rw->run();
     return 0;
 }

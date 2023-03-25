@@ -23,7 +23,16 @@ public:
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);
 	virtual void run();
 
+	/// <summary>
+	/// gameObjectManger 인터페이스 반환
+	/// </summary>
+	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() { return nullptr; };
+
+	/// <summary>
+	/// 카메라 2d, 3d 모드 변환
+	/// </summary>
+	/// <param name="_type">[viewType::_2D] 또는 [viewType::_3D] 입력</param>
 	virtual void ChangeCameraViewType(viewType);
 
 };

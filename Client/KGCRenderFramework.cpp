@@ -4,6 +4,7 @@
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
 #include <Framework/IFrameworkFactory.h>
+#include <Framework/Framework.h>
 #include <string>
 #pragma comment(lib, "Framework-lib.lib")
 
@@ -82,16 +83,6 @@ public:
 		obj11->transform.SetScale(10, 20, 30);
 		obj12->transform.SetScale(10, 20, 30);
 
-		
-
-
-
-	
-
-
-
-
-
 		gamelist.push_back(obj);
 		gamelist.push_back(obj1);
 		gamelist.push_back(obj2);
@@ -105,8 +96,6 @@ public:
 		gamelist.push_back(obj10);
 		gamelist.push_back(obj11);
 		gamelist.push_back(obj12);
-		
-
 	}
 	virtual ~Example() {};
 
@@ -124,21 +113,10 @@ public:
 	{
 		const auto& keyboard = InputManager::GetKeyboard()->GetState();
 		const auto& mouse = InputManager::GetMouse()->GetState();
-	
 	};
 
 	virtual void Render() 
 	{
-
-
-
-	
-
-
-
-
-
-
 
 		if (my_tool_active) {
 			ImGui::Begin(u8"Hierarchy View",&my_tool_active,ImGuiWindowFlags_MenuBar);
@@ -214,37 +192,13 @@ public:
 
 			ImGui::End();
 		}
-	};
-
-
-};
-
-class Example1 : public ILayer
-{
-public:
-	Example1(const std::string name) : ILayer(name) {}
-	virtual ~Example1() {};
-
-	virtual void Init()
-	{
-
-
-	};
-
-	virtual void Update()
-	{
-		std::cout << "test" << std::endl;
-
-	};
-
-	virtual void Render()
-	{
-		ImGui::Begin(u8"정보창");
-		ImGui::Text(u8"TEST1");
+		ImGui::SetNextWindowSize(ImVec2(520, 600));
+		ImGui::Begin(u8"Debug View");
+		ImGui::Text(u8"평균 프레임: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text(u8"마우스 좌표: X: %d, Y: %d", InputManager::GetMouse()->GetState().x, InputManager::GetMouse()->GetState().y);
+		ImGui::Text(u8"입력 키 W: %d A: %d S: %d D: %d", InputManager::GetKeyboard()->GetState().W, InputManager::GetKeyboard()->GetState().A, InputManager::GetKeyboard()->GetState().S, InputManager::GetKeyboard()->GetState().D);
 		ImGui::End();
 	};
-
-
 };
 
 
@@ -254,26 +208,14 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
                        _In_ int       nCmdShow )
 {
 	IFramework* rw = IFrameworkFactory::createFramework();
-	IFramework* rw1 = IFrameworkFactory::createFramework();
 
 	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
 	
 	IGameObjectManager* manager = rw->GetGameObjectManager();
 
-
-
-	Example* temp = new Example(manager,"example");
-    rw->RegisterLayer("example", temp);
-
-	Example1* temp1 = new Example1("example1");
-	rw1->RegisterLayer("example1", temp1);
-
-
-
+	Example* temp = new Example(manager, "example");
+	rw->RegisterLayer("example", temp);
 
 	rw->run();
     return 0;
 }
-
-
-

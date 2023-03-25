@@ -102,8 +102,11 @@ void GraphicManager::RenderFrame()
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
 	
-	
-
+	if(gameObjectManager->FindGameObject("Nanosuit")==nullptr)
+	{
+		GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
+		obj1->transform.SetPosition(0, 5, 0);
+	}
 
 	
 
@@ -533,8 +536,7 @@ bool GraphicManager::InitializeScene()
 	//
 	//obj4->SetPosition(2,0,0);
 
-	GameObject* obj1 = CreateGameObject_1("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-	obj1->transform.SetPosition(0, 5, 0);
+	
 
 	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
 	//obj2->transform.SetPosition(0, 5, 0);
@@ -596,40 +598,7 @@ bool GraphicManager::InitializeScene()
 	return true;
 }
 
-GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const std::string& path)
-{
-	//리소스매니저에서 쉐이더를 가져옵니다.
-	PixelShader* ps_1 = res->FindPixelShader("ps_1");
-	VertexShader* vs_1 = res->FindVertexShader("vs_1");
 
-	PixelShader* ps_2 = res->FindPixelShader("ps_2");
-	VertexShader* vs_2 = res->FindVertexShader("vs_2");
-	Sprite* sp = res->FindSprite("ani");
-
-	//오브젝트를 생성합니다.
-	GameObject* obj = new GameObject(name);
-
-	//모델 렌더러를 생성합니다.
-	ModelRenderer* render1 = new ModelRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb2, vs_2, ps_2);
-
-	//모델 렌더러를 등록합니다.
-	obj->AddComponent(render1);
-
-	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBox3D(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
-
-	//SpriteRenderer* render2 = new SpriteRenderer(obj);
-	//render2->AddSprite(sp);
-	//render2->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
-	//render2->SelectAnimation("motion1");
-	//obj->AddComponent(render2);
-
-	//게임오브젝트를 등록합니다.
-	gameObjectManager->gameObjects.insert(std::make_pair<>(name, obj));
-
-	return obj;
-}
 
 /*
  스키닝 메시 테스트 함수

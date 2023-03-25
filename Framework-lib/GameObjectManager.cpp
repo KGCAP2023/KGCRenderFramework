@@ -1,22 +1,42 @@
 #include "pch.h"
 #include "GameObjectManager.h"
+#include "Framework.h"
 
 
-GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
+GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& path)
 {
-    if (this->FindGameObject(_name) != nullptr) {
-        //std::cout << "object already exists" << std::endl;
-        return nullptr; 
-    }
 
-    GameObject* obj = new GameObject(_name);
+	//리소스매니저에서 쉐이더를 가져옵니다.
+	PixelShader* ps_1 = res->FindPixelShader("ps_1");
+	VertexShader* vs_1 = res->FindVertexShader("vs_1");
 
+	PixelShader* ps_2 = res->FindPixelShader("ps_2");
+	VertexShader* vs_2 = res->FindVertexShader("vs_2");
+	Sprite* sp = res->FindSprite("ani");
 
-    this->gameObjects.insert(std::make_pair<>(_name, obj));
+	//오브젝트를 생성합니다.
+	GameObject* obj = new GameObject(_name);
 
-    //std::cout << "add success" << std::endl;
+	//모델 렌더러를 생성합니다.
+	ModelRenderer* render1 = new ModelRenderer(obj);
+	render1->Init(path, graphicManager->device.Get(), graphicManager->deviceContext.Get(), graphicManager->res->cb2, vs_2, ps_2);
 
-    return obj;
+	//모델 렌더러를 등록합니다.
+	obj->AddComponent(render1);
+
+	//바운딩 박스 렌더러를 생성&등록합니다.
+	obj->AddComponent(new BoundingBox3D(obj, graphicManager->device.Get(), graphicManager->deviceContext.Get(), ps_1, vs_1, res->cb1));
+
+	//SpriteRenderer* render2 = new SpriteRenderer(obj);
+	//render2->AddSprite(sp);
+	//render2->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
+	//render2->SelectAnimation("motion1");
+	//obj->AddComponent(render2);
+
+	//게임오브젝트를 등록합니다.
+	this->gameObjects.insert(std::make_pair<>(_name, obj));
+
+	return obj;
 }
 
 GameObject* GameObjectManager::FindGameObject(const std::string& _name)

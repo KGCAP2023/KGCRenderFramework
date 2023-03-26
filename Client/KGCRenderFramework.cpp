@@ -22,7 +22,7 @@ public:
 
 	std::vector<GameObject*> gamelist;
 
-	Example(IGameObjectManager* manager, const std::string name) : ILayer(name) 
+	Example(IGameObjectManager* manager, const std::string name) : ILayer(name)
 	{
 		this->_manager = manager;
 		GameObject* obj = _manager->CreateGameObject("Object1");
@@ -101,37 +101,39 @@ public:
 
 
 
-	
-	virtual void Init() 
+
+	virtual void Init()
 	{
 
 
 
 	};
 
-	virtual void Update() 
+	virtual void Update()
 	{
-		const auto& keyboard = InputManager::GetKeyboard()->GetState();
-		const auto& mouse = InputManager::GetMouse()->GetState();
+
 	};
 
-	virtual void Render() 
+	virtual void Render()
 	{
+		auto keyboard = InputManager::GetKeyboardState();
+		auto mouse = InputManager::GetMouseState();
+
 
 		if (my_tool_active) {
-			ImGui::Begin(u8"Hierarchy View",&my_tool_active,ImGuiWindowFlags_MenuBar);
-		
+			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_MenuBar);
+
 			if (ImGui::BeginMenuBar())
 			{
 				if (ImGui::Button("add"))
 				{
-					
-					if (active) 
+
+					if (active)
 					{
 						ImGui::SetNextWindowSize(ImVec2(520, 600));
 						if (!ImGui::BeginPopupContextWindow("AddObject", ImGuiWindowFlags_Popup))
 						{
-							std::cout <<active << std::endl;
+							std::cout << active << std::endl;
 
 							if (ImGui::MenuItem("Close")) { active = false; }
 							ImGui::EndPopup();
@@ -140,13 +142,13 @@ public:
 							ImGui::Text("z");
 						ImGui::EndPopup();
 					}
-				
+
 
 
 				}
 				if (ImGui::Button("delete"))
 				{
-					
+
 					active = true;
 					if (active)
 					{
@@ -155,8 +157,8 @@ public:
 						if (ImGui::MenuItem("Close")) { active = false; }
 						ImGui::EndChild();
 					}
-					
-					
+
+
 
 
 
@@ -171,7 +173,7 @@ public:
 				if (ImGui::Selectable(const_cast<char*>(gamelist.at(i)->ObjectName.c_str()), selected == i))
 					selected = i;
 			}
-			
+
 			ImGui::EndChild();
 			ImGui::SameLine();
 
@@ -188,34 +190,34 @@ public:
 			ImGui::EndChild();
 			ImGui::SameLine();
 			ImGui::EndGroup();
-			        ImGui::SameLine();
+			ImGui::SameLine();
 
 			ImGui::End();
 		}
 		ImGui::SetNextWindowSize(ImVec2(520, 600));
 		ImGui::Begin(u8"Debug View");
 		ImGui::Text(u8"평균 프레임: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text(u8"마우스 좌표: X: %d, Y: %d", InputManager::GetMouse()->GetState().x, InputManager::GetMouse()->GetState().y);
-		ImGui::Text(u8"입력 키 W: %d A: %d S: %d D: %d", InputManager::GetKeyboard()->GetState().W, InputManager::GetKeyboard()->GetState().A, InputManager::GetKeyboard()->GetState().S, InputManager::GetKeyboard()->GetState().D);
+		ImGui::Text(u8"마우스 좌표: X: %d, Y: %d", mouse.x, mouse.y);
+		ImGui::Text(u8"입력 키 W: %d A: %d S: %d D: %d", keyboard.W, keyboard.A, keyboard.S, keyboard.D);
 		ImGui::End();
 	};
 };
 
 
-int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
-                       _In_opt_ HINSTANCE hPrevInstance,
-                       _In_ LPWSTR    lpCmdLine,
-                       _In_ int       nCmdShow )
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
 	IFramework* rw = IFrameworkFactory::createFramework();
 
 	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
-	
+
 	IGameObjectManager* manager = rw->GetGameObjectManager();
 
 	Example* temp = new Example(manager, "example");
 	rw->RegisterLayer("example", temp);
 
 	rw->run();
-    return 0;
+	return 0;
 }

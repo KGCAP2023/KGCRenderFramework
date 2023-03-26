@@ -8,9 +8,41 @@
 #include <string>
 #pragma comment(lib, "Framework-lib.lib")
 
+class LevelEditExample : public ILayer 
+{
+public:
+	IGameObjectManager* _manager;
+	ImVector<ImVec2> points;
+	bool opt_enable_grid = true;
+	bool opt_enable_context_menu = true;
+	bool adding_line = false;
+	bool level_edit = true;
+
+	//생성자 부분, 추후 변경할 예정
+	LevelEditExample(IGameObjectManager* manager, const std::string name) : ILayer(name) {
+		this->_manager = manager;
+	}
+	virtual ~LevelEditExample()
+	{
+
+	};
+
+	virtual void Init()
+	{
+
+	};
+	virtual void Update()
+	{
+
+	};
+	virtual void Render()
+	{
+		auto keyboard = InputManager::GetKeyboardState();
+		auto mouse = InputManager::GetMouseState();
+		
+		static ImVec2 scrolling(0.0f, 0.0f);
 
 
-static int selected = 0;
 
 class Example : public ILayer
 {
@@ -209,7 +241,6 @@ public:
 	};
 };
 
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -223,6 +254,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	Example* temp = new Example(manager, "example");
 	rw->RegisterLayer("example", temp);
+
+	LevelEditExample* temp2 = new LevelEditExample(manager, "example2");
+	rw->RegisterLayer("example2", temp2);
 
 	rw->run();
 	return 0;

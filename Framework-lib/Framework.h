@@ -35,13 +35,16 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() override;
-
+	/// <summary>
+	/// 리소스 매니저를 반환합니다. 
+	/// </summary>
+	/// <returns></returns>
+	virtual IResourceManager* GetResourceManager() override;
 	/// <summary>
 	/// 백엔드 개발용 인스턴스 반환
 	/// </summary>
 	/// <returns></returns>
 	GameObjectManager* GetGameObjectManagerInstance();
-
 	/// <summary>
 	/// 카메라 모드 전환
 	/// </summary>

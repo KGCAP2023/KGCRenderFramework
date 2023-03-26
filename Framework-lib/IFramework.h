@@ -3,6 +3,7 @@
 #include "IScript.h"
 #include "ILayer.h"
 #include "GameObjectManager.h"
+#include "ResourceManager.h"
 #include "Camera.h"
 
 class IFramework
@@ -28,6 +29,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() { return nullptr; };
+	/// <summary>
+	/// 리소스 매니저를 반환합니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual IResourceManager* GetResourceManager() { return nullptr; };
 
 	/// <summary>
 	/// 카메라 2d, 3d 모드 변환

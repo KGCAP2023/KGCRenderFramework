@@ -31,9 +31,6 @@ public:
 	bool Initialize(Framework* framework,HWND hwnd, int width, int height);
 	void RenderFrame();
 
-	//게임 오브젝트
-	//SimpleRenderableObject* obj;
-	//RenderableObject* obj3;
 	GameObject* camera;
 	Camera3D* cameraComponent;
 
@@ -83,8 +80,6 @@ private:
 	void SceneHierarchyWindow();
 	bool doTreeNode(GameObject* obj, int index);
 	Timer fps;
-
-
 
 	//윈도우 핸들
 	HWND hwnd;

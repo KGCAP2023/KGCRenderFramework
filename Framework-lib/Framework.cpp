@@ -37,6 +37,11 @@ IGameObjectManager* Framework::GetGameObjectManager()
 	return gameObjManager;
 }
 
+IResourceManager* Framework::GetResourceManager()
+{
+	return &this->resourceManager;
+}
+
 GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
 	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
@@ -82,7 +87,8 @@ void Framework::Update()
 			std::cout << "Å¬¸¯µÈÁÂÇ¥:  " << mouse.x << "/" << mouse.y << std::endl;
 			this->ray->CalculatePicking(mouse.x, mouse.y);
 			for (auto& kv : this->gameObjManager->gameObjects) {
-				this->ray->isPicked(dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox()));
+				BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
+				if(bbox != nullptr) this->ray->isPicked(bbox);
 			}
 
 		}
@@ -97,16 +103,12 @@ void Framework::Update()
 
 	if (mouse.rightButton)
 	{
-		//std::cout << mouse.x << " " << mouse.y << std::endl;
-
 		while (!yPosRelative.empty())
 		{
-			
 			int yPosRelative2 = yPosRelative.front();
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();
 			xPosRelative.pop();
-			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
 			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
@@ -121,12 +123,6 @@ void Framework::Update()
 	//auto& io = ImGui::GetIO();
 	//if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
 	//	return;
-	//}
-
-
-	//if(mouse.leftButton)
-	//{
-	//	this->graphics.camera->transform.SetLookAtPos(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	//}
 		
 	if (kb.Back) // Backspace key is down
@@ -151,72 +147,24 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		//std::cout << "w" << std::endl;
-		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 
 	if (kb.A) // A key is down
 	{
-		//std::cout << "a" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
 	if (kb.S) // S key is down
 	{
-		//std::cout << "s" << std::endl;
-		//walk->transform.Translate(walk->transform.GetBackward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
 	if (kb.D) // D key is down
 	{
-		//std::cout << "d" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}
 		
-	//if (kb.LeftShift)
-			// Left shift key is down
-
-	//if (kb.RightShift)
-			// Right shift key is down
-
-	 // Keyboard::Keys
-			//std::cout << "Enter" << std::endl;
-
-
-	
-	
-	
-	//this->graphics.obj->Translate(0, 0, 0.008 * dt);
-	
-	//this->graphics.obj3->SetPosition(0,-13,-3);
-	
-	//this->graphics.camera.Translate(0,0,0.008*dt);
-
-	
-
-	bool change = true;
-
-	
-
-	//for (const auto& kv : GameObject::gameObjects) {
-
-	//	if (change)
-	//	{
-	//		kv.second->SetPosition(10, 0, 10);
-	//		kv.second->Rotate(speed * dt,0, 0);
-	//		change = false;
-	//	}
-	//	else
-	//	{
-	//		kv.second->SetPosition(5, 0, 5);
-	//		kv.second->Rotate(speed * dt, 0, speed * dt);
-	//	}
-	//}
-
-	//this->graphics.camera.Rotate(0, speed * dt,0);
-
 
 }
 

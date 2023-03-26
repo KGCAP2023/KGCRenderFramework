@@ -9,7 +9,57 @@
 #include "Shaders.h"
 class Framework;
 
-class ResourceManager
+class IResourceManager
+{
+	/// <summary>
+	/// 스프라이트를 리소스 매니저에 로드합니다.
+	/// 실패시 nullptr를 반환합니다.
+	/// </summary>
+	/// <param name="name">등록할 이름</param>
+	/// <param name="spritePath">파일 경로</param>
+	/// <returns>스프라이트</returns>
+	virtual Sprite* LoadSprite(const std::string& name, const std::string& spritePath) {};
+	/// <summary>
+	/// 스프라이트를 찾습니다.
+	/// 존재하지 않을시 nullptr를 반환합니다.
+	/// </summary>
+	/// <param name="name">찾을 이름</param>
+	/// <returns>스프트라이트</returns>
+	virtual Sprite* FindSprite(const std::string& name) {};
+	/// <summary>
+	/// 버텍스 쉐이더를 로드합니다.
+	/// </summary>
+	/// <param name="name">이름</param>
+	/// <param name="path">경로</param>
+	/// <param name="layout">버텍스 레이아웃</param>
+	/// <param name="numElements2D">버텍스 레이아웃 크기</param>
+	/// <returns>성공여부</returns>
+	virtual bool LoadVertexShader(const std::string& name, const std::wstring& path, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements2D) {};
+	/// <summary>
+	/// 픽셀쉐이더를 로드합니다.
+	/// </summary>
+	/// <param name="name">이름</param>
+	/// <param name="path">경로</param>
+	/// <returns>성공여부</returns>
+	virtual bool LoadPixelShader(const std::string& name, const std::wstring& path) {};
+	/// <summary>
+	/// 버텍스 쉐이더를 찾습니다.
+	/// 존재하지
+	/// </summary>
+	/// <param name="key">찾을 이름</param>
+	/// <returns>버텍스쉐이더</returns>
+	virtual VertexShader* FindVertexShader(const std::string& key) {};
+	/// <summary>
+	/// 픽셀 쉐이더를 찾습니다.
+	/// 존재하지 않을시 nullptr를 반환합니다.
+	/// </summary>
+	/// <param name="key">찾을 이름</param>
+	/// <returns>버텍스쉐이더</returns>
+	virtual PixelShader* FindPixelShader(const std::string& key) {};
+};
+
+
+class ResourceManager : public IResourceManager
 {
 public:
 	ResourceManager() {};
@@ -20,16 +70,15 @@ public:
 	void InitFont(const std::wstring& path);
 
 	//Sprite
-	Sprite* LoadSprite(const std::string& name, const std::string& spritePath);
-	Sprite* FindSprite(const std::string& name);
+	Sprite* LoadSprite(const std::string& name, const std::string& spritePath) override;
+	Sprite* FindSprite(const std::string& name) override;
 
 	//Shader
-	bool LoadVertexShader(const std::string& name, const std::wstring& path, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements2D);
-	bool LoadPixelShader(const std::string& name, const std::wstring& path);
+	bool LoadVertexShader(const std::string& name, const std::wstring& path, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements2D) override;
+	bool LoadPixelShader(const std::string& name, const std::wstring& path) override;
 
-	VertexShader* FindVertexShader(const std::string& key);
-	PixelShader* FindPixelShader(const std::string& key);
-
+	VertexShader* FindVertexShader(const std::string& key) override;
+	PixelShader* FindPixelShader(const std::string& key) override;
 
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;

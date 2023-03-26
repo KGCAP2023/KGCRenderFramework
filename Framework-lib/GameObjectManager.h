@@ -59,13 +59,6 @@ public:
 	/// <param name="res">ResourceManager* 형식으로 현재 ResourceManager를 전달반습니다.</param>
 	GameObjectManager(Framework* framework);
 	
-	
-	Framework* framework; 
-
-	ResourceManager* res;
-
-	GraphicManager* graphicManager;
-	
 	virtual GameObject* CreateGameObject(const std::string& _name) override;
 
 	virtual GameObject* CreateGameObject(const std::string& _name, const std::string& path) override;
@@ -76,10 +69,14 @@ public:
 	
 	virtual std::string GetObjectNames() override;
 
+	//의존성
+	Framework* framework;
+	ResourceManager* res;
+	GraphicManager* graphicManager;
+
+	//맵
 	std::unordered_map<std::string, GameObject*> gameObjects;
-
 	
-
 };
 
 

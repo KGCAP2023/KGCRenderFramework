@@ -88,7 +88,6 @@ bool Ray::isPicked(BoundingBox3D* bbox)
 {
 	// 월드 행렬의 역함수를 구하십시오.
 	XMMATRIX world = bbox->GetOwner()->transform.worldMatrix;
-	//XMMATRIX world = this->framework->gameObjManager->FindGameObject("Nanosuit")->transform.worldMatrix;
 	XMMATRIX inverseWorld = XMMatrixInverse(nullptr, world);
 
 	// 이제 광선 원점과 광선 방향을 뷰 공간에서 월드 공간으로 변환합니다.

@@ -40,11 +40,22 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 
+extern "C"
+{
+	#include <Lua/lua.h>
+	#include <Lua/lauxlib.h>
+	#include <Lua/lualib.h>
+}
+
+#include <Fmod/fmod.hpp>
+
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"DirectXTK.lib")
 #pragma comment(lib,"DirectXTex.lib")
 #pragma comment(lib,"assimp-vc143-mtd.lib")
+#pragma comment(lib,"fmod_vc.lib")
+#pragma comment(lib,"liblua54.a")
 
 #include "Logger.h"
 

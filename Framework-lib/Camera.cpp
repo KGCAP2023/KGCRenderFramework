@@ -12,10 +12,38 @@ Camera3D::Camera3D(GameObject* owner) : Component(owner)
 	this->Update();
 }
 
-void Camera3D::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
+
+
+void Camera3D::ChangeProjectionValues(viewType _type) {
+
+	switch (_type)
+	{
+	case viewType::_2D:
+		this->projectionMatrix = view2DMatrix;
+		break;
+
+	case viewType::_3D:
+		this->projectionMatrix = view3DMatrix;
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+
+
+void Camera3D::initViewMatrix(float fovDegrees, float aspectRatio, float nearZ, float farZ, float _width, float _hight, float _nearZ2, float _farZ2)
 {
 	float fovRadians = (fovDegrees / 360.0f) * XM_2PI;
-	this->projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, nearZ, farZ);
+	this->view3DMatrix = DirectX::XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, nearZ, farZ);
+
+	this->view2DMatrix = DirectX::XMMatrixOrthographicLH(_width, _hight, _nearZ2, _farZ2);
+
+	//todo : 설정에 따라서 초기 뷰 모드 메트릭스로 설정, 현재는 3d 가 디폴트
+	this->projectionMatrix = view3DMatrix;
+
 }
 
 const XMMATRIX& Camera3D::GetViewMatrix() const

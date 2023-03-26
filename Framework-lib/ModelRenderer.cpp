@@ -6,7 +6,6 @@ bool ModelRenderer::Init(const std::string& filePath, ID3D11Device* device, ID3D
 {
 	if (!model.Init(filePath, device, deviceContext, cb_vs_vertexshader,vertexShader,pixelShader))
 		return false;
-	owner->transform.SetPosition(0.0f, 5.0f, 0.0f);
 	owner->transform.SetRotation(0.0f, 0.0f, 0.0f);
 	owner->transform.SetScale(1.0f, 1.0f, 1.0f);
 	this->Update();
@@ -15,7 +14,6 @@ bool ModelRenderer::Init(const std::string& filePath, ID3D11Device* device, ID3D
 
 void ModelRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-
 	model.Draw(owner->transform.worldMatrix,viewProjectionMatrix);
 }
 
@@ -36,7 +34,7 @@ std::string ModelRenderer::GetPath()
 	return this->model.GetPath();
 }
 
-const aiScene* ModelRenderer::GetAiScene()
-{
-	return this->model.getAiScene();
-}
+//const aiScene* ModelRenderer::GetAiScene()
+//{
+//	return this->model.getAiScene();
+//}

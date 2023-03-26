@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Animation2D.h" />
     <ClInclude Include="Animation3D.h" />
-    <ClInclude Include="BoundingBoxRenderer.h" />
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
@@ -46,7 +46,7 @@
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Protocols.h" />
-    <ClInclude Include="RenderComponent.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shaders.h" />
@@ -64,7 +64,7 @@
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp" />
     <ClCompile Include="Animation3D.cpp" />
-    <ClCompile Include="BoundingBoxRenderer.cpp" />
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Framework.cpp" />
@@ -83,7 +83,7 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
-    <ClCompile Include="RenderComponent.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shaders.cpp" />

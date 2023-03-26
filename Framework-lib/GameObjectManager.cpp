@@ -1,22 +1,69 @@
 #include "pch.h"
 #include "GameObjectManager.h"
+#include "Framework.h"
 
+
+GameObjectManager::GameObjectManager(Framework* framework)
+{
+		this->framework = framework;
+		this->graphicManager = &framework->graphics;
+		this->res = &framework->resourceManager;
+}
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
-    if (this->FindGameObject(_name) != nullptr) {
-        //std::cout << "object already exists" << std::endl;
-        return nullptr; 
-    }
 
-    GameObject* obj = new GameObject(_name);
+	//리소스매니저에서 쉐이더를 가져옵니다.
+	PixelShader* ps_1 = res->FindPixelShader("ps_1");
+	VertexShader* vs_1 = res->FindVertexShader("vs_1");
 
 
-    this->gameObjects.insert(std::make_pair<>(_name, obj));
+	//오브젝트를 생성합니다.
+	GameObject* obj = new GameObject(_name);
 
-    //std::cout << "add success" << std::endl;
 
-    return obj;
+	//바운딩 박스 렌더러를 생성&등록합니다.
+	obj->AddComponent(new BoundingBox3D(obj, graphicManager->device.Get(), graphicManager->deviceContext.Get(), ps_1, vs_1, res->cb1));
+
+
+	//게임오브젝트를 등록합니다.
+	this->gameObjects.insert(std::make_pair<>(_name, obj));
+
+	return obj;
+}
+
+GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& path)
+{
+
+	//리소스매니저에서 쉐이더를 가져옵니다.
+	PixelShader* ps_1 = res->FindPixelShader("ps_1");
+	VertexShader* vs_1 = res->FindVertexShader("vs_1");
+
+	PixelShader* ps_2 = res->FindPixelShader("ps_2");
+	VertexShader* vs_2 = res->FindVertexShader("vs_2");
+
+
+	//오브젝트를 생성합니다.
+	GameObject* obj = new GameObject(_name);
+
+
+	//모델 렌더러를 생성합니다.
+	ModelRenderer* render1 = new ModelRenderer(obj);
+	render1->Init(path, graphicManager->device.Get(), graphicManager->deviceContext.Get(), graphicManager->res->cb2, vs_2, ps_2);
+
+
+	//모델 렌더러를 등록합니다.
+	obj->AddComponent(render1);
+
+
+	//바운딩 박스 렌더러를 생성&등록합니다.
+	obj->AddComponent(new BoundingBox3D(obj, graphicManager->device.Get(), graphicManager->deviceContext.Get(), ps_1, vs_1, res->cb1));
+
+
+	//게임오브젝트를 등록합니다.
+	this->gameObjects.insert(std::make_pair<>(_name, obj));
+
+	return obj;
 }
 
 GameObject* GameObjectManager::FindGameObject(const std::string& _name)

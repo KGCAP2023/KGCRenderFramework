@@ -3,7 +3,7 @@
 #include "Sprite.h"
 #include "Animation2D.h"
 
-class SpriteRenderer : public Component, public Renderer
+class SpriteRenderer : public Component
 {
 public:
 	SpriteRenderer(GameObject* owner) : Component(owner)

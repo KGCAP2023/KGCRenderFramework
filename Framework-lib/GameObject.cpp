@@ -9,11 +9,14 @@ void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 	if (isActive)
 	{
-		for (auto it : this->render)
+		for (auto it : this->components)
 		{
-			it->Draw(viewProjectionMatrix);
+			it.second->Draw(viewProjectionMatrix);
 		}
 	}
+
+	if (bbox != nullptr && bbox->isActive())
+		bbox->Draw(viewProjectionMatrix);
 
 	if (!this->child.empty())
 	{
@@ -43,12 +46,13 @@ void GameObject::Update()
 void GameObject::AddComponent(Component* pComponent)
 {
 	Component::Type type = pComponent->GetType();
-	if (type == Component::Type::RENDERER_MODEL || type == Component::Type::BOUNDING_BOX)
+
+	if (type == Component::Type::BOUNDING_BOX)
 	{
-		//this->render MapÀ¸·Î ¹Ù²ã¾ßµÊ
-		this->render.push_back(dynamic_cast<Renderer*>(pComponent));
-		//this->render.push_back((Renderer*)pComponent);
+		this->bbox = dynamic_cast<BoundingBoxRenderer*>(pComponent);
+		return;
 	}
+	
 	components.insert(std::make_pair(type, pComponent));
 }
 

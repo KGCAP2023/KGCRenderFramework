@@ -10,7 +10,7 @@
 
 
 
-
+static int selected = 0;
 
 class Example : public ILayer
 {
@@ -21,6 +21,7 @@ public:
 	bool active = false;
 
 	std::vector<GameObject*> gamelist;
+	char a[20];
 
 	Example(IGameObjectManager* manager, const std::string name) : ILayer(name)
 	{
@@ -38,6 +39,7 @@ public:
 		GameObject* obj10 = _manager->CreateGameObject("Object11");
 		GameObject* obj11 = _manager->CreateGameObject("Object12");
 		GameObject* obj12 = _manager->CreateGameObject("Object13");
+
 
 		obj->transform.SetPosition(30, 20, 30);
 		obj1->transform.SetPosition(10, 30, 15);
@@ -96,6 +98,7 @@ public:
 		gamelist.push_back(obj10);
 		gamelist.push_back(obj11);
 		gamelist.push_back(obj12);
+
 	}
 	virtual ~Example() {};
 
@@ -149,24 +152,13 @@ public:
 				if (ImGui::Button("delete"))
 				{
 
-					active = true;
-					if (active)
-					{
-						ImGui::BeginChild("add");
-
-						if (ImGui::MenuItem("Close")) { active = false; }
-						ImGui::EndChild();
-					}
-
-
-
-
+					gamelist.at(selected)->Destroy();
+					gamelist.erase(gamelist.begin() + selected);
 
 				}
 
 				ImGui::EndMenuBar();
 			}
-			static int selected = 0;
 
 			ImGui::BeginChild("Scrolling", ImVec2(150, 0));
 			for (int i = 0; i < gamelist.size(); ++i) {
@@ -174,6 +166,8 @@ public:
 					selected = i;
 			}
 
+			static bool show = true;
+			ImGui::ShowDemoWindow(&show);
 			ImGui::EndChild();
 			ImGui::SameLine();
 
@@ -183,10 +177,13 @@ public:
 			ImGui::Text(const_cast<char*>(gamelist.at(selected)->ObjectName.c_str()));
 			ImGui::Separator();
 			ImGui::Text("TRANSFORM");
-			ImGui::Text(u8"pos : X:%.3f\tY:%.3f\tZ:%.3f", gamelist.at(selected)->transform.position.x, gamelist.at(selected)->transform.position.y, gamelist.at(selected)->transform.position.z);
-			ImGui::Text(u8"rotation :X:%.3f\tY:%.3f\tZ:%.3f", gamelist.at(selected)->transform.rotation.x, gamelist.at(selected)->transform.rotation.y, gamelist.at(selected)->transform.rotation.z);
-			ImGui::Text(u8"scale :X:%.3f\tY:%.3f\tZ:%.3f", gamelist.at(selected)->transform.scale.x, gamelist.at(selected)->transform.scale.y, gamelist.at(selected)->transform.scale.z);
-
+			ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
+			ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
+			ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
+			ImGui::Separator();
+			ImGui::Text("Other Component");
+			ImGui::Separator();
+			ImGui::Button("Add Component");
 			ImGui::EndChild();
 			ImGui::SameLine();
 			ImGui::EndGroup();
@@ -194,6 +191,15 @@ public:
 
 			ImGui::End();
 		}
+		ImGui::Begin(u8"AddObject");
+		ImGui::InputText("name", a, IM_ARRAYSIZE(a));
+		if (ImGui::Button("save")) {
+			GameObject* ob = _manager->CreateGameObject(a);
+			gamelist.push_back(ob);
+
+		}
+
+		ImGui::End();
 		ImGui::SetNextWindowSize(ImVec2(520, 600));
 		ImGui::Begin(u8"Debug View");
 		ImGui::Text(u8"평균 프레임: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

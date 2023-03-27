@@ -131,7 +131,7 @@ public:
 	IGameObjectManager* _manager;
 
 	bool my_tool_active = true;
-	bool active = true;
+	bool active = false;
 
 	std::vector<GameObject*> gamelist;
 	char a[20];
@@ -247,24 +247,8 @@ public:
 			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_MenuBar);
 				if (ImGui::Button("add"))
 				{
-					ImGui::SetNextWindowSize(ImVec2(520, 600));
-					if(ImGui::Begin("add", &active))
-					{
+					active = true;
 
-						ImGui::InputText("name", a, IM_ARRAYSIZE(a));
-						ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
-						ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
-						ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
-						if (ImGui::Button("save")) {
-							GameObject* ob = _manager->CreateGameObject(a);
-							ob->transform.SetPosition(pos.x, pos.y, pos.z);
-							ob->transform.SetRotation(rot.x, rot.y, rot.z);
-							ob->transform.SetScale(scale.x, scale.y, scale.z);
-							gamelist.push_back(ob);
-
-						}
-						
-					}ImGui::End();
 				
 				}
 				ImGui::SameLine();
@@ -331,28 +315,29 @@ public:
 			ImGui::SameLine();
 			
 			ImGui::End();
+			if (active) {
+				ImGui::Begin("add2", &active, ImGuiWindowFlags_MenuBar);
 
+
+				ImGui::InputText("name", a, IM_ARRAYSIZE(a));
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
+				ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
+				ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
+				if (ImGui::Button("save")) {
+					GameObject* ob = _manager->CreateGameObject(a);
+					ob->transform.SetPosition(pos.x, pos.y, pos.z);
+					ob->transform.SetRotation(rot.x, rot.y, rot.z);
+					ob->transform.SetScale(scale.x, scale.y, scale.z);
+					gamelist.push_back(ob);
+
+				}
+
+				ImGui::End();
+			}
 		}
-
 
 		ImGui::SetNextWindowSize(ImVec2(520, 600));
-		if (ImGui::Begin("add", &active))
-		{
 
-			ImGui::InputText("name", a, IM_ARRAYSIZE(a));
-			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
-			ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
-			ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
-			if (ImGui::Button("save")) {
-				GameObject* ob = _manager->CreateGameObject(a);
-				ob->transform.SetPosition(pos.x, pos.y, pos.z);
-				ob->transform.SetRotation(rot.x, rot.y, rot.z);
-				ob->transform.SetScale(scale.x, scale.y, scale.z);
-				gamelist.push_back(ob);
-
-			}
-			ImGui::End();
-		}
 
 		ImGui::Begin(u8"Debug View");
 		ImGui::Text(u8"평균 프레임: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

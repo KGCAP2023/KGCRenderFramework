@@ -131,7 +131,7 @@ public:
 	IGameObjectManager* _manager;
 
 	bool my_tool_active = true;
-	bool active = false;
+	bool active = true;
 
 	std::vector<GameObject*> gamelist;
 	char a[20];
@@ -232,7 +232,11 @@ public:
 	{
 
 	};
+	virtual void draw()
+	{
 
+
+	}
 	virtual void Render()
 	{
 		auto keyboard = InputManager::GetKeyboardState();
@@ -241,16 +245,12 @@ public:
 
 		if (my_tool_active) {
 			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_MenuBar);
-
-			if (ImGui::BeginMenuBar())
-			{
 				if (ImGui::Button("add"))
 				{
-					active = true;
-					if (active)
+					ImGui::SetNextWindowSize(ImVec2(520, 600));
+					if(ImGui::Begin("add", &active))
 					{
-						ImGui::SetNextWindowSize(ImVec2(520, 600));
-						ImGui::Begin(u8"AddObject",&active);
+
 						ImGui::InputText("name", a, IM_ARRAYSIZE(a));
 						ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
 						ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
@@ -263,30 +263,41 @@ public:
 							gamelist.push_back(ob);
 
 						}
-
-						ImGui::End();
+						
+					}ImGui::End();
+				
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("delete"))
+				{
+					//selected=0~12 size 13
+					if (selected >= 0) {
+						if (selected == gamelist.size() - 1)
+						{
+							gamelist.at(selected)->Destroy();
+							gamelist.pop_back();
+							selected--;
+						}
+						else
+						{
+							gamelist.at(selected)->Destroy();
+							gamelist.erase(gamelist.begin() + selected);
+						}
 					}
 
 
-
-				}
-				if (ImGui::Button("delete"))
-				{
-
-					gamelist.at(selected)->Destroy();
-					gamelist.erase(gamelist.begin() + selected);
-
 				}
 
-				ImGui::EndMenuBar();
-			}
+
 
 			ImGui::BeginChild("Scrolling", ImVec2(150, 0));
-			for (int i = 0; i < gamelist.size(); ++i) {
-				if (ImGui::Selectable(const_cast<char*>(gamelist.at(i)->ObjectName.c_str()), selected == i))
-					selected = i;
+			if (gamelist.size() != 0)
+			{
+				for (int i = 0; i < gamelist.size(); i++) {
+					if (ImGui::Selectable(const_cast<char*>(gamelist.at(i)->ObjectName.c_str()), selected == i))
+						selected = i;
+				}
 			}
-
 			static bool show = true;
 			ImGui::ShowDemoWindow(&show);
 			ImGui::EndChild();
@@ -295,25 +306,53 @@ public:
 			ImGui::BeginGroup();
 
 			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
-			ImGui::Text(const_cast<char*>(gamelist.at(selected)->ObjectName.c_str()));
+			if (gamelist.size() != 0)
+			{
+				ImGui::Text(const_cast<char*>(gamelist.at(selected)->ObjectName.c_str()));
+				ImGui::Separator();
+				ImGui::Text("TRANSFORM");
+
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
+				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
+				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
+			}
+			
 			ImGui::Separator();
-			ImGui::Text("TRANSFORM");
-			ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
-			ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
-			ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
-			ImGui::Separator();
+
 			ImGui::Text("Other Component");
+
 			ImGui::Separator();
+
 			ImGui::Button("Add Component");
+
 			ImGui::EndChild();
 			ImGui::SameLine();
 			ImGui::EndGroup();
 			ImGui::SameLine();
-
+			
 			ImGui::End();
+
 		}
 
 
+		ImGui::SetNextWindowSize(ImVec2(520, 600));
+		if (ImGui::Begin("add", &active))
+		{
+
+			ImGui::InputText("name", a, IM_ARRAYSIZE(a));
+			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
+			ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
+			ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
+			if (ImGui::Button("save")) {
+				GameObject* ob = _manager->CreateGameObject(a);
+				ob->transform.SetPosition(pos.x, pos.y, pos.z);
+				ob->transform.SetRotation(rot.x, rot.y, rot.z);
+				ob->transform.SetScale(scale.x, scale.y, scale.z);
+				gamelist.push_back(ob);
+
+			}
+			ImGui::End();
+		}
 
 		ImGui::Begin(u8"Debug View");
 		ImGui::Text(u8"평균 프레임: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

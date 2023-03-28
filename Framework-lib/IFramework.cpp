@@ -25,7 +25,7 @@ void IFramework::run()
 {
 }
 
-void IFramework::ChangeCameraViewType(viewType)
+void IFramework::ChangeCameraViewType(Camera3D::ViewType viewType)
 {
 }
 

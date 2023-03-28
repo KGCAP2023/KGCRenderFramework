@@ -3,6 +3,7 @@
 #include "ConstantBuffer.h"
 #include "ConstantBufferType.h"
 #include "Sprite.h"
+#include "TileMap.h"
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include <CommonStates.h>
@@ -11,6 +12,7 @@ class Framework;
 
 class IResourceManager
 {
+public:
 	/// <summary>
 	/// 스프라이트를 리소스 매니저에 로드합니다.
 	/// 실패시 nullptr를 반환합니다.
@@ -56,6 +58,18 @@ class IResourceManager
 	/// <param name="key">찾을 이름</param>
 	/// <returns>버텍스쉐이더</returns>
 	virtual PixelShader* FindPixelShader(const std::string& key) { return nullptr; };
+	/// <summary>
+	/// 타일맵을 리소스매니저에 등록합니다.
+	/// </summary>
+	/// <param name="name">찾을 이름</param>
+	/// <param name="tileMap">타일맵</param>
+	virtual void RegisterTileMap(const std::string& name, TileMap* tileMap) {};
+	/// <summary>
+	/// 타일맵을 찾습니다.
+	/// </summary>
+	/// <param name="name">찾을 이름</param>
+	/// <returns>타일맵</returns>
+	virtual TileMap* FindTileMap(const std::string& name) { return nullptr; };
 };
 
 
@@ -73,6 +87,10 @@ public:
 	Sprite* LoadSprite(const std::string& name, const std::string& spritePath) override;
 	Sprite* FindSprite(const std::string& name) override;
 
+	//Sprite
+	void RegisterTileMap(const std::string& name, TileMap* tileMap) override;
+	TileMap* FindTileMap(const std::string& name) override;
+
 	//Shader
 	bool LoadVertexShader(const std::string& name, const std::wstring& path, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements2D) override;
 	bool LoadPixelShader(const std::string& name, const std::wstring& path) override;
@@ -82,6 +100,7 @@ public:
 
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;
+	std::unordered_map<std::string, TileMap*> _TileMap;
 
 	//버텍스 쉐이더
 	std::unordered_map<std::string, VertexShader*> _vsMap;

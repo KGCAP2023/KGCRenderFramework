@@ -3,6 +3,9 @@
 #include "Sprite.h"
 #include "Animation2D.h"
 
+/// <summary>
+/// 2D스프라이트를 가져옵니다.
+/// </summary>
 class SpriteRenderer : public Component
 {
 public:

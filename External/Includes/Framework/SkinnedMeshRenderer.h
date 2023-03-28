@@ -3,6 +3,9 @@
 #include "Shaders.h"
 #include "SkinnedMesh.h"
 
+/// <summary>
+/// 애니메이션이들어있는 동적 3D모델을 로드할때 사용하는 컴포넌트 입니다. 
+/// </summary>
 class SkinnedMeshRenderer : public Component
 {
 public:

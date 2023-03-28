@@ -21,3 +21,8 @@ GameObject* Component::GetOwner()
 {
 	return this->owner;
 }
+
+std::string Component::GetName()
+{
+	return this->name;
+}

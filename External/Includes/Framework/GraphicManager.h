@@ -74,12 +74,11 @@ private:
 
 	std::string target;
 
-	GameObject* CreateGameObject_1(const std::string& name, const std::string& path);
-	GameObject* CreateGameObject_2(const std::string& name, const std::string& path);
-
 	void SceneHierarchyWindow();
 	bool doTreeNode(GameObject* obj, int index);
 	Timer fps;
+
+	GameObject* CreateGameObject_2(const std::string& name, const std::string& path);
 
 	//윈도우 핸들
 	HWND hwnd;

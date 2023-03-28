@@ -39,9 +39,6 @@
     <ClInclude Include="Component.h">
       <Filter>헤더 파일\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>헤더 파일\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Animation2D.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
@@ -74,9 +71,6 @@
     </ClInclude>
     <ClInclude Include="Matrix.h">
       <Filter>헤더 파일\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>헤더 파일\Component</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>헤더 파일\Scene</Filter>
@@ -159,6 +153,15 @@
     <ClInclude Include="BoundingBox.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapRenderer.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp">
@@ -192,9 +195,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">

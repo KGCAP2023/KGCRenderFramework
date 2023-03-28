@@ -12,22 +12,13 @@ GameObjectManager::GameObjectManager(Framework* framework)
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
-
-	//리소스매니저에서 쉐이더를 가져옵니다.
-	PixelShader* ps_1 = res->FindPixelShader("ps_1");
-	VertexShader* vs_1 = res->FindVertexShader("vs_1");
-
-
 	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(_name);
-
-
-	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBox3D(obj, graphicManager->device.Get(), graphicManager->deviceContext.Get(), ps_1, vs_1, res->cb1));
-
-
+	obj->SetObjectType(GameObject::ObjectType::OBJECT_2D);
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));
+
+
 
 	return obj;
 }
@@ -45,7 +36,7 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const 
 
 	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(_name);
-
+	obj->SetObjectType(GameObject::ObjectType::OBJECT_3D);
 
 	//모델 렌더러를 생성합니다.
 	ModelRenderer* render1 = new ModelRenderer(obj);

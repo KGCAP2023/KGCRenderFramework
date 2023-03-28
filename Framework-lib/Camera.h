@@ -2,18 +2,20 @@
 #include "GameObject.h"
 using namespace DirectX;
 
-enum class viewType { _2D, _3D };
+
 
 class Camera3D : public Component
 {
 public:
+	static enum class ViewType { _2D, _3D };
+
 	Camera3D(GameObject* owner);
 
 	/// <summary>
 	/// 카메라 2d, 3d 모드 변환
 	/// </summary>
 	/// <param name="_type">[viewType::_2D] 또는 [viewType::_3D] 입력</param>
-	void ChangeProjectionValues(viewType _type);
+	void ChangeProjectionValues(ViewType _type);
 	
 	/// <summary>
 	/// 카메라 기본 뷰 메트릭스 초기화

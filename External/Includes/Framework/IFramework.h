@@ -39,6 +39,6 @@ public:
 	/// 카메라 2d, 3d 모드 변환
 	/// </summary>
 	/// <param name="_type">[viewType::_2D] 또는 [viewType::_3D] 입력</param>
-	virtual void ChangeCameraViewType(viewType);
+	virtual void ChangeCameraViewType(Camera3D::ViewType viewType);
 
 };

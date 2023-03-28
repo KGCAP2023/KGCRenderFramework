@@ -41,7 +41,6 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="pch.h" />
@@ -56,6 +55,8 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMapRenderer.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
@@ -80,7 +81,6 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="Ray.cpp" />

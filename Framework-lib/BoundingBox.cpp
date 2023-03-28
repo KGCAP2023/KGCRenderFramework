@@ -123,6 +123,6 @@ void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
 
         //파이프라인에 최종적으로 등록합니다.
         this->deviceContext->DrawIndexed(this->indexbuffer.IndexCount(), 0, 0);
-        
+  
     }
 }

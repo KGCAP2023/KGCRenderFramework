@@ -49,7 +49,7 @@ GameObjectManager* Framework::GetGameObjectManagerInstance()
 	return gameObjManager;
 }
 
-void Framework::ChangeCameraViewType(viewType _viewType)
+void Framework::ChangeCameraViewType(Camera3D::ViewType _viewType)
 {
 
 	if(this->graphics.cameraComponent != nullptr) this->graphics.cameraComponent->ChangeProjectionValues(_viewType);

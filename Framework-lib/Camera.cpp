@@ -14,18 +14,17 @@ Camera3D::Camera3D(GameObject* owner) : Component(owner)
 
 
 
-void Camera3D::ChangeProjectionValues(viewType _type) {
+void Camera3D::ChangeProjectionValues(ViewType _type) {
 
 	switch (_type)
 	{
-	case viewType::_2D:
+	case ViewType::_2D:
 		this->projectionMatrix = view2DMatrix;
 		break;
 
-	case viewType::_3D:
+	case ViewType::_3D:
 		this->projectionMatrix = view3DMatrix;
 		break;
-
 	default:
 		break;
 	}

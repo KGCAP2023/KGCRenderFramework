@@ -4,6 +4,9 @@
 #include "Renderer.h"
 #include "Model.h"
 
+/// <summary>
+/// 정적 모델을 불러올때 주로 사용하는 컴포넌트 입니다.
+/// </summary>
 class ModelRenderer : public Component, public Renderer
 {
 public:

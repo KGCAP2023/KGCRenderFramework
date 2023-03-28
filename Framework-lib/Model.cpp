@@ -27,7 +27,7 @@ bool Model::Init(const std::string& filePath, ID3D11Device* device, ID3D11Device
 
 void Model::Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix)
 {
-
+	this->deviceContext->IASetInputLayout(this->vertexShader->GetInputLayout());
 	this->deviceContext->VSSetShader(this->vertexShader->GetShader(), NULL, 0);
 	this->deviceContext->PSSetShader(this->pixelShader->GetShader(), NULL, 0);
 
@@ -65,7 +65,6 @@ bool Model::loadModel(const std::string & path)
 		return false;
 
 	this->directory = path.substr(0, path.find_last_of("/\\"));
-
 	processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
 
 	return true;
@@ -90,7 +89,6 @@ void Model::processNode(aiNode* node, const aiScene* scene, const XMMATRIX& pare
 		this->processNode(node->mChildren[i], scene, nodeTransformMatrix);
 	}
 }
-
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, const XMMATRIX& transformMatrix)
 {

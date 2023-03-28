@@ -101,11 +101,6 @@ void GraphicManager::RenderFrame()
 	deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
-	
-
-	
-
-
 	/*
 	//DRAW CALL (3D 도형 그리기)
 	IASetInputLayout 버텍스 인풋 레이아웃 세트		deviceContext
@@ -131,19 +126,33 @@ void GraphicManager::RenderFrame()
 
 	*/
 
+	const wchar_t* output = L"캡스톤_프로젝트";
 
-	VertexShader* vs_3 = res->FindVertexShader("vs_1");
-	deviceContext->IASetInputLayout(vs_3->GetInputLayout());
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	//Perspective Projection 행렬을 셋팅합니다.
+	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 
+	//3D오브젝트를 그립니다.
 	{
 		for (const auto& kv : gameObjectManager->gameObjects) {
-			(kv.second)->Draw(vp);
+			(kv.second)->Draw(vp, GameObject::ObjectType::OBJECT_3D);
 		}
 	}
 
+	// Orthographic Projection 행렬을 셋팅합니다.
+	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
+	vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
+
+	//2D오브젝트를 그립니다.
+	{
+		for (const auto& kv : gameObjectManager->gameObjects) {
+			(kv.second)->Draw(vp, GameObject::ObjectType::OBJECT_2D);
+		}
+	}
+
+	res->spriteBatch->Begin();
+	res->spriteFont->DrawString(res->spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
+	res->spriteBatch->End();
 
 	static int fpsCounter = 0;
 	fpsCounter += 1;
@@ -155,14 +164,7 @@ void GraphicManager::RenderFrame()
 		fps.ReStart();
 	}
 
-	const wchar_t* output = L"캡스톤_프로젝트";
-	res->spriteBatch->Begin();
-	res->spriteFont->DrawString(res->spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
-	res->spriteBatch->End();
-
-	//Sprite* sp = res->FindSprite("ani");
-	//sp->Draw(DirectX::SimpleMath::Vector2(0, 0), res->spriteBatch.get());
-
+	//그려진 백버퍼를 텍스쳐로 저장합니다.
 	deviceContext->CopyResource(refTex, backBuffer.Get());
 
 	/**
@@ -170,21 +172,15 @@ void GraphicManager::RenderFrame()
 	 IMGUI
 
 	**/
-	static bool inspector = true;
-	static bool ppp = true;
-	bool show_demo_window = true;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-	// Start the Dear ImGui frame
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
+	//도킹스페이스를 그립니다.
 	framework->layerManager.DockingSpace();
+	//창을 그립니다.
 	framework->layerManager.Render();
 	
-
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 

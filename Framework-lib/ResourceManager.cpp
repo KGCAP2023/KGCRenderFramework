@@ -64,7 +64,20 @@ Sprite* ResourceManager::FindSprite(const std::string& key)
 	}
 	return nullptr;
 }
-;
+
+void ResourceManager::RegisterTileMap(const std::string& name, TileMap* tileMap)
+{
+	if(tileMap != nullptr)
+		this->_TileMap.insert(std::make_pair<>(name, tileMap));
+}
+
+TileMap* ResourceManager::FindTileMap(const std::string& name)
+{
+	if (this->_TileMap.find(name) != this->_TileMap.end()) {
+		return this->_TileMap[name];
+	}
+	return nullptr;
+}
 
 VertexShader* ResourceManager::FindVertexShader(const std::string& key)
 {

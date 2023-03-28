@@ -13,6 +13,7 @@ void LayerManager::Init(Framework* framework)
 
 void LayerManager::RegisterLayer(const std::string& key, ILayer* layer)
 {
+	layer->Init();
 	this->_layerMap.insert(std::make_pair<>(key,layer));
 }
 

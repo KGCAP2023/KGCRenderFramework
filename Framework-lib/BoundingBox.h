@@ -30,7 +30,6 @@ public:
 	}
 
 
-
 protected:
 	bool isActiveBoundingBox = true;
 };
@@ -46,7 +45,6 @@ public:
 	{
 		//부모 노드 기준 좌표계로 변환
 		XMMATRIX nodeTransformMatrix = XMMatrixTranspose(XMMATRIX(&node->mTransformation.a1)) * parentTransformMatrix;
-
 
 		//해당 노드의 메시를 순회 
 		for (UINT i = 0; i < node->mNumMeshes; i++) {

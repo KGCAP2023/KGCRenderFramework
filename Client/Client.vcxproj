@@ -161,6 +161,7 @@
     <ClCompile Include="KGCRenderFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hierarchy.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

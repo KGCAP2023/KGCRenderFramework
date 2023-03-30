@@ -10,8 +10,12 @@ bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std:
 			resource.GetAddressOf(),
 			this->view.GetAddressOf());
 
-	//COM_ERROR_IF_FAILED(hr, "Failed to initialize vertex buffer for sprite.");
-
+	if (FAILED(hr))
+	{
+		Logger::Log("해당 경로에서 Sprite를 읽어올수 없습니다! 경로: " + spritePath);
+		return false;
+	}
+		
 	resource.As(&texture2d);
 
 	CD3D11_TEXTURE2D_DESC texDesc;
@@ -25,12 +29,12 @@ bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std:
 
 float Sprite::GetWidth()
 {
-	return origin.x;
+	return origin.x * 2;
 }
 
 float Sprite::GetHeight()
 {
-	return origin.y;
+	return origin.y * 2;
 }
 
 ID3D11ShaderResourceView* Sprite::Get()

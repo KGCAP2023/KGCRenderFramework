@@ -19,13 +19,13 @@ HRESULT CompileShaderFromFile(std::wstring FileName, LPCSTR szEntryPoint, LPCSTR
 	dwShaderFlags |= D3DCOMPILE_DEBUG;
 #endif
 
-	ID3DBlob* pErrorBlob;
+	ID3DBlob* pErrorBlob = nullptr ;
 	hr = D3DCompileFromFile(FileName.c_str(), NULL, NULL, szEntryPoint, szShaderModel,
 		dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
 
 	if (FAILED(hr))
 	{
-		if (pErrorBlob != NULL)
+		if (pErrorBlob != nullptr)
 			OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
 		if (pErrorBlob) pErrorBlob->Release();
 		return hr;

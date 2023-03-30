@@ -49,6 +49,9 @@ void Ray::CalculatePicking(int mouseX, int mouseY)
 	XMMATRIX inverseView;
 	XMMATRIX translate;
 
+	//3D관점의 뷰를 사용합니다.
+	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
+
 	proj = cameraComponent->GetProjectionMatrix();
 	view = cameraComponent->GetViewMatrix();
 

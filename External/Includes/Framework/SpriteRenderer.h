@@ -12,6 +12,7 @@ public:
 	SpriteRenderer(GameObject* owner) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_MODEL;
+		this->name = "SpriteRenderer";
 	}
 
 	virtual void Update() override;

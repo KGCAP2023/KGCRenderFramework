@@ -10,6 +10,7 @@ public:
 	TileMapRenderer(GameObject* owner) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_TILEMAP;
+		this->name = "TileMapRenderer";
 	}
 
 	void Init(TileMap* tileMap)

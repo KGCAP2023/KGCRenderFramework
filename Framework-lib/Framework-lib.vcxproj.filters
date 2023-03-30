@@ -34,6 +34,9 @@
     <Filter Include="헤더 파일\Manager">
       <UniqueIdentifier>{f565d208-7870-4979-b51f-801bd9dd7e51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Audio">
+      <UniqueIdentifier>{51c575f2-acc3-4ff8-a3f4-e193a3b2fd31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h">
@@ -165,6 +168,9 @@
     <ClInclude Include="TestRenderer.h">
       <Filter>헤더 파일\Component</Filter>
     </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>헤더 파일\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp">
@@ -267,6 +273,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TestRenderer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

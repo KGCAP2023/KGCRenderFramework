@@ -1,6 +1,7 @@
 #pragma once
 #include "IFramework.h"
 #include "GraphicManager.h"
+#include "AudioManager.h"
 #include "Timer.h"
 #include "InputManager.h"
 #include "LayerManager.h"
@@ -67,6 +68,7 @@ public:
 	LayerManager layerManager;
 	GraphicManager graphics;
 	ResourceManager resourceManager;
+	AudioManager audioManager;
 	GameObjectManager* gameObjManager;
 	Ray* ray;
 

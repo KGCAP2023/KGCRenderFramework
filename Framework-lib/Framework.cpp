@@ -261,8 +261,23 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		return false;
 	}
 
+	//오디오 매니저 초기화
+	if (!this->audioManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED Audio Manager Initialize!" << std::endl;
+		return false;
+	}
+
+	ray = new Ray(this);
 	ray = new Ray(this);
 
+	//오디오 테스트 및 초기화 완료 음
+	#pragma region MyRegion
+	audioManager.LoadAudio("test", "..//Resource/Audios/test.mp3");
+	audioManager.PlayAudio("test");
+	#pragma endregion
+
+	
 	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 
 	return true;

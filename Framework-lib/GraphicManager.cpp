@@ -141,7 +141,7 @@ void GraphicManager::RenderFrame()
 
 	// Orthographic Projection 행렬을 셋팅합니다.
 	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
-	vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
+	vp = camera->transform.worldMatrix * cameraComponent->GetProjectionMatrix();
 
 	//2D오브젝트를 그립니다.
 	{
@@ -405,13 +405,11 @@ bool GraphicManager::InitializeShaders()
 
 	if (!res->LoadVertexShader("vs_1", L"..\\Shader\\VertexShader.hlsl", layout, numElements))
 	{
-		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
 	if (!res->LoadPixelShader("ps_1", L"..\\Shader\\PixelShader.hlsl"))
 	{
-		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
 	}
 
@@ -426,13 +424,11 @@ bool GraphicManager::InitializeShaders()
 
 	if (!res->LoadVertexShader("vs_2", L"..\\Shader\\VertexShader2.hlsl", layout3D, numElements3D))
 	{
-		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
 	if (!res->LoadPixelShader("ps_2", L"..\\Shader\\PixelShader2.hlsl"))
 	{
-		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
 	}
 
@@ -459,7 +455,6 @@ bool GraphicManager::InitializeShaders()
 
 	if (!res->LoadVertexShader("vs_3", L"..\\Shader\\VertexShader3.hlsl", layoutw, numElementsw))
 	{
-		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
@@ -510,11 +505,13 @@ bool GraphicManager::InitializeScene()
 
 
 	#pragma region 테스트용
-		if (gameObjectManager->FindGameObject("Nanosuit") == nullptr)
-		{
-			GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit","..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-			obj1->transform.SetPosition(0, 0, 0);
-		}
+
+	if (gameObjectManager->FindGameObject("Nanosuit") == nullptr)
+	{
+		GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
+		obj1->transform.SetPosition(0, 0, 0);
+	}
+
 	#pragma endregion
 
 

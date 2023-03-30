@@ -14,7 +14,6 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
 	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(_name);
-	obj->SetObjectType(GameObject::ObjectType::OBJECT_2D);
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));
 

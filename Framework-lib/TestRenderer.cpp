@@ -3,7 +3,7 @@
 
 bool TestRenderer::Init(ResourceManager* res, Sprite *sprite)
 {
-
+    //기본셋팅 
     this->device = res->device.Get();
     this->deviceContext = res->deviceContext.Get();
     this->constantBuffer = res->cb2;
@@ -11,6 +11,7 @@ bool TestRenderer::Init(ResourceManager* res, Sprite *sprite)
     this->vertexShader = res->FindVertexShader("vs_2");
     this->sprite = sprite;
 
+    //정점 좌표 그리기
 	vertices.push_back(Vertex3D(-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
 	vertices.push_back(Vertex3D(0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
 	vertices.push_back(Vertex3D(-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f));
@@ -37,10 +38,10 @@ bool TestRenderer::Init(ResourceManager* res, Sprite *sprite)
 	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), device);
 	hr = this->indexbuffer.Init(indices.data(), indices.size(), device);
 
-    /*
-        <필수>
-        중요!!!!! 여기서 반드시 위치 초기화 작업 해줄것!!!!!!!
-    */
+
+
+    //<필수> 초기화 작업 꼭 해줄것 안하면 scale 기본값 0 0 이라 안보임
+
     this->owner->transform.SetPosition(0.0f, 0.0f, 0.0f);
     this->owner->transform.SetRotation(0.0f, 0.0f, 0.0f);
     this->owner->transform.SetScale(1.f, 1.f);
@@ -90,6 +91,8 @@ void TestRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 
 void TestRenderer::Update()
 {
+    //행렬 업데이트
+    //Scale * Rotate * Translation
 	GameObject* owner = this->owner;
 	owner->transform.worldMatrix = DirectX::XMMatrixScaling(owner->transform.scale.x, owner->transform.scale.y, owner->transform.scale.z) * XMMatrixRotationRollPitchYaw(owner->transform.rotation.x, owner->transform.rotation.y, owner->transform.rotation.z) * XMMatrixTranslation(owner->transform.position.x, owner->transform.position.y, owner->transform.position.z);
 	owner->transform.UpdateDirection();

@@ -65,6 +65,7 @@ void GameObject::AddComponent(Component* pComponent)
 	{
 		case Component::Type::RENDERER_MODEL:
 		case Component::Type::RENDERER_SKINNED_MODEL:
+		case Component::Type::RENDERER_TEST:
 			this->objectType = GameObject::ObjectType::OBJECT_3D;
 			break;
 		case Component::Type::RENDERER_SPRITE:
@@ -74,6 +75,14 @@ void GameObject::AddComponent(Component* pComponent)
 	}
 
 	components.insert(std::make_pair(type, pComponent));
+}
+
+void GameObject::RemoveComponent(const Component::Type componentID)
+{
+	//Component* c = this->GetComponent(componentID);
+	//if (c != nullptr)
+	//	delete c;
+	components.erase(componentID);
 }
 
 Component* GameObject::GetComponent(const std::string componentID)
@@ -100,6 +109,24 @@ Component* GameObject::GetComponent(const Component::Type componentID)
 	else
 	{
 		return nullptr;
+	}
+}
+
+std::unordered_map<Component::Type, Component*, Component::ComponentHash> GameObject::GetComponentMap()
+{
+	return this->components;
+}
+
+int GameObject::GetComponentSize()
+{
+	return components.size();
+}
+
+void GameObject::ComponentForeach(std::function<void(Component*)> callback)
+{
+	for (auto& a : components)
+	{
+		callback(a.second);
 	}
 }
 

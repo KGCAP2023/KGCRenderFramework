@@ -10,7 +10,8 @@ public:
 
 	TestRenderer(GameObject *owner) : Component(owner)
 	{
-		this->type = Component::Type::RENDERER_MODEL;
+		this->type = Component::Type::RENDERER_TEST;
+		this->name = "TestRenderer";
 	}
 
 	bool Init(ResourceManager* res, Sprite* sprite);

@@ -29,12 +29,12 @@ bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std:
 
 float Sprite::GetWidth()
 {
-	return origin.x;
+	return origin.x * 2;
 }
 
 float Sprite::GetHeight()
 {
-	return origin.y;
+	return origin.y * 2;
 }
 
 ID3D11ShaderResourceView* Sprite::Get()

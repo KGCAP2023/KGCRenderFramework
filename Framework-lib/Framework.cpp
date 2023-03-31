@@ -84,6 +84,8 @@ void Framework::Update()
 	{
 		if (!MOUSE_LEFT_BUTTON_PRESSED)
 		{
+			this->ChangeCameraViewType(Camera3D::ViewType::_2D);
+
 			std::cout << "Å¬¸¯µÈÁÂÇ¥:  " << mouse.x << "/" << mouse.y << std::endl;
 			this->ray->CalculatePicking(mouse.x, mouse.y);
 			for (auto& kv : this->gameObjManager->gameObjects) {
@@ -105,6 +107,7 @@ void Framework::Update()
 	{
 		while (!yPosRelative.empty())
 		{
+			this->ChangeCameraViewType(Camera3D::ViewType::_3D);
 			int yPosRelative2 = yPosRelative.front();
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();

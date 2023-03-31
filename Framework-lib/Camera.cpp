@@ -19,14 +19,11 @@ void Camera3D::ChangeProjectionValues(ViewType _type) {
 	switch (_type)
 	{
 	case ViewType::_2D:
-		changeMode(true);
-		//this->projectionMatrix = view2DMatrix;
+		changeMode(false);
 		break;
 
 	case ViewType::_3D:
-		changeMode(false);
-
-		this->projectionMatrix = view3DMatrix;
+		changeMode(true);
 		break;
 	default:
 		break;

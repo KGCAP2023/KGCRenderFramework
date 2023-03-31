@@ -5,12 +5,11 @@
 #include <imgui_impl_dx11.h>
 #include <Framework/IFrameworkFactory.h>
 #include <Framework/Framework.h>
-#include "hierarchy.h"
-#include <string>
-#pragma comment(lib, "Framework-lib.lib")
 #include <Framework/ILayer.h>
 #include <Framework/IFramework.h>
 #include <imgui.h>
+
+static int selected = 0;
 
 class Hierarchy : public ILayer 
 {

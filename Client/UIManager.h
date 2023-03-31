@@ -26,7 +26,7 @@ public:
 	{
 		LevelEditExample* temp2 = new LevelEditExample(this->objMgr, resMgr, "example2");
 		uiList.push_back(temp2);
-		Hierarchy* hierarachy = new Hierarchy(this->objMgr, "hierarachy", this->framework);
+		Hierarchy* hierarachy = new Hierarchy(this->objMgr,this->resMgr, "hierarachy", this->framework);
 		uiList.push_back(hierarachy);
 	}
 

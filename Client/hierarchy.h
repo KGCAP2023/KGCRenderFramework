@@ -5,33 +5,34 @@
 #include <imgui_impl_dx11.h>
 #include <Framework/IFrameworkFactory.h>
 #include <Framework/Framework.h>
+#include "hierarchy.h"
 #include <Framework/ILayer.h>
 #include <Framework/IFramework.h>
 #include <imgui.h>
 
-static int selected = 0;
-
-class Hierarchy : public ILayer 
+class Hierarchy : public ILayer
 {
 public:
-
 	IFramework* framework = nullptr;
 	IGameObjectManager* _manager;
+	IResourceManager* res;
+	Sprite* sp;
 	std::vector<GameObject*> gamelist;
 	int selected = 0;
+	int component_selected = 0;
 	bool my_tool_active = true;
 	bool active = false;
+	bool component_active = false;
 	char a[20]{};
 	DirectX::XMFLOAT3 pos{};
 	DirectX::XMFLOAT3 rot{};
 	DirectX::XMFLOAT3 scale{};
 
-	Hierarchy(IGameObjectManager* manager, const std::string& name, IFramework* framework) : ILayer(name)
+	Hierarchy(IGameObjectManager* manager, IResourceManager* res, const std::string& name, IFramework* framework) : ILayer(name)
 	{
 		this->framework = framework;
 		this->_manager = manager;
-
-		
+		this->res = res;
 		GameObject* obj = _manager->CreateGameObject("Object1");
 		GameObject* obj1 = _manager->CreateGameObject("Object2");
 		GameObject* obj2 = _manager->CreateGameObject("Object3");
@@ -105,7 +106,7 @@ public:
 		gamelist.push_back(obj11);
 		gamelist.push_back(obj12);
 	}
-	
+
 	virtual ~Hierarchy()
 	{
 
@@ -156,7 +157,8 @@ public:
 			ImGui::BeginChild("Scrolling", ImVec2(150, 0));
 			if (gamelist.size() != 0)
 			{
-				for (int i = 0; i < gamelist.size(); i++) {
+				for (int i = 0; i < gamelist.size(); i++)
+				{
 					if (ImGui::Selectable(const_cast<char*>(gamelist.at(i)->ObjectName.c_str()), selected == i))
 						selected = i;
 				}
@@ -178,15 +180,68 @@ public:
 				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
 				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
 				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
+
+				ImGui::Separator();
+
+				ImGui::Text("Other Component");
+				ImGui::Separator();
+				if (gamelist.at(selected)->GetComponentSize() != 0)
+				{
+					GameObject* obj = gamelist.at(selected);
+
+					int count = 0;
+
+
+					obj->ComponentForeach([&](Component* c) {
+
+						std::string name = c->GetName();
+						Component::Type type = c->GetType();
+						
+						switch (type)
+						{
+							case Component::Type::RENDERER_SPRITE:
+
+
+								break;
+							case Component::Type::RENDERER_MODEL:
+								SpriteRenderer* render2 = dynamic_cast<SpriteRenderer*>(c);
+								render2->AddSprite(res->FindSprite("test"));
+								ImGui::Text(name.c_str());
+								if (ImGui::Button("Del"))
+									obj->RemoveComponent(type);
+								ImGui::Separator();
+								
+								break;
+								/*
+							case Component::Type::RENDERER_TILEMAP:
+								TileMapRenderer* render1 = dynamic_cast<TileMapRenderer*>(c);
+
+								render1->(res->FindSprite("test"));
+								
+								ImGui::Text(name.c_str());
+								ImGui::Separator();
+						
+								break;
+								*/
+  
+						}
+
+
+		
+						
+					});
+
+				}
+				ImGui::Separator();
+
+				if (ImGui::Button("Add Component"))
+				{
+					component_active = true;
+
+				}
 			}
 
-			ImGui::Separator();
 
-			ImGui::Text("Other Component");
-
-			ImGui::Separator();
-
-			ImGui::Button("Add Component");
 
 			ImGui::EndChild();
 			ImGui::SameLine();
@@ -194,7 +249,8 @@ public:
 			ImGui::SameLine();
 
 			ImGui::End();
-			if (active) {
+			if (active)
+			{
 				ImGui::Begin("add2", &active, ImGuiWindowFlags_MenuBar);
 
 
@@ -202,7 +258,8 @@ public:
 				ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
 				ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
 				ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
-				if (ImGui::Button("save")) {
+				if (ImGui::Button("save"))
+				{
 					GameObject* ob = _manager->CreateGameObject(a);
 					ob->transform.SetPosition(pos.x, pos.y, pos.z);
 					ob->transform.SetRotation(rot.x, rot.y, rot.z);
@@ -212,6 +269,36 @@ public:
 
 				}
 
+				ImGui::End();
+			}
+			if (component_active)
+			{
+				ImGui::Begin("add2", &active, ImGuiWindowFlags_MenuBar);
+
+				if (ImGui::Button("SpriteRenderer"))
+				{
+					GameObject* temp = gamelist.at(selected);
+					SpriteRenderer* render = new SpriteRenderer(temp);
+					//render->Init();
+					gamelist.at(selected)->AddComponent(render);
+
+				}
+				if (ImGui::Button("ModelRenderer"))
+				{
+					GameObject* temp = gamelist.at(selected);
+					ModelRenderer* render = new ModelRenderer(temp);
+					//render->Init();
+					gamelist.at(selected)->AddComponent(render);
+
+
+				}
+				if (ImGui::Button("TileMapRender"))
+				{
+					GameObject* temp1 = gamelist.at(selected);
+					TileMapRenderer* render1 = new TileMapRenderer(temp1);
+					//render->Init();
+					gamelist.at(selected)->AddComponent(render1);
+				}
 				ImGui::End();
 			}
 		}

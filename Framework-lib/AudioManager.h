@@ -24,16 +24,48 @@ public:
     void LoadAudio(const char* audioName, const char* audioFilePath);
 
     /// <summary>
+    /// 불러온 오디오를 삭제합니다.
+    /// </summary>
+    /// <param name="audioName">삭제할 오디오 이름입니다.</param>
+    void DeleteAudio(const char* audioName);
+
+    /// <summary>
     /// 오디오를 재생합니다.
     /// </summary>
-    /// <param name="audioName">map에서 불러올 오디오의 이름입니다.</param>
+    /// <param name="audioName">재생할 오디오의 이름입니다.</param>
     void PlayAudio(const char* audioName);
 
     /// <summary>
-    /// 오디오 재생을 중단합니다.
+    /// 오디오 재생을 중지합니다.
     /// </summary>
-    /// <param name="audioName">map에서 불러올 오디오의 이름입니다.</param>
+    /// <param name="audioName">중지할 오디오의 이름입니다.</param>
     void StopAudio(const char* audioName);
+
+
+    /// <summary>
+    /// 오디오 재생을 일시중지합니다.
+    /// </summary>
+    /// <param name="audioName">일시 중지할 오디오의 이름입니다.</param>
+    void PauseAudio(const char* audioName);
+    
+
+    /// <summary>
+    /// 모든 오디오를 일시중지합니다.
+    /// </summary>
+    void PauseAll();
+
+    /// <summary>
+    /// 오디오 재생을 일시중지를 해제합니다.
+    /// </summary>
+    /// <param name="audioName">해제할 오디오의 이름입니다.</param>
+    void ResumeAudio(const char* audioName);
+
+
+    /// <summary>
+    /// 모든 오디오의 일시중지를 해제합니다.
+    /// </summary>
+    void ResumeAll();
+
 
     /// <summary>
     /// 오디오의 볼륨을 조절합니다.

@@ -10,31 +10,68 @@ bool AudioManager::Initialize(Framework* framework)
 	this->res = &framework->resourceManager;
 
 
-	FMOD::System_Create(&m_system);
-	m_system->init(32, FMOD_INIT_NORMAL, nullptr);
+	FMOD::System_Create(&this->m_system);
+	this->m_system->init(32, FMOD_INIT_NORMAL, nullptr);
 
 	return true;
 }
 
 
-void AudioManager::LoadAudio(const char* audioName, const char* audioFilePath) {
-	FMOD::Sound* sound;
-	m_system->createSound(audioFilePath, FMOD_DEFAULT, nullptr, &sound);
-	m_sound[audioName] = sound;
-	m_channel[audioName]->setVolume(1.0f);
+void AudioManager::LoadAudio(const char* audioName, const char* audioFilePath) 
+{
+	if (this->m_sound.find(audioName) == this->m_sound.end())
+	{
+		FMOD::Sound* sound;
+		this->m_system->createSound(audioFilePath, FMOD_DEFAULT, nullptr, &sound);
+		this->m_sound.insert(std::make_pair<>(audioName, sound));
+		this->m_channel[audioName]->setVolume(1.0f);
+	}
+	else
+		std::cout << "Audio Name already exist" << std::endl;
 }
 
 
-void AudioManager::PlayAudio(const char* audioName) {
-	m_system->playSound(m_sound[audioName], nullptr, false, &m_channel[audioName]);
+void AudioManager::DeleteAudio(const char* audioName)
+{
+	this->m_sound.erase(audioName);
 }
 
 
-void AudioManager::StopAudio(const char* audioName) {
-	m_channel[audioName]->stop();
+void AudioManager::PlayAudio(const char* audioName) 
+{
+	this->m_system->playSound(m_sound[audioName], nullptr, false, &m_channel[audioName]);
 }
 
 
-void AudioManager::SetVolume(const char* audioName, float volume) {
-	m_channel[audioName]->setVolume(volume);
+void AudioManager::StopAudio(const char* audioName)
+{
+	this->m_channel[audioName]->stop();
+}
+
+void AudioManager::PauseAudio(const char* audioName)
+{
+	this->m_channel[audioName]->setPaused(true);
+}
+
+void AudioManager::PauseAll()
+{
+	this->m_system->mixerSuspend();
+}
+
+
+
+void AudioManager::ResumeAudio(const char* audioName)
+{
+	this->m_channel[audioName]->setPaused(false);
+}
+
+
+void AudioManager::ResumeAll()
+{
+	this->m_system->mixerResume();
+}
+
+void AudioManager::SetVolume(const char* audioName, float volume)
+{
+	this->m_channel[audioName]->setVolume(volume);
 }

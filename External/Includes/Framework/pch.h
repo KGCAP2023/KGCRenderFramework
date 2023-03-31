@@ -34,6 +34,8 @@
 #include <future>
 #include <queue>
 #include <map>
+#include <chrono>
+#include <thread>
 
 // Directx 11
 #include <d3d11.h>

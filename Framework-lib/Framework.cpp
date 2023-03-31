@@ -272,15 +272,17 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	//오디오 테스트 및 초기화 완료
 	#pragma region MyRegion
-	
-	auto f1 = std::async([&] {
+	std::thread t([&] {
 		audioManager.LoadAudio("test", "..//Resource/Audios/bgm.mp3");
 		audioManager.PlayAudio("test");
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		audioManager.PauseAudio("test");
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		audioManager.ResumeAudio("test");
+		std::cout << "Audio play complete" << std::endl;
 		});
+
+	t.detach();
 	#pragma endregion
 
 	

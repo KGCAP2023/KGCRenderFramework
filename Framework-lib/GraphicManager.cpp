@@ -129,24 +129,12 @@ void GraphicManager::RenderFrame()
 	const wchar_t* output = L"캡스톤_프로젝트";
 
 	//Perspective Projection 행렬을 셋팅합니다.
-	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 
 	//3D오브젝트를 그립니다.
 	{
 		for (const auto& kv : gameObjectManager->gameObjects) {
-			(kv.second)->Draw(vp, GameObject::ObjectType::OBJECT_3D);
-		}
-	}
-
-	// Orthographic Projection 행렬을 셋팅합니다.
-	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
-	vp = camera->transform.worldMatrix * cameraComponent->GetProjectionMatrix();
-
-	//2D오브젝트를 그립니다.
-	{
-		for (const auto& kv : gameObjectManager->gameObjects) {
-			(kv.second)->Draw(vp, GameObject::ObjectType::OBJECT_2D);
+			(kv.second)->Draw(vp);
 		}
 	}
 

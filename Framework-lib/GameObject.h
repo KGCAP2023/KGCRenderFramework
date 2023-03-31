@@ -89,7 +89,7 @@ public:
 	/// </summary>
 	void CleanUpComponent();
 
-	void Draw(const XMMATRIX& viewProjectionMatrix, GameObject::ObjectType type);
+	void Draw(const XMMATRIX& viewProjectionMatrix);
 	void Update();
 
 	void Destroy() { this->isDestroy = true; }

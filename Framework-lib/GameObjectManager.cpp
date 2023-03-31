@@ -10,8 +10,19 @@ GameObjectManager::GameObjectManager(Framework* framework)
 		this->res = &framework->resourceManager;
 }
 
+
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
+	//이름 같은 거 존재시 생성 거부
+	
+	
+
+	if (this->FindGameObject(_name) != nullptr) {
+
+		
+		return nullptr;
+	}
+
 	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(_name);
 	//게임오브젝트를 등록합니다.
@@ -24,6 +35,11 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& path)
 {
+
+	//이름 같은 거 존재시 생성 거부
+	if (this->FindGameObject(_name) != nullptr) {
+		return nullptr;
+	}
 
 	//리소스매니저에서 쉐이더를 가져옵니다.
 	PixelShader* ps_1 = res->FindPixelShader("ps_1");

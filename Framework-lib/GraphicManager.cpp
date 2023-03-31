@@ -502,15 +502,12 @@ bool GraphicManager::InitializeScene()
 	
 	// 오브젝트를 파일에서 읽기 & 초기화
 	// -> fbx (게임오브젝트 및 스프라이트)
-
+	GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
+	obj1->transform.SetPosition(0, 0, 0);
 
 	#pragma region 테스트용
 
-	if (gameObjectManager->FindGameObject("Nanosuit") == nullptr)
-	{
-		GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-		obj1->transform.SetPosition(0, 0, 0);
-	}
+	
 
 	#pragma endregion
 

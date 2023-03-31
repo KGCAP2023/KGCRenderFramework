@@ -20,7 +20,6 @@ public:
 
 	virtual void Update() 
 	{
-		std::cout << "test" << std::endl;
 
 	};
 

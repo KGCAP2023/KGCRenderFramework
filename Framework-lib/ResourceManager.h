@@ -87,13 +87,13 @@ public:
 	/// <returns></returns>
 	virtual bool LoadSkinnedModel(const std::string& modelName, const std::string& filePath) { return false; };
 	/// <summary>
-	/// 스키닝 모델을 가져옵니다.
+	/// 스키닝 모델을 가져옵니다. (Clone)
 	/// </summary>
 	/// <param name="modelName"></param>
 	/// <returns></returns>
 	virtual SkinnedMesh* FindSkinnedModel(const std::string& modelName) { return nullptr; };
 	/// <summary>
-	/// 일반 모델을 가져옵니다.
+	/// 일반 모델을 가져옵니다. (Clone)
 	/// </summary>
 	/// <param name="modelName"></param>
 	/// <returns></returns>

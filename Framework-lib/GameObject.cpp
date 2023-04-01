@@ -36,6 +36,9 @@ void GameObject::Update()
 		it.second->Update();
 	}
 
+	if (bbox != nullptr)
+		bbox->Update();
+
 	if (!this->child.empty())
 	{
 		for (auto it : this->child)

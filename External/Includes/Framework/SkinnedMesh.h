@@ -32,11 +32,26 @@ public:
         const std::string& Filename,
         ResourceManager* res);
 
+    bool AddAnimation(std::string filepath)
+    {
+        const aiScene* scene = Importer.ReadFile(filepath.c_str(), aiProcess_Triangulate |
+            aiProcess_ConvertToLeftHanded | aiProcess_OptimizeGraph);
+
+        if (scene) {
+            this->InitAnimations(scene);
+            return true;
+        }
+        else {
+            std::cout << "[x] Animation Load Failed - Error parsing " << filepath.c_str() << " : " << Importer.GetErrorString() << std::endl;
+            return false;
+        }
+    }
+
     SkinnedMesh(const SkinnedMesh& rhs)
     {
         std::cout << "[=] SkinnedMesh CLONE Process - Copy constructor called" << std::endl;
 
-        this->modelName = modelName;
+        this->modelName = rhs.modelName;
         this->pScene = rhs.pScene;
         this->_isDefaultPose = rhs._isDefaultPose;
         this->animations = rhs.animations;
@@ -70,8 +85,12 @@ public:
         this->m_BoneNameToIndexMap = rhs.m_BoneNameToIndexMap;
 
         this->m_BoneInfo = rhs.m_BoneInfo;
-    }
 
+        for (UINT i = 0; i < this->m_BoneInfo.size(); i++) {
+            m_BoneInfo[i].FinalTransformation = XMMatrixIdentity();
+        }
+
+    }
 
     void Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix);
 
@@ -82,15 +101,19 @@ public:
 
     XMMATRIX& GetWorldTransform() { return world; }
 
-    void GetBoneTransforms(float TimeInSeconds, std::vector<XMMATRIX>& Transforms);
+    void GetBoneTransforms(float TimeInSeconds, std::vector<XMMATRIX>& Transforms, Animation3D* animation);
     void SetBoneTransforms(UINT index, XMMATRIX transform);
     //const Material& GetMaterial();
 
     std::string GetPath();
     const aiScene* GetAiScene();
 
+    void InitDefaultPose();
     bool isDefaultPose() { return _isDefaultPose; }
     void setDefaultPose(bool value) { _isDefaultPose = value; }
+
+    std::vector<Animation3D*>* GetAnimationList() { return animations; }
+
 
 private:
     Assimp::Importer Importer;
@@ -98,7 +121,7 @@ private:
 
     bool _isDefaultPose = true;
     //std::vector<aiAnimation*> animations;
-    std::vector<Animation3D*> animations;
+    std::vector<Animation3D*>* animations;
 
     XMMATRIX world = XMMatrixIdentity();
     XMMATRIX m_GlobalInverseTransform;
@@ -183,11 +206,12 @@ private:
     void LoadMeshBones(UINT MeshIndex, const aiMesh* paiMesh);
     void LoadSingleBone(UINT MeshIndex, const aiBone* pBone);
     int GetBoneId(const aiBone* pBone);
-    void ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNode, const XMMATRIX& ParentTransform, const aiAnimation* pAnimation);
+    void ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNode, const XMMATRIX& ParentTransform, const aiAnimation* pAnimation, Animation3D* selectedAnimation);
    
     void PopulateBuffers();
 
     //Animation
+
 
 
     const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const std::string& NodeName);

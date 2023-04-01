@@ -23,7 +23,7 @@ bool SkinnedMeshRenderer::SetSkinnedMesh(SkinnedMesh* model)
 	this->model = model;
 	owner->transform.SetPosition(0.0f, 0.0f, 0.0f);
 	owner->transform.SetRotation(0.0f, 0.0f, 0.0f);
-	owner->transform.SetScale(1.0f, 1.0f, 1.0f);
+	owner->transform.SetScale(0.1f, 0.1f, 0.1f);
 	this->Update();
 	StartTimeMillis = GetCurrentTimeMillis();
 
@@ -36,13 +36,10 @@ void SkinnedMeshRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 	{
 		if (this->isStart)
 		{
-
 			long long CurrentTimeMillis = GetCurrentTimeMillis();
 			float AnimationTimeSec = ((float)(CurrentTimeMillis - StartTimeMillis)) / 1000.0f;
-			model->GetBoneTransforms(AnimationTimeSec, this->matrix);
-
+			model->GetBoneTransforms(AnimationTimeSec, this->matrix,this->selectedAnimation);
 		}
-
 		model->Draw(owner->transform.worldMatrix, viewProjectionMatrix);
 	}
 }

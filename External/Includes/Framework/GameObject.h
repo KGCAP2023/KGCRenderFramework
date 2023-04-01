@@ -15,8 +15,7 @@ public:
 	static enum class ObjectType
 	{
 		OBJECT_DEFAULT,
-		OBJECT_2D,
-		OBJECT_3D
+		OBJECT_SPRITE
 	};
 
 	GameObject(const std::string& name) : transform(Transform(this)) 

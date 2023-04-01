@@ -13,7 +13,7 @@ public:
 		this->name = "TileMapRenderer";
 	}
 
-	void Init(TileMap* tileMap)
+	void AddTileMap(TileMap* tileMap)
 	{
 		this->tileMap = tileMap;
 	}

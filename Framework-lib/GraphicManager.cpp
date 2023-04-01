@@ -495,10 +495,8 @@ bool GraphicManager::InitializeScene()
 
 	#pragma region 테스트용
 
-	
 	GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
 	obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
-
 
 	#pragma endregion
 
@@ -517,27 +515,6 @@ bool GraphicManager::InitializeScene()
 	return true;
 }
 
-
-
-/*
- 스키닝 메시 테스트 함수
-*/
-//GameObject* GraphicManager::CreateGameObject_2(const std::string& name, const std::string& path)
-//{
-//	PixelShader* ps_2 = res->FindPixelShader("ps_2");
-//	VertexShader* vs_3 = res->FindVertexShader("vs_3");
-//
-//	GameObject* obj = new GameObject(name);
-//	obj->SetActive(false);
-//	SkinnedMeshRenderer* render1 = new SkinnedMeshRenderer(obj);
-//	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb_skinning_1, res->cb_skinning_2, vs_3, ps_2);
-//	obj->AddComponent(render1);
-//	//obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
-//
-//	gameObjectManager->gameObjects.insert(std::make_pair(name, obj));
-//
-//	return obj;
-//}
 
 bool GraphicManager::doTreeNode(GameObject* obj, int index) {
 

@@ -509,7 +509,6 @@ bool GraphicManager::InitializeScene()
 	this->cameraComponent->initViewMatrix(
 		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
 		100, 100, -1, INFINITE);
-
 	/**********************************************/
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;

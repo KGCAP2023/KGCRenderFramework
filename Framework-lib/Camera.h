@@ -45,6 +45,9 @@ public:
 	/// </summary>
 	/// <param name="_bool">2d or 3d</param>
 	void changeMode(bool _bool);
+
+	bool curType = true;
+
 private:
 	virtual void Update() override;
 
@@ -53,7 +56,5 @@ private:
 
 	XMMATRIX view3DMatrix;
 	XMMATRIX view2DMatrix;
-
-	bool curType = true;
 };
 

@@ -20,6 +20,7 @@ void Camera3D::ChangeProjectionValues(ViewType _type) {
 	{
 	case ViewType::_2D:
 		changeMode(false);
+		this->GetOwner()->transform.SetRotation(0, 0, 0);
 		break;
 
 	case ViewType::_3D:

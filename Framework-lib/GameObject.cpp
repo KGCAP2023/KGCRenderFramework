@@ -60,6 +60,8 @@ void GameObject::AddComponent(Component* pComponent)
 	if (type == Component::Type::BOUNDING_BOX)
 	{
 		this->bbox = dynamic_cast<BoundingBoxRenderer*>(pComponent);
+		this->bb3d = dynamic_cast<BoundingBox3D*>(pComponent);
+
 		return;
 	}
 

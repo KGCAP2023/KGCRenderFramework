@@ -26,7 +26,7 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));
 
-
+	obj->AddComponent(new BoundingBox3D(obj, res));
 
 	return obj;
 }

@@ -3,6 +3,49 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 
+#pragma region 그리기_순서_목록_벡터
+
+	//큐브
+	DWORD cubeArr[] =
+	{
+		0, 1,
+		1, 2,
+		2, 3,
+		3, 0,
+		4, 5,
+		5, 6,
+		6, 7,
+		7, 4,
+		0, 4,
+		1, 5,
+		2, 6,
+		3, 7
+	};
+	std::vector<DWORD> cube(std::begin(cubeArr), std::end(cubeArr));
+
+	//모래시계
+	DWORD hourGlassArr[] =
+	{
+		0, 1,
+		1, 2,
+		2, 3,
+		3, 0,
+		4, 5,
+		5, 6,
+		6, 7,
+		7, 4,
+		0,5,
+		1,4,
+		3,6,
+		2,7,
+	};
+	std::vector<DWORD> hourGlass(std::begin(hourGlassArr), std::end(hourGlassArr));
+
+#pragma endregion
+
+
+
+
 BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : BoundingBoxRenderer(owner)
 {
 	this->type = Component::Type::BOUNDING_BOX;
@@ -44,10 +87,12 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : Bounding
 		processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
 	}
 
+
 	//버텍스를 정의합니다.
 	//<주의> 
 	// 버텍스 쉐이더에 들어가는 구조체(Vertex.h)와 동일해야합니다
 
+	//조금더 유동적인 방법 찾아보기
 	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
 	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
 	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
@@ -57,33 +102,50 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : Bounding
 	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
 	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
 
+
+	//초기설정은 cube
+	indices = cube;
+
 	//정점에대한 인덱스를 정의합니다. 
-	DWORD arr[] =
-	{
-		0, 1,
-		1, 2,
-		2, 3,
-		3, 0,
-		4, 5,
-		5, 6,
-		6, 7,
-		7, 4,
-		0, 4,
-		1, 5,
-		2, 6,
-		3, 7
-	};
+	DrawSetting(res);
+	
+}
 
-	std::vector<DWORD> indices(std::begin(arr), std::end(arr));
 
+void BoundingBox3D::DrawSetting(ResourceManager* res)
+{
+	
 	//버텍스 버퍼와 인덱스 버퍼에 등록합니다.
 	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), res->device.Get());
 	hr = this->indexbuffer.Init(indices.data(), indices.size(), res->device.Get());
 
 }
 
+
+
+void BoundingBox3D::ChangeDrawShape(ShapeType _type,  ResourceManager* res)
+{
+
+	switch (_type)
+	{
+	case BoundingBox3D::ShapeType::CUBE:
+		indices = cube;
+		break;
+	case BoundingBox3D::ShapeType::HOUR_GLASS:
+		indices = hourGlass;
+		break;
+	default:
+		break;
+	}
+
+	DrawSetting(res);
+
+}
+
+
 void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
 {
+
     if (isActive)
     {
         // 버텍스 쉐이더에 들어가는 구조체는 버텍스 레이아웃과 동일해야합니다.
@@ -126,4 +188,11 @@ void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
         this->deviceContext->DrawIndexed(this->indexbuffer.IndexCount(), 0, 0);
   
     }
+}
+
+void BoundingBox3D::Update()
+{
+	owner->transform.worldMatrix = DirectX::XMMatrixScaling(1, 1, 1) *
+		XMMatrixRotationRollPitchYaw(0, 0, 0) *
+		XMMatrixTranslation(owner->transform.position.x, owner->transform.position.y, owner->transform.position.z);
 }

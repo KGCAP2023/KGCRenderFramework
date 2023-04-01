@@ -36,6 +36,8 @@ public:
 	GameObject::ObjectType objectType = GameObject::ObjectType::OBJECT_DEFAULT;
 	BoundingBoxRenderer* bbox = nullptr;
 
+	BoundingBox3D* bb3d = nullptr;
+
 	void SetObjectType(GameObject::ObjectType type);
 
 	/// <summary>

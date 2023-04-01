@@ -109,7 +109,7 @@ void Framework::Update()
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();
 			xPosRelative.pop();
-			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
+				this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
 	}

@@ -43,6 +43,20 @@ void AudioManager::PlayAudio(const char* audioName)
 }
 
 
+void AudioManager::PlayAudio(const char* audioName, const long frontdelay, const long backdelay)
+{
+	std::thread t([=] {
+		std::this_thread::sleep_for(std::chrono::milliseconds(frontdelay));
+		this->PlayAudio(audioName);
+		std::cout << "sound!" << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(backdelay));
+		});
+
+	t.detach();
+
+}
+
+
 void AudioManager::StopAudio(const char* audioName)
 {
 	this->m_channel[audioName]->stop();

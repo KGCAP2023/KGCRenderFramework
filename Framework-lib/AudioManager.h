@@ -33,38 +33,45 @@ public:
     /// 오디오를 재생합니다.
     /// </summary>
     /// <param name="audioName">재생할 오디오의 이름입니다.</param>
-    void PlayAudio(const char* audioName);
+    void PlayAudio(const char* audioName, const long frontdelay, const long backdelay);
+
+
+    /// <summary>
+    /// 오디오를 입력된 시간 값에 따라 지연되어 재생합니다. 단위는 ms입니다.
+    /// </summary>
+    /// <param name="audioName">재생할 오디오의 이름입니다.</param>
+    /// <param name="frontdelay">재생 전 지연될 시간입니다.</param>
+    /// <param name="backdelay">재생 후 지연될 시간입니다.</param>
+    void PlayAudio(const char* audioName, const long frontdelay, const long backdelay);
 
     /// <summary>
     /// 오디오 재생을 중지합니다.
     /// </summary>
     /// <param name="audioName">중지할 오디오의 이름입니다.</param>
-    void StopAudio(const char* audioName);
+    /// <param name="frontdelay">재생 전 지연될 시간입니다.</param>
+    /// <param name="backdelay">재생 후 지연될 시간입니다.</param>
+    void StopAudio(const char* audioName, const long frontdelay, const long backdelay);
 
 
     /// <summary>
     /// 오디오 재생을 일시중지합니다.
     /// </summary>
     /// <param name="audioName">일시 중지할 오디오의 이름입니다.</param>
-    void PauseAudio(const char* audioName);
+    /// <param name="frontdelay">재생 전 지연될 시간입니다.</param>
+    /// <param name="backdelay">재생 후 지연될 시간입니다.</param>
+    void PauseAudio(const char* audioName, const long frontdelay, const long backdelay);
     
 
-    /// <summary>
-    /// 모든 오디오를 일시중지합니다.
-    /// </summary>
-    void PauseAll();
 
     /// <summary>
     /// 오디오 재생을 일시중지를 해제합니다.
     /// </summary>
     /// <param name="audioName">해제할 오디오의 이름입니다.</param>
-    void ResumeAudio(const char* audioName);
+    /// <param name="frontdelay">재생 전 지연될 시간입니다.</param>
+    /// <param name="backdelay">재생 후 지연될 시간입니다.</param>
+    void ResumeAudio(const char* audioName, const long frontdelay, const long backdelay);
 
 
-    /// <summary>
-    /// 모든 오디오의 일시중지를 해제합니다.
-    /// </summary>
-    void ResumeAll();
 
 
     /// <summary>

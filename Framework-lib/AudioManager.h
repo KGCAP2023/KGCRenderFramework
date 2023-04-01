@@ -29,12 +29,7 @@ public:
     /// <param name="audioName">삭제할 오디오 이름입니다.</param>
     void DeleteAudio(const char* audioName);
 
-    /// <summary>
-    /// 오디오를 재생합니다.
-    /// </summary>
-    /// <param name="audioName">재생할 오디오의 이름입니다.</param>
-    void PlayAudio(const char* audioName, const long frontdelay, const long backdelay);
-
+    
 
     /// <summary>
     /// 오디오를 입력된 시간 값에 따라 지연되어 재생합니다. 단위는 ms입니다.

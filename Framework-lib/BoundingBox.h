@@ -8,9 +8,11 @@
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
 #include "ConstantBufferType.h"
+
 #include <directxcollision.h>
 
 class GameObject;
+class ResourceManager;
 
 class BoundingBoxRenderer : public Component
 {
@@ -38,7 +40,7 @@ class BoundingBox3D : public BoundingBoxRenderer
 {
 public:
 
-	BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11DeviceContext* deviceContext, PixelShader* ps, VertexShader* vs, ConstantBuffer<CB_VS_1>& constantBuffer);
+	BoundingBox3D(GameObject* owner, ResourceManager* res);
 
 	//경계박스 계산 코드
 	void processNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix)

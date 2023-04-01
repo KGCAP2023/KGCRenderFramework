@@ -37,6 +37,9 @@
     <Filter Include="헤더 파일\Audio">
       <UniqueIdentifier>{51c575f2-acc3-4ff8-a3f4-e193a3b2fd31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Lua">
+      <UniqueIdentifier>{ccbb0d4c-5195-40e7-b631-2bef68d921eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h">
@@ -147,9 +150,6 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>헤더 파일\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicManager.h">
-      <Filter>헤더 파일\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Ray.h">
       <Filter>헤더 파일\Graphic</Filter>
     </ClInclude>
@@ -170,6 +170,12 @@
     </ClInclude>
     <ClInclude Include="AudioManager.h">
       <Filter>헤더 파일\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicManager.h">
+      <Filter>헤더 파일\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaManager.h">
+      <Filter>헤더 파일\Lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -276,6 +282,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="AudioManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

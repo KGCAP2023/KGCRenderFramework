@@ -1,16 +1,15 @@
 #include "pch.h"
 #include "BoundingBox.h"
 #include "GameObject.h"
+#include "ResourceManager.h"
 
-BoundingBox3D::BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11DeviceContext* deviceContext, PixelShader* ps, VertexShader* vs, ConstantBuffer<CB_VS_1>& constantBuffer) : BoundingBoxRenderer(owner)
+BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : BoundingBoxRenderer(owner)
 {
 	this->type = Component::Type::BOUNDING_BOX;
-	this->deviceContext = deviceContext;
-	this->ps = ps;
-	this->vs = vs;
-	this->constantBuffer = &constantBuffer;
-
-
+	this->deviceContext = res->deviceContext;
+	this->ps = res->FindPixelShader("ps_1");
+	this->vs = res->FindVertexShader("vs_1");
+	this->constantBuffer = &res->cb1;
 
 	XMMATRIX worldMatrix = owner->transform.worldMatrix;
 
@@ -78,8 +77,8 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11Devi
 	std::vector<DWORD> indices(std::begin(arr), std::end(arr));
 
 	//버텍스 버퍼와 인덱스 버퍼에 등록합니다.
-	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), device);
-	hr = this->indexbuffer.Init(indices.data(), indices.size(), device);
+	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), res->device.Get());
+	hr = this->indexbuffer.Init(indices.data(), indices.size(), res->device.Get());
 
 }
 
@@ -89,6 +88,8 @@ void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
     {
         // 버텍스 쉐이더에 들어가는 구조체는 버텍스 레이아웃과 동일해야합니다.
         // 버텍스 레이아웃은 GraphicManager.cpp의 InitializeShaders()를 참조하십시요
+
+		this->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
         deviceContext->IASetInputLayout(this->vs->GetInputLayout());
 
         //버텍스 쉐이더를 셋팅합니다.
@@ -114,7 +115,7 @@ void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
         //현재코드는 경계값을 그리기위해 D3D_PRIMITIVE_TOPOLOGY_LINELIST를 사용하며
         //D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST 사용시 정점 입력과 인덱스 입력을 삼각형 그리는 방향으로 정의 하십시요
 
-        this->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        
 
         //버텍스 버퍼를 셋팅합니다.
         this->deviceContext->IASetVertexBuffers(0, 1, this->vertexbuffer.GetAddressOf(), this->vertexbuffer.StridePtr(), &offset);

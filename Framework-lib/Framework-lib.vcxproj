@@ -40,6 +40,7 @@
     <ClInclude Include="IScript.h" />
     <ClInclude Include="LayerManager.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="LuaManager.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -82,6 +83,7 @@
     <ClCompile Include="IScript.cpp" />
     <ClCompile Include="LayerManager.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="LuaManager.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />

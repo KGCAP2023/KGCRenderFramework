@@ -2,6 +2,7 @@
 #include "Gameobject.h"
 #include "Shaders.h"
 #include "SkinnedMesh.h"
+#include "ResourceManager.h"
 
 /// <summary>
 /// 애니메이션이들어있는 동적 3D모델을 로드할때 사용하는 컴포넌트 입니다. 
@@ -16,8 +17,7 @@ public:
 		this->name = "SkinnedMeshRenderer";
 	}
 
-	bool Init(const std::string& filePath, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_2>& cb_vs_vertexshader, ConstantBuffer<CB_VS_3>& cb_vs_vertexshader2 ,VertexShader* vertexShader,
-		PixelShader* pixelShader);
+	bool SetSkinnedMesh(SkinnedMesh* model);
 
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual void Update() override;
@@ -27,7 +27,7 @@ public:
 
 	bool isStart = false;
 private:
-	SkinnedMesh model;
+	SkinnedMesh* model;
 	std::vector<XMMATRIX> matrix;
 	long long StartTimeMillis = 0;
 };

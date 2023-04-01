@@ -78,8 +78,6 @@ private:
 	bool doTreeNode(GameObject* obj, int index);
 	Timer fps;
 
-	GameObject* CreateGameObject_2(const std::string& name, const std::string& path);
-
 	//윈도우 핸들
 	HWND hwnd;
 

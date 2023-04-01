@@ -7,6 +7,7 @@
 #include "LayerManager.h"
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
+#include "LuaManager.h"
 #include "Ray.h"
 
 /*
@@ -69,6 +70,7 @@ public:
 	GraphicManager graphics;
 	ResourceManager resourceManager;
 	AudioManager audioManager;
+	LuaManager luaManager;
 	GameObjectManager* gameObjManager;
 	Ray* ray;
 

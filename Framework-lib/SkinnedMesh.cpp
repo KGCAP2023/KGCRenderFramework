@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SkinnedMesh.h"
-
+#include "ResourceManager.h"
 
 SkinnedMesh::~SkinnedMesh()
 {
@@ -13,26 +13,26 @@ void SkinnedMesh::Clear()
 }
 
 bool SkinnedMesh::LoadMesh(
+	const std::string& modelName,
 	const std::string& Filename,
-	ID3D11Device* device,
-	ID3D11DeviceContext* deviceContext,
-	ConstantBuffer<CB_VS_2>& cb_vs_vertexshader,
-	ConstantBuffer<CB_VS_3>& cb_vs_vertexshader2,
-	VertexShader* vertexShader,
-	PixelShader* pixelShader)
+	ResourceManager* res)
 {
 	Clear(); //클리어 
 
-		//상수 버퍼
-	this->constantBuffer = &cb_vs_vertexshader;
-	this->constantBuffer2 = &cb_vs_vertexshader2;
+	this->modelName = modelName;
 
-	this->vertexShader = vertexShader;
-	this->pixelShader = pixelShader;
+	this->textures_loaded_ = res->GetCachedTexture(modelName);
+
+		//상수 버퍼
+	this->constantBuffer = &res->cb_skinning_1;
+	this->constantBuffer2 = &res->cb_skinning_2;
+
+	this->vertexShader = res->FindVertexShader("vs_3");
+	this->pixelShader = res->FindPixelShader("ps_2");
 
 	//컨텍스트
-	this->deviceContext = deviceContext;
-	this->device = device;
+	this->deviceContext = res->deviceContext;
+	this->device = res->device;
 
 	this->filePath = Filename;
 
@@ -268,6 +268,8 @@ void SkinnedMesh::PopulateBuffers()
 
 void SkinnedMesh::Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix)
 {
+	this->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->deviceContext->IASetInputLayout(this->vertexShader->GetInputLayout());
 	this->deviceContext->VSSetShader(this->vertexShader->GetShader(), NULL, 0);
 	this->deviceContext->PSSetShader(this->pixelShader->GetShader(), NULL, 0);
 
@@ -577,9 +579,9 @@ std::vector<Texture> SkinnedMesh::loadMaterialTextures(aiMaterial* mat, aiTextur
 		// Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
 		bool skip = false;
 
-		for (UINT j = 0; j < textures_loaded_.size(); j++) {
-			if (std::strcmp(textures_loaded_[j].path.c_str(), str.C_Str()) == 0) {
-				textures.push_back(textures_loaded_[j]);
+		for (UINT j = 0; j < textures_loaded_->size(); j++) {
+			if (std::strcmp(textures_loaded_->at(j).path.c_str(), str.C_Str()) == 0) {
+				textures.push_back(textures_loaded_->at(j));
 				skip = true; // A texture with the same filepath has already been loaded, continue to next one. (optimization)
 				break;
 			}
@@ -631,7 +633,7 @@ std::vector<Texture> SkinnedMesh::loadMaterialTextures(aiMaterial* mat, aiTextur
 			texture.type = typeName;
 			texture.path = str.C_Str();
 			textures.push_back(texture);
-			this->textures_loaded_.push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+			this->textures_loaded_->push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
 		}
 	}
 	return textures;

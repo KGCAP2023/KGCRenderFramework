@@ -2,10 +2,11 @@
 #include "ModelRenderer.h"
 
 
-bool ModelRenderer::Init(const std::string& filePath, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_2>& cb_vs_vertexshader, VertexShader* vertexShader, PixelShader* pixelShader)
+bool ModelRenderer::SetModel(Model *model)
 {
-	if (!model.Init(filePath, device, deviceContext, cb_vs_vertexshader,vertexShader,pixelShader))
+	if (model == nullptr)
 		return false;
+	this->model = model;
 	owner->transform.SetRotation(0.0f, 0.0f, 0.0f);
 	owner->transform.SetScale(1.0f, 1.0f, 1.0f);
 	this->Update();
@@ -14,7 +15,8 @@ bool ModelRenderer::Init(const std::string& filePath, ID3D11Device* device, ID3D
 
 void ModelRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-	model.Draw(owner->transform.worldMatrix,viewProjectionMatrix);
+	if(model != nullptr)
+		model->Draw(owner->transform.worldMatrix,viewProjectionMatrix);
 }
 
 void ModelRenderer::Update()
@@ -26,12 +28,12 @@ void ModelRenderer::Update()
 
 std::vector<Mesh>& ModelRenderer::GetMeshes()
 {
-	return this->model.GetMeshes();
+	return this->model->GetMeshes();
 }
 
 std::string ModelRenderer::GetPath()
 {
-	return this->model.GetPath();
+	return this->model->GetPath();
 }
 
 //const aiScene* ModelRenderer::GetAiScene()

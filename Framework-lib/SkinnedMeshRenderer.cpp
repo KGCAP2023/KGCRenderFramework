@@ -16,19 +16,11 @@ long long GetCurrentTimeMillis()
 #endif
 }
 
-bool SkinnedMeshRenderer::Init(
-	const std::string& filePath,
-	ID3D11Device* device,
-	ID3D11DeviceContext* deviceContext,
-	ConstantBuffer<CB_VS_2>& cb_vs_vertexshader,
-	ConstantBuffer<CB_VS_3>& cb_vs_vertexshader2,
-	VertexShader* vertexShader,
-	PixelShader* pixelShader)
+bool SkinnedMeshRenderer::SetSkinnedMesh(SkinnedMesh* model)
 {
-	if (!model.LoadMesh(filePath, device, deviceContext, cb_vs_vertexshader, cb_vs_vertexshader2, vertexShader, pixelShader))
+	if (model == nullptr)
 		return false;
-
-
+	this->model = model;
 	owner->transform.SetPosition(0.0f, 0.0f, 0.0f);
 	owner->transform.SetRotation(0.0f, 0.0f, 0.0f);
 	owner->transform.SetScale(1.0f, 1.0f, 1.0f);
@@ -40,17 +32,19 @@ bool SkinnedMeshRenderer::Init(
 
 void SkinnedMeshRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-
-	if (this->isStart)
+	if (model != nullptr)
 	{
+		if (this->isStart)
+		{
 
-		long long CurrentTimeMillis = GetCurrentTimeMillis();
-		float AnimationTimeSec = ((float)(CurrentTimeMillis - StartTimeMillis)) / 1000.0f;
-		model.GetBoneTransforms(AnimationTimeSec, this->matrix);
+			long long CurrentTimeMillis = GetCurrentTimeMillis();
+			float AnimationTimeSec = ((float)(CurrentTimeMillis - StartTimeMillis)) / 1000.0f;
+			model->GetBoneTransforms(AnimationTimeSec, this->matrix);
 
+		}
+
+		model->Draw(owner->transform.worldMatrix, viewProjectionMatrix);
 	}
-
-	model.Draw(owner->transform.worldMatrix, viewProjectionMatrix);
 }
 
 void SkinnedMeshRenderer::Update()
@@ -63,10 +57,10 @@ void SkinnedMeshRenderer::Update()
 
 std::string SkinnedMeshRenderer::GetPath()
 {
-	return this->model.GetPath();
+	return this->model->GetPath();
 }
 
 const aiScene* SkinnedMeshRenderer::GetAiScene()
 {
-	return this->model.GetAiScene();
+	return this->model->GetAiScene();
 }

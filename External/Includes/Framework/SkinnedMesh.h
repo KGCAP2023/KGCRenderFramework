@@ -17,23 +17,61 @@
 
 
 using namespace DirectX;
+class ResourceManager;
 
 #define MAX_NUM_BONES_PER_VERTEX 4
 
 class SkinnedMesh
 {
 public:
-    SkinnedMesh() {};
+    SkinnedMesh() {}
 
     ~SkinnedMesh();
 
-    bool LoadMesh(const std::string& Filename,
-        ID3D11Device* device,
-        ID3D11DeviceContext* deviceContext,
-        ConstantBuffer<CB_VS_2>& cb_vs_vertexshader,
-        ConstantBuffer<CB_VS_3>& cb_vs_vertexshader2,
-        VertexShader* vertexShader,
-        PixelShader* pixelShader);
+    bool LoadMesh(const std::string& modelName,
+        const std::string& Filename,
+        ResourceManager* res);
+
+    SkinnedMesh(const SkinnedMesh& rhs)
+    {
+        std::cout << "[=] SkinnedMesh CLONE Process - Copy constructor called" << std::endl;
+
+        this->modelName = modelName;
+        this->pScene = rhs.pScene;
+        this->_isDefaultPose = rhs._isDefaultPose;
+        this->animations = rhs.animations;
+        this->world = XMMatrixIdentity();
+        this->m_GlobalInverseTransform = rhs.m_GlobalInverseTransform;
+        this->directory = rhs.directory;
+        this->filePath = rhs.filePath;
+
+        //쉐이더
+        this->vertexShader = rhs.vertexShader;
+        this->pixelShader = rhs.pixelShader;
+
+        //메시 기본정보 (대입연산)
+        this->m_Meshes = rhs.m_Meshes;
+
+        //인덱스 버퍼 (대입연산)
+        this->vertexbuffer = rhs.vertexbuffer;
+        this->indexbuffer = rhs.indexbuffer;
+
+        this->constantBuffer = rhs.constantBuffer;
+        this->constantBuffer2 = rhs.constantBuffer2;
+
+        this->device = rhs.device;
+        this->deviceContext = rhs.deviceContext;
+
+        this->m_vertices = rhs.m_vertices;
+        this->m_indices = rhs.m_indices;
+
+        this->m_textures = rhs.m_textures;
+        this->textures_loaded_ = rhs.textures_loaded_;
+        this->m_BoneNameToIndexMap = rhs.m_BoneNameToIndexMap;
+
+        this->m_BoneInfo = rhs.m_BoneInfo;
+    }
+
 
     void Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix);
 
@@ -62,10 +100,10 @@ private:
     //std::vector<aiAnimation*> animations;
     std::vector<Animation3D*> animations;
 
-
     XMMATRIX world = XMMatrixIdentity();
     XMMATRIX m_GlobalInverseTransform;
 
+    std::string modelName;
     std::string directory;
     std::string filePath;
 
@@ -199,7 +237,7 @@ private:
 
     //텍스쳐
     std::vector<Texture> m_textures;
-    std::vector<Texture> textures_loaded_;
+    std::vector<Texture>* textures_loaded_;
 
     //BONE
     std::vector<VertexBoneData> m_Bones;

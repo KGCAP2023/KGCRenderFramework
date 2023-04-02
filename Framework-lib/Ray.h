@@ -9,16 +9,6 @@ class Ray
 {
 public:
 
-	//struct Sphere
-	//{
-	//	
-	//	XMVECTOR center;
-	//	float radius;
-	//	bool isPicked;
-	//	//XMVector3Unproject();
-	//	
-	//};
-
 	Ray() {}
 
 	Ray(Framework* framework);
@@ -33,6 +23,8 @@ public:
 
 	float screenWidth;
 	float screenHeight;
+
+	bool isOrthoGrahpicProjection = false;
 
 	Framework* framework;
 	GraphicManager* graphic;

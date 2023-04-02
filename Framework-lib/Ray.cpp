@@ -34,8 +34,11 @@ bool Ray::RaySphereIntersect(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, float ra
 bool Ray::RayIntersectTri(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, XMVECTOR v1, XMVECTOR v2, XMVECTOR v3)
 {
 	float distance;
+
 	if (TriangleTests::Intersects(XMLoadFloat3(&rayOrigin), XMLoadFloat3(&rayDirection), v1, v2, v3, distance))
+	{
 		return true;
+	}
 	else
 		return false;
 }
@@ -48,7 +51,6 @@ void Ray::CalculatePicking(int mouseX, int mouseY)
 	XMMATRIX proj, view;
 	XMMATRIX inverseView;
 	XMMATRIX translate;
-
 
 	proj = cameraComponent->GetProjectionMatrix();
 	view = cameraComponent->GetViewMatrix();
@@ -74,19 +76,31 @@ void Ray::CalculatePicking(int mouseX, int mouseY)
 
 	// 뷰 공간에서 피킹 레이의 방향을 계산합니다.
 	// [x,y,z] * [뷰행렬의 역행렬]
-	// 뷰 -> 월드
 
 	direction.x = (pointX * inverseViewMatrix4._11) + (pointY * inverseViewMatrix4._21) + inverseViewMatrix4._31;
 	direction.y = (pointX * inverseViewMatrix4._12) + (pointY * inverseViewMatrix4._22) + inverseViewMatrix4._32;
 	direction.z = (pointX * inverseViewMatrix4._13) + (pointY * inverseViewMatrix4._23) + inverseViewMatrix4._33;
 
 	// 카메라의 위치 인 picking ray의 원점을 가져옵니다.
-	origin = camera->transform.GetPositionXMFloat3();
-	
+
+	if (isOrthoGrahpicProjection)
+	{
+		XMVECTOR up = XMVector3Cross(camera->transform.GetLeft(), camera->transform.GetForward());
+		up = XMVectorScale(up, pointY);
+		XMVECTOR right = camera->transform.GetRight();
+		right = XMVectorScale(right, pointX);
+		XMVECTOR pos = camera->transform.GetPositionXMVector() + right + up;
+		XMStoreFloat3(&origin, pos);
+	}
+	else
+	{
+		origin = camera->transform.GetPositionXMFloat3();
+	}
 }
 
 bool Ray::isPicked(BoundingBox3D* bbox)
 {
+
 	// 월드 행렬의 역함수를 구하십시오.
 	XMMATRIX world = bbox->GetOwner()->transform.worldMatrix;
 	XMMATRIX inverseWorld = XMMatrixInverse(nullptr, world);
@@ -96,7 +110,11 @@ bool Ray::isPicked(BoundingBox3D* bbox)
 	XMStoreFloat3(&direction, XMVector3TransformNormal(XMVectorSet(direction.x, direction.y, direction.z, 0.0f), inverseWorld));
 
 	// 광선 방향을 표준화합니다.
-	XMStoreFloat3(&rayDirection, XMVector3Normalize(XMVectorSet(direction.x, direction.y, direction.z, 0.0f)));
+
+	if(isOrthoGrahpicProjection)
+		XMStoreFloat3(&rayDirection, XMVector3Normalize(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f)));
+	else
+		XMStoreFloat3(&rayDirection, XMVector3Normalize(XMVectorSet(direction.x, direction.y, direction.z, 0.0f)));
 
 	// 이제 광선 구 교차 테스트를 수행하십시오.
 	//if (RaySphereIntersect(rayOrigin, rayDirection, 2.0f) == true)

@@ -129,24 +129,12 @@ void GraphicManager::RenderFrame()
 	const wchar_t* output = L"캡스톤_프로젝트";
 
 	//Perspective Projection 행렬을 셋팅합니다.
-	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 
 	//3D오브젝트를 그립니다.
 	{
 		for (const auto& kv : gameObjectManager->gameObjects) {
-			(kv.second)->Draw(vp, GameObject::ObjectType::OBJECT_3D);
-		}
-	}
-
-	// Orthographic Projection 행렬을 셋팅합니다.
-	cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
-	vp = camera->transform.worldMatrix * cameraComponent->GetProjectionMatrix();
-
-	//2D오브젝트를 그립니다.
-	{
-		for (const auto& kv : gameObjectManager->gameObjects) {
-			(kv.second)->Draw(vp, GameObject::ObjectType::OBJECT_2D);
+			(kv.second)->Draw(vp);
 		}
 	}
 
@@ -181,6 +169,12 @@ void GraphicManager::RenderFrame()
 	//창을 그립니다.
 	framework->layerManager.Render();
 	
+	#pragma region LuaTest
+
+	//this->framework->luaManager.ExecuteGUITest();
+
+	#pragma endregion
+
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -497,20 +491,12 @@ bool GraphicManager::InitializeScene()
 	res->cb_light.data.ambientLightStrength = 1.0f;
 
 	res->LoadSprite("ani", "..\\Resource\\a.jpg");
-
-
-	
-	// 오브젝트를 파일에서 읽기 & 초기화
-	// -> fbx (게임오브젝트 및 스프라이트)
-
+	res->LoadModel("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 
 	#pragma region 테스트용
 
-	if (gameObjectManager->FindGameObject("Nanosuit") == nullptr)
-	{
-		GameObject* obj1 = gameObjectManager->CreateGameObject("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-		obj1->transform.SetPosition(0, 0, 0);
-	}
+	GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
+	obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
 
 	#pragma endregion
 
@@ -523,33 +509,11 @@ bool GraphicManager::InitializeScene()
 	this->cameraComponent->initViewMatrix(
 		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
 		100, 100, -1, INFINITE);
-
 	/**********************************************/
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;
 }
 
-
-
-/*
- 스키닝 메시 테스트 함수
-*/
-GameObject* GraphicManager::CreateGameObject_2(const std::string& name, const std::string& path)
-{
-	PixelShader* ps_2 = res->FindPixelShader("ps_2");
-	VertexShader* vs_3 = res->FindVertexShader("vs_3");
-
-	GameObject* obj = new GameObject(name);
-	obj->SetActive(false);
-	SkinnedMeshRenderer* render1 = new SkinnedMeshRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb_skinning_1, res->cb_skinning_2, vs_3, ps_2);
-	obj->AddComponent(render1);
-	//obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
-
-	gameObjectManager->gameObjects.insert(std::make_pair(name, obj));
-
-	return obj;
-}
 
 bool GraphicManager::doTreeNode(GameObject* obj, int index) {
 

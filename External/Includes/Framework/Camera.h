@@ -33,7 +33,20 @@ public:
 			
 
 	const XMMATRIX& GetViewMatrix() const;
-	const XMMATRIX& GetProjectionMatrix() const;
+	const XMMATRIX& GetProjectionMatrix();
+
+	/// <summary>
+	/// 시점변환 선형 보간 계산 함수
+	/// </summary>
+	void cameraLerp();
+
+	/// <summary>
+	/// 카메라 모드 전환 처리 함수
+	/// </summary>
+	/// <param name="_bool">2d or 3d</param>
+	void changeMode(bool _bool);
+
+	bool curType = true;
 
 private:
 	virtual void Update() override;
@@ -43,6 +56,5 @@ private:
 
 	XMMATRIX view3DMatrix;
 	XMMATRIX view2DMatrix;
-
 };
 

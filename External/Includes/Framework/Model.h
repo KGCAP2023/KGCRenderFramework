@@ -12,14 +12,30 @@
 
 using namespace DirectX;
 
+class ResourceManager;
 /*
     Assimp 예제 , LearnOpenGL Model 참고
 */
 class Model
 {
 public:
+    Model() {}
 
-	bool Init(const std::string& filePath, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_2>& cb_vs_vertexshader, VertexShader* vertexShader, PixelShader* pixelShader);
+    Model(const Model& rhs) : meshes(rhs.meshes)
+    {
+        this->modelName = rhs.modelName;
+        this->directory = rhs.directory;
+        this->filePath = rhs.filePath;
+        this->pScene = rhs.pScene;
+        this->textures_loaded_ = rhs.textures_loaded_;
+        this->device = rhs.device;
+        this->deviceContext = rhs.deviceContext;
+        this->constantBuffer = rhs.constantBuffer;
+        this->vertexShader = rhs.vertexShader;
+        this->pixelShader = rhs.pixelShader;
+    }
+
+	bool Init(const std::string& modelName,const std::string& filePath, ResourceManager* res);
 	void Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix);
 
     std::vector<Mesh>& GetMeshes();
@@ -30,6 +46,7 @@ private:
     /*  Model 데이터  */
 
     std::vector<Mesh> meshes;
+    std::string modelName;
     std::string directory;
     std::string filePath;
 
@@ -43,7 +60,7 @@ private:
         std::string typeName, const aiScene* scene);
     ID3D11ShaderResourceView* loadEmbeddedTexture(const aiTexture* embeddedTexture);
 
-    std::vector<Texture> textures_loaded_;
+    std::vector<Texture>* textures_loaded_;
 	ID3D11Device* device = nullptr;
 	ID3D11DeviceContext* deviceContext = nullptr;
 

@@ -19,18 +19,18 @@ void Camera3D::ChangeProjectionValues(ViewType _type) {
 	switch (_type)
 	{
 	case ViewType::_2D:
-		this->projectionMatrix = view2DMatrix;
+		changeMode(false);
+		this->GetOwner()->transform.SetRotation(0, 0, 0);
 		break;
 
 	case ViewType::_3D:
-		this->projectionMatrix = view3DMatrix;
+		changeMode(true);
 		break;
 	default:
 		break;
 	}
 
 }
-
 
 
 void Camera3D::initViewMatrix(float fovDegrees, float aspectRatio, float nearZ, float farZ, float _width, float _hight, float _nearZ2, float _farZ2)
@@ -43,6 +43,7 @@ void Camera3D::initViewMatrix(float fovDegrees, float aspectRatio, float nearZ, 
 	//todo : 설정에 따라서 초기 뷰 모드 메트릭스로 설정, 현재는 3d 가 디폴트
 	this->projectionMatrix = view3DMatrix;
 
+
 }
 
 const XMMATRIX& Camera3D::GetViewMatrix() const
@@ -50,10 +51,31 @@ const XMMATRIX& Camera3D::GetViewMatrix() const
 	return this->viewMatrix;
 }
 
-const XMMATRIX& Camera3D::GetProjectionMatrix() const
+
+
+void Camera3D::changeMode(bool _bool) {
+	if (curType == _bool) return;
+	projectionMatrix = _bool ? view2DMatrix : view3DMatrix;
+	curType = _bool;
+}
+
+void Camera3D::cameraLerp()
 {
+	if(curType)
+		this->projectionMatrix = this->projectionMatrix + view3DMatrix/8000;
+	else
+		this->projectionMatrix = this->projectionMatrix + view2DMatrix / 2.8f;
+
+}
+
+const XMMATRIX& Camera3D::GetProjectionMatrix()
+{
+
+	cameraLerp();
 	return this->projectionMatrix;
 }
+
+
 
 void Camera3D::Update()
 {

@@ -5,10 +5,9 @@ using namespace DirectX;
 //XMLoad XMVECTOR로 탑재
 //XMSTORE XMFLOAT로 만듬
 
-void GameObject::Draw(const XMMATRIX& viewProjectionMatrix, GameObject::ObjectType objectType)
+void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-	if (this->objectType == objectType)
-	{
+
 		if (isActive)
 		{
 			for (auto it : this->components)
@@ -24,10 +23,10 @@ void GameObject::Draw(const XMMATRIX& viewProjectionMatrix, GameObject::ObjectTy
 		{
 			for (auto it : this->child)
 			{
-				it->Draw(viewProjectionMatrix, objectType);
+				it->Draw(viewProjectionMatrix);
 			}
 		}
-	}
+	
 }
 
 void GameObject::Update()
@@ -36,6 +35,9 @@ void GameObject::Update()
 	{
 		it.second->Update();
 	}
+
+	if (bbox != nullptr)
+		bbox->Update();
 
 	if (!this->child.empty())
 	{
@@ -58,21 +60,11 @@ void GameObject::AddComponent(Component* pComponent)
 	if (type == Component::Type::BOUNDING_BOX)
 	{
 		this->bbox = dynamic_cast<BoundingBoxRenderer*>(pComponent);
+		this->bb3d = dynamic_cast<BoundingBox3D*>(pComponent);
+
 		return;
 	}
 
-	switch (type)
-	{
-		case Component::Type::RENDERER_MODEL:
-		case Component::Type::RENDERER_SKINNED_MODEL:
-		case Component::Type::RENDERER_TEST:
-			this->objectType = GameObject::ObjectType::OBJECT_3D;
-			break;
-		case Component::Type::RENDERER_SPRITE:
-		case Component::Type::RENDERER_TILEMAP:
-			this->objectType = GameObject::ObjectType::OBJECT_2D;
-			break;
-	}
 
 	components.insert(std::make_pair(type, pComponent));
 }

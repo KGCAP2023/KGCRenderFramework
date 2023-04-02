@@ -8,15 +8,18 @@
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
 #include "ConstantBufferType.h"
+
+
 #include <directxcollision.h>
 
 class GameObject;
+class ResourceManager;
 
 class BoundingBoxRenderer : public Component
 {
 public:
 	BoundingBoxRenderer(GameObject* owner) : Component(owner) {}
-
+	virtual void Update() {};
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) {};
 
 	void SetBoundingBoxActive(bool value)
@@ -30,6 +33,7 @@ public:
 	}
 
 
+
 protected:
 	bool isActiveBoundingBox = true;
 };
@@ -37,8 +41,12 @@ protected:
 class BoundingBox3D : public BoundingBoxRenderer
 {
 public:
+	virtual void Update() override;
 
-	BoundingBox3D(GameObject* owner, ID3D11Device* device, ID3D11DeviceContext* deviceContext, PixelShader* ps, VertexShader* vs, ConstantBuffer<CB_VS_1>& constantBuffer);
+	static enum class ShapeType { CUBE, HOUR_GLASS };
+
+
+	BoundingBox3D(GameObject* owner, ResourceManager* res);
 
 	//경계박스 계산 코드
 	void processNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix)
@@ -121,7 +129,23 @@ public:
 	//컨텍스트 - 외부에서 끌어다 옵니다. 
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
 
-	
+	/// <summary>
+	/// 그리기 버퍼 세팅, 버퍼 변경점 갱신
+	/// </summary>
+	/// <param name="res">resourceManager (res)</param>
+	void DrawSetting(ResourceManager* res);
+
+	/// <summary>
+	/// 그려지는 모양 변경
+	/// </summary>
+	/// <param name="_type">enum 참조하여 선택</param>
+	/// <param name="_g">대상 게임오브젝트</param>
+	/// <param name="res">resourceManager 전달(res)</param>
+	void ChangeDrawShape(ShapeType _type, ResourceManager* res);
+
+private:
+
+	std::vector<DWORD> indices;
 
 };
 

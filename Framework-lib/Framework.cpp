@@ -109,7 +109,7 @@ void Framework::Update()
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();
 			xPosRelative.pop();
-			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
+				this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
 	}
@@ -250,6 +250,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	//인풋 매니저 초기화
 	this->InputManager.Init(this);
+
 	//레이어 매니저 초기화
 	this->layerManager.Init(this);
 	this->layerManager.SetImGuiDemo(true);
@@ -261,7 +262,30 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		return false;
 	}
 
+	//오디오 매니저 초기화
+	if (!this->audioManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED Audio Manager Initialize!" << std::endl;
+		return false;
+	}
+
+	//루아 스크립트 매니저 초기화
+	if (!this->luaManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED LUA Manager Initialize!" << std::endl;
+		return false;
+	}
+
+
 	ray = new Ray(this);
+
+	//오디오 테스트 및 초기화 완료
+	#pragma region MyRegion
+		audioManager.LoadAudio("test", "..//Resource/Audios/bgm.mp3");
+		audioManager.PlayAudio("test",5000,5000);
+	#pragma endregion
+
+
 
 	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 

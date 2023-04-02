@@ -10,45 +10,45 @@ GameObjectManager::GameObjectManager(Framework* framework)
 		this->res = &framework->resourceManager;
 }
 
+
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
+	//이름 같은 거 존재시 생성 거부
+
+	if (this->FindGameObject(_name) != nullptr) {
+
+		
+		return nullptr;
+	}
+
 	//오브젝트를 생성합니다.
 	GameObject* obj = new GameObject(_name);
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));
 
-
+	obj->AddComponent(new BoundingBox3D(obj, res));
 
 	return obj;
 }
 
-GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& path)
+GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& modelName)
 {
 
-	//리소스매니저에서 쉐이더를 가져옵니다.
-	PixelShader* ps_1 = res->FindPixelShader("ps_1");
-	VertexShader* vs_1 = res->FindVertexShader("vs_1");
-
-	PixelShader* ps_2 = res->FindPixelShader("ps_2");
-	VertexShader* vs_2 = res->FindVertexShader("vs_2");
-
+	//이름 같은 거 존재시 생성 거부
+	if (this->FindGameObject(_name) != nullptr) {
+		return nullptr;
+	}
 
 	//오브젝트를 생성합니다.
-	GameObject* obj = new GameObject(_name);
-	obj->SetObjectType(GameObject::ObjectType::OBJECT_3D);
-
+	GameObject* obj = CreateGameObject(_name);
 	//모델 렌더러를 생성합니다.
-	ModelRenderer* render1 = new ModelRenderer(obj);
-	render1->Init(path, graphicManager->device.Get(), graphicManager->deviceContext.Get(), graphicManager->res->cb2, vs_2, ps_2);
-
-
+	ModelRenderer* render = new ModelRenderer(obj);
+	Model* model = res->FindModel(modelName);
+	render->SetModel(model);
 	//모델 렌더러를 등록합니다.
-	obj->AddComponent(render1);
-
-
+	obj->AddComponent(render);
 	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBox3D(obj, graphicManager->device.Get(), graphicManager->deviceContext.Get(), ps_1, vs_1, res->cb1));
-
+	obj->AddComponent(new BoundingBox3D(obj, res));
 
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));

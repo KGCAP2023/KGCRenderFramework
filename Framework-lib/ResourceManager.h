@@ -8,6 +8,8 @@
 #include <SpriteFont.h>
 #include <CommonStates.h>
 #include "Shaders.h"
+#include "Model.h"
+#include "SkinnedMesh.h"
 class Framework;
 
 class IResourceManager
@@ -70,6 +72,58 @@ public:
 	/// <param name="name">찾을 이름</param>
 	/// <returns>타일맵</returns>
 	virtual TileMap* FindTileMap(const std::string& name) { return nullptr; };
+	/// <summary>
+	/// 일반 모델링 파일을 로드합니다. 
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <param name="filePath"></param>
+	/// <returns></returns>
+	virtual bool LoadModel(const std::string& modelName, const std::string& filePath) { return false; };
+	/// <summary>
+	/// 스키닝 모델(애니메이션이 있는 모델)을 로드합니다.
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <param name="filePath"></param>
+	/// <returns></returns>
+	virtual bool LoadSkinnedModel(const std::string& modelName, const std::string& filePath) { return false; };
+	/// <summary>
+	/// 스키닝 모델을 가져옵니다. (Clone)
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <returns></returns>
+	virtual SkinnedMesh* FindSkinnedModel(const std::string& modelName) { return nullptr; };
+	/// <summary>
+	/// 일반 모델을 가져옵니다. (Clone)
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <returns></returns>
+	virtual Model* FindModel(const std::string& modelName) { return nullptr; };
+	/// <summary>
+	/// 모델에 캐싱되어있는 텍스쳐를 가져옵니다.
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <returns></returns>
+	virtual std::vector<Texture>* GetCachedTexture(const std::string& modelName) { return nullptr; };
+	/// <summary>
+	/// 스프라이트 맵을 순회합니다.
+	/// </summary>
+	/// <param name="callback"></param>
+	virtual void SpriteForeach(std::function<void(Sprite*)> callback) {};
+	/// <summary>
+	/// 스프라이트 맵을 가져옵니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual std::unordered_map<std::string, Sprite*> GetSpriteMap() { return std::unordered_map<std::string, Sprite*>(); };
+	/// <summary>
+	/// 타일 맵을 순회합니다.
+	/// </summary>
+	/// <param name="callback"></param>
+	virtual void TileMapForeach(std::function<void(TileMap*)> callback) {};
+	/// <summary>
+	/// 타일 맵을 가져옵니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual std::unordered_map<std::string, TileMap*> GetTileMap() { return std::unordered_map<std::string, TileMap*>(); };
 };
 
 
@@ -98,9 +152,30 @@ public:
 	VertexShader* FindVertexShader(const std::string& key) override;
 	PixelShader* FindPixelShader(const std::string& key) override;
 
+	bool LoadSkinnedModel(const std::string& modelName, const std::string& filePath) override;
+	bool LoadModel(const std::string& modelName, const std::string& filePath) override;
+
+	SkinnedMesh* FindSkinnedModel(const std::string& modelName) override;
+	Model* FindModel(const std::string& modelName) override;
+
+	std::vector<Texture>* GetCachedTexture(const std::string& modelName) override;
+
+	void SpriteForeach(std::function<void(Sprite*)> callback) override;
+	std::unordered_map<std::string, Sprite*> GetSpriteMap() override;
+
+	void TileMapForeach(std::function<void(TileMap*)> callback) override;
+	std::unordered_map<std::string, TileMap*> GetTileMap() override;
+
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;
 	std::unordered_map<std::string, TileMap*> _TileMap;
+
+	//모델
+	std::unordered_map<std::string, Model*> _modelMap;
+	//스키닝 모델
+	std::unordered_map<std::string, SkinnedMesh*> _skinnedMap;
+	//텍스쳐
+	std::unordered_map<std::string, std::vector<Texture>*> _textures_loaded;
 
 	//버텍스 쉐이더
 	std::unordered_map<std::string, VertexShader*> _vsMap;

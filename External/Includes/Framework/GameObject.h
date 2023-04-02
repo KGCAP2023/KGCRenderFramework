@@ -15,8 +15,7 @@ public:
 	static enum class ObjectType
 	{
 		OBJECT_DEFAULT,
-		OBJECT_2D,
-		OBJECT_3D
+		OBJECT_SPRITE
 	};
 
 	GameObject(const std::string& name) : transform(Transform(this)) 
@@ -36,6 +35,8 @@ public:
 	Transform transform;
 	GameObject::ObjectType objectType = GameObject::ObjectType::OBJECT_DEFAULT;
 	BoundingBoxRenderer* bbox = nullptr;
+
+	BoundingBox3D* bb3d = nullptr;
 
 	void SetObjectType(GameObject::ObjectType type);
 
@@ -89,7 +90,7 @@ public:
 	/// </summary>
 	void CleanUpComponent();
 
-	void Draw(const XMMATRIX& viewProjectionMatrix, GameObject::ObjectType type);
+	void Draw(const XMMATRIX& viewProjectionMatrix);
 	void Update();
 
 	void Destroy() { this->isDestroy = true; }

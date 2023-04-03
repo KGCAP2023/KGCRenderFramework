@@ -52,17 +52,21 @@ public:
 		float x = 32 / image->GetWidth();
 		float y = 32 / image->GetHeight();
 
+		float width = image->GetWidth();
+		float height = image->GetHeight();
+
 		if (level_edit) {
-			ImGui::SetNextWindowSize(ImVec2(450, 500));
-			ImGui::Begin(u8"Level Editor", &level_edit, ImGuiWindowFlags_MenuBar);	//UI창을 내부 메뉴 선택과 창닫기가 가능하도록 MenuBar로 설정
+			//ImGui::SetNextWindowSize(ImVec2(450, 500));	//사이즈 고정
+			ImGui::Begin(u8"Level Editor", &level_edit, ImGuiWindowFlags_HorizontalScrollbar);	//UI창을 내부 메뉴 선택과 창닫기가 가능하도록 MenuBar로 설정
 
-			ImGui::Image((void*)image->Get(), ImVec2(512, 512), ImVec2(1, 1), ImVec2(x, y));	//이미지 파일 띄우기 (크기는 512, 512로 고정)
-
-			if (ImGui::Button("add")) {		//새 창 띄우기
+			if (ImGui::Button("add")) {		//새 창 띄우기, 이미지에서 지정된 부분(크기 32,32)을 출력하도록 설정
 				isActiveWindow2 = true;
 			}
 			if (isActiveWindow2) {
 				ImGui::Begin(u8"Info2");
+				ImGui::Image((void*)image->Get(), ImVec2(128, 128), ImVec2(0, 0), ImVec2(x, y));	//이미지 파일 띄우기 (크기는 512, 512로 고정)
+				ImGui::SameLine();
+				ImGui::Image((void*)image->Get(), ImVec2(128, 128), ImVec2(x, 0), ImVec2(2*x, y));
 				ImGui::End();
 			}
 
@@ -78,7 +82,7 @@ public:
 
 			ImGuiIO& io = ImGui::GetIO();
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));	//캔버스 내부 색상과 테두리 설정
 			draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
 
 			//마우스가 캔버스 안에 들어와있을 때의 동작을 감지하는 부분
@@ -87,6 +91,11 @@ public:
 			const bool is_active = ImGui::IsItemActive();   // 캔버스 내부에서 클릭된 상태인 경우
 			const ImVec2 origin(canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y);				// Lock scrolled origin
 			const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);	//캔버스 내부의 마우스 좌표를 받아옴
+
+			//캔버스 draw_list 창 내부에 이미지 삽입, 배경색과 배경테두리보다 나중에 호출되어 상단에 그려짐 
+			//grid보다 먼저 호출되어 이미지 위에 grid가 그려질 수 있게함
+			//캔버스 범위를 벗어나는 경우에도 이미지가 가려지지 않는 문제가 있음 수정이 필요함
+			draw_list->AddImage((void*)image->Get(), origin, ImVec2(origin.x + width, origin.y + height), ImVec2(0, 0), ImVec2(1, 1));
 
 			//마우스가 캔버스 내부에 들어와있는 상태에서 좌클릭된 경우
 			if (is_hovered && !adding_line && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
@@ -129,11 +138,11 @@ public:
 			draw_list->PushClipRect(canvas_p0, canvas_p1, true);
 			if (opt_enable_grid)
 			{
-				const float GRID_STEP = 64.0f;
+				const float GRID_STEP = 32.0f;
 				for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
-					draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
+					draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 250));
 				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
-					draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+					draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 250));
 			}
 			for (int n = 0; n < points.Size; n += 2)
 				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);

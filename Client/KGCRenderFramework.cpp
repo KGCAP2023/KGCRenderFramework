@@ -76,6 +76,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		uiMgr->RegisterAllUI();
 	}
 
+
+
 	//Example* temp = new Example(objM, "example");
 
 	rw->run();

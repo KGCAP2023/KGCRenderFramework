@@ -32,8 +32,8 @@ public:
 
 	void InitResource()
 	{
-		this->resMgr->LoadSprite("test", "..\\Resource\\Textures\\seamless_grass.JPG");
-
+		sp = this->resMgr->LoadSprite("test", "..\\Resource\\Textures\\sand.PNG");
+		this->TileMapping();
 	}
 
 	void RegisterAllUI()
@@ -44,8 +44,39 @@ public:
 		}
 	}
 
+	void TileMapping() 
+	{
+		TileMap* tileMap = new TileMap();
+		tileMap->Init(sp, 5, 5);
+
+		//타일사이즈 스케일
+		tileMap->SetScale(2.f);
+
+		//타일선택 
+		tileMap->SelectTile(0, 0, 0, 0);
+		tileMap->SelectTile(1, 1, 1, 1);
+		tileMap->SelectTile(2, 2, 2, 2);
+
+		//타일맵등록
+		resMgr->RegisterTileMap("tilemap", tileMap);
+
+		//게임오브젝트 생성
+		GameObject* gg = objMgr->CreateGameObject("eee");
+		gg->transform.SetPosition(50, 40, 0);
+
+		//타일맵 렌더러 컴포넌트 생성
+		TileMapRenderer* tileRender = new TileMapRenderer(gg);
+
+		//타일맵 렌더러 컴포넌트에 타일맵을 장착		Init 대신 AddTileMap 사용
+		tileRender->AddTileMap(tileMap);
+
+		//게임오브젝트에 타일맵 렌더러 컴포넌트 장착
+		gg->AddComponent(tileRender);
+	}
+
 	std::vector<ILayer*> uiList;
 	IResourceManager* resMgr = nullptr;
 	IGameObjectManager* objMgr = nullptr;
 	IFramework* framework = nullptr;
+	Sprite* sp = nullptr;
 };

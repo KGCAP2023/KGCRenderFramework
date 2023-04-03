@@ -39,56 +39,28 @@ void AudioManager::DeleteAudio(const char* audioName)
 
 
 
-void AudioManager::PlayAudio(const char* audioName, const long frontdelay, const long backdelay)
+void AudioManager::PlayAudio(const char* audioName)
 {
-	std::thread t([=] {
-		std::this_thread::sleep_for(std::chrono::milliseconds(frontdelay));
 		this->m_system->playSound(m_sound[audioName], nullptr, false, &m_channel[audioName]);
-		std::this_thread::sleep_for(std::chrono::milliseconds(backdelay));
-		});
-
-	t.detach();
-
 }
 
 
-void AudioManager::StopAudio(const char* audioName, const long frontdelay, const long backdelay)
+void AudioManager::StopAudio(const char* audioName)
 {
-	std::thread t([=] {
-		std::this_thread::sleep_for(std::chrono::milliseconds(frontdelay));
 		this->m_channel[audioName]->stop();
-		std::this_thread::sleep_for(std::chrono::milliseconds(backdelay));
-		});
-
-	t.detach();
-	
 }
 
-void AudioManager::PauseAudio(const char* audioName, const long frontdelay, const long backdelay)
+void AudioManager::PauseAudio(const char* audioName)
 {
-	std::thread t([=] {
-		std::this_thread::sleep_for(std::chrono::milliseconds(frontdelay));
 		this->m_channel[audioName]->setPaused(true);
-		std::this_thread::sleep_for(std::chrono::milliseconds(backdelay));
-		});
-
-	t.detach();
-	
 }
 
 
 
 
-void AudioManager::ResumeAudio(const char* audioName, const long frontdelay, const long backdelay)
+void AudioManager::ResumeAudio(const char* audioName)
 {
-	std::thread t([=] {
-		std::this_thread::sleep_for(std::chrono::milliseconds(frontdelay));
 		this->m_channel[audioName]->setPaused(false);
-		std::this_thread::sleep_for(std::chrono::milliseconds(backdelay));
-		});
-
-	t.detach();
-	
 }
 
 

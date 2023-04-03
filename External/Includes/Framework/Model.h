@@ -41,6 +41,7 @@ public:
     std::vector<Mesh>& GetMeshes();
     const aiScene* getAiScene();
     std::string GetPath();
+    std::string GetName();
 
 private:
     /*  Model ตฅภฬลอ  */

@@ -22,7 +22,7 @@ Sprite* ResourceManager::LoadSprite(const std::string& name, const std::string& 
 {
 	Sprite* sp = new Sprite();
 
-	if (sp->Init(this->device.Get(), this->deviceContext.Get(), spritePath,this->spriteBatch.get()))
+	if (sp->Init(name,this->device.Get(), this->deviceContext.Get(), spritePath,this->spriteBatch.get()))
 	{
 		this->_spriteMap.insert(std::make_pair<>(name, sp));
 		return sp;

@@ -1,15 +1,17 @@
 #include "pch.h"
 #include "Model.h"
+#include "ResourceManager.h"
 
-
-bool Model::Init(const std::string& filePath, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_2>& constantBuffer, VertexShader* vertexShader, PixelShader* pixelShader)
+bool Model::Init(const std::string& modelName, const std::string& filePath, ResourceManager* res)
 {
-	this->device = device;
-	this->deviceContext = deviceContext;
-	this->constantBuffer = &constantBuffer;
+	this->modelName = modelName;
+	this->device = res->device.Get();
+	this->deviceContext = res->deviceContext.Get();
+	this->constantBuffer = &res->cb2;
 	this->filePath = filePath;
-	this->vertexShader = vertexShader;
-	this->pixelShader = pixelShader;
+	this->vertexShader = res->FindVertexShader("vs_2");
+	this->pixelShader = res->FindPixelShader("ps_2");
+	this->textures_loaded_ = res->GetCachedTexture(modelName);
 
 	try
 	{
@@ -27,7 +29,8 @@ bool Model::Init(const std::string& filePath, ID3D11Device* device, ID3D11Device
 
 void Model::Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix)
 {
-
+	this->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->deviceContext->IASetInputLayout(this->vertexShader->GetInputLayout());
 	this->deviceContext->VSSetShader(this->vertexShader->GetShader(), NULL, 0);
 	this->deviceContext->PSSetShader(this->pixelShader->GetShader(), NULL, 0);
 
@@ -65,7 +68,6 @@ bool Model::loadModel(const std::string & path)
 		return false;
 
 	this->directory = path.substr(0, path.find_last_of("/\\"));
-
 	processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
 
 	return true;
@@ -90,7 +92,6 @@ void Model::processNode(aiNode* node, const aiScene* scene, const XMMATRIX& pare
 		this->processNode(node->mChildren[i], scene, nodeTransformMatrix);
 	}
 }
-
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, const XMMATRIX& transformMatrix)
 {
@@ -169,9 +170,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		// Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
 		bool skip = false;
 
-		for (UINT j = 0; j < textures_loaded_.size(); j++) {
-			if (std::strcmp(textures_loaded_[j].path.c_str(), str.C_Str()) == 0) {
-				textures.push_back(textures_loaded_[j]);
+		for (UINT j = 0; j < textures_loaded_->size(); j++) {
+			if (std::strcmp(textures_loaded_->at(j).path.c_str(), str.C_Str()) == 0) {
+				textures.push_back(textures_loaded_->at(j));
 				skip = true; // A texture with the same filepath has already been loaded, continue to next one. (optimization)
 				break;
 			}
@@ -220,7 +221,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 			texture.type = typeName;
 			texture.path = str.C_Str();
 			textures.push_back(texture);
-			this->textures_loaded_.push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+			this->textures_loaded_->push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
 		}
 	}
 	return textures;

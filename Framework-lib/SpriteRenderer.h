@@ -3,12 +3,16 @@
 #include "Sprite.h"
 #include "Animation2D.h"
 
-class SpriteRenderer : public Component, public Renderer
+/// <summary>
+/// 2D스프라이트를 가져옵니다.
+/// </summary>
+class SpriteRenderer : public Component
 {
 public:
 	SpriteRenderer(GameObject* owner) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_MODEL;
+		this->name = "SpriteRenderer";
 	}
 
 	virtual void Update() override;

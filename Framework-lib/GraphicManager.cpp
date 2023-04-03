@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "GraphicManager.h"
 #include "Framework.h"
-#include "GameObjectManager.h"
+
 //imgui / 타이머
 bool GraphicManager::Initialize(Framework* framework,HWND hwnd, int width, int height)
 {
@@ -101,13 +101,6 @@ void GraphicManager::RenderFrame()
 	deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
-	
-	
-
-
-	
-
-
 	/*
 	//DRAW CALL (3D 도형 그리기)
 	IASetInputLayout 버텍스 인풋 레이아웃 세트		deviceContext
@@ -133,20 +126,21 @@ void GraphicManager::RenderFrame()
 
 	*/
 
+	const wchar_t* output = L"캡스톤_프로젝트";
 
-	VertexShader* vs_3 = res->FindVertexShader("vs_1");
-	deviceContext->IASetInputLayout(vs_3->GetInputLayout());
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	//Perspective Projection 행렬을 셋팅합니다.
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
-	cameraComponent->SetProjectionValues(90.0f, static_cast<float>(this->width) / static_cast<float>(this->height), 0.1f, 3000.0f);
 
+	//3D오브젝트를 그립니다.
 	{
 		for (const auto& kv : gameObjectManager->gameObjects) {
 			(kv.second)->Draw(vp);
 		}
 	}
 
+	res->spriteBatch->Begin();
+	res->spriteFont->DrawString(res->spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
+	res->spriteBatch->End();
 
 	static int fpsCounter = 0;
 	fpsCounter += 1;
@@ -158,14 +152,7 @@ void GraphicManager::RenderFrame()
 		fps.ReStart();
 	}
 
-	const wchar_t* output = L"캡스톤_프로젝트";
-	res->spriteBatch->Begin();
-	res->spriteFont->DrawString(res->spriteBatch.get(), output, XMFLOAT2(0, 30), Colors::Black, 0.0f, XMFLOAT2(0, 0), 1.0f);
-	res->spriteBatch->End();
-
-	//Sprite* sp = res->FindSprite("ani");
-	//sp->Draw(DirectX::SimpleMath::Vector2(0, 0), res->spriteBatch.get());
-
+	//그려진 백버퍼를 텍스쳐로 저장합니다.
 	deviceContext->CopyResource(refTex, backBuffer.Get());
 
 	/**
@@ -173,21 +160,20 @@ void GraphicManager::RenderFrame()
 	 IMGUI
 
 	**/
-	static bool inspector = true;
-	static bool ppp = true;
-	bool show_demo_window = true;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-	// Start the Dear ImGui frame
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
-	//framework->layerManager.DockingSpace();
-
+	//도킹스페이스를 그립니다.
+	framework->layerManager.DockingSpace();
+	//창을 그립니다.
 	framework->layerManager.Render();
 	
+	#pragma region LuaTest
+
+	//this->framework->luaManager.ExecuteGUITest();
+
+	#pragma endregion
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -413,13 +399,11 @@ bool GraphicManager::InitializeShaders()
 
 	if (!res->LoadVertexShader("vs_1", L"..\\Shader\\VertexShader.hlsl", layout, numElements))
 	{
-		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
 	if (!res->LoadPixelShader("ps_1", L"..\\Shader\\PixelShader.hlsl"))
 	{
-		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
 	}
 
@@ -434,13 +418,11 @@ bool GraphicManager::InitializeShaders()
 
 	if (!res->LoadVertexShader("vs_2", L"..\\Shader\\VertexShader2.hlsl", layout3D, numElements3D))
 	{
-		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
 	if (!res->LoadPixelShader("ps_2", L"..\\Shader\\PixelShader2.hlsl"))
 	{
-		Logger::Log(L"픽셀쉐이더 로드 실패");
 		return false;
 	}
 
@@ -467,7 +449,6 @@ bool GraphicManager::InitializeShaders()
 
 	if (!res->LoadVertexShader("vs_3", L"..\\Shader\\VertexShader3.hlsl", layoutw, numElementsw))
 	{
-		Logger::Log(L"버텍스쉐이더 로드 실패");
 		return false;
 	}
 
@@ -510,147 +491,29 @@ bool GraphicManager::InitializeScene()
 	res->cb_light.data.ambientLightStrength = 1.0f;
 
 	res->LoadSprite("ani", "..\\Resource\\a.jpg");
+	res->LoadModel("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 
+	#pragma region 테스트용
 
-	
-	// 오브젝트를 파일에서 읽기 & 초기화
-	// -> fbx (게임오브젝트 빛 스프라이트)
+	GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
+	obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
 
-	//obj = new SimpleRenderableObject();
-	//obj->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	//obj->SetPosition(1, 1, 1);
+	#pragma endregion
 
-
-	//SimpleRenderableObject* obj1 = new SimpleRenderableObject();
-	//obj1->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	//obj1->SetPosition(4, 0, 4);
-
-	//SimpleRenderableObject* obj2 = new SimpleRenderableObject();
-	//obj2->Init(this->device.Get(), this->deviceContext.Get(), this->cb1);
-	//obj2->SetPosition(10, 0, 10);
-
-
-	//RenderableObject* obj4 = new RenderableObject();
-	//
-	//obj4->SetPosition(2,0,0);
-
-	GameObject* obj1 = CreateGameObject_1("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-	obj1->transform.SetPosition(0, 5, 0);
-
-	//GameObject* obj2 = CreateGameObject_2("boblampclean", "Resource\\Objects\\boblamp\\boblampclean.md5mesh");
-	//obj2->transform.SetPosition(0, 5, 0);
-	//obj2->transform.SetScale(0.2f, 0.2f, 0.2f);
-	//obj2->SetActive(true);
-
-	//assimp 자체에 fbx 애니메이션 버그가 있다.
-	//GameObject* obj2 = CreateGameObject_2("spin", "Resource\\Objects\\spin\\spin.dae");
-
-	//GameObject* obj2 = CreateGameObject_2("walk", "Resource\\Objects\\walking\\walk.fbx");
-	//obj2->transform.SetPosition(0, 5, 0);
-	//obj2->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj2->SetActive(true);
-
-	//GameObject* obj5 = CreateGameObject_2("walk2", "Resource\\Objects\\walking\\walk.fbx");
-	//obj5->transform.SetPosition(0, 5, 0);
-	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj5->SetActive(true);
-
-	//GameObject* obj6 = CreateGameObject_2("walk3", "Resource\\Objects\\walking\\walk.fbx");
-	//obj5->transform.SetPosition(0, 5, 0);
-	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj5->SetActive(true);
-
-	//GameObject* obj7 = CreateGameObject_2("walk4", "Resource\\Objects\\walking\\walk.fbx");
-	//obj5->transform.SetPosition(0, 5, 0);
-	//obj5->transform.SetScale(0.05f, 0.05f, 0.05f);
-	//obj5->SetActive(true);
-
-	//GameObject* obj3 = CreateGameObject_1("Nanosuit", "Resource\\Objects\\Nanosuit\\Nanosuit.obj");
-	//obj3->transform.SetPosition(0, 5, 0);
-
-
-	////GameObject* obj8 = CreateGameObject_1("steve", "Resource\\Objects\\steve\\source\\steve.fbx");
-	////obj8->transform.SetPosition(0, 5, 0);
-
-	//GameObject* obj8 = CreateGameObject_1("grass", "Resource\\Objects\\grass\\Grass_Block.obj");
-	//obj8->transform.SetPosition(0, 5, 0);
-	//obj8->transform.SetScale(0.5,0.5,0.5);
-
-	//GameObject* obj9 = CreateGameObject_1("grass2", "Resource\\Objects\\grass\\Grass_Block.obj");
-	//obj9->transform.SetPosition(1, 5, 0);
-	//obj9->transform.SetScale(0.5, 0.5, 0.5);
-	//
-
-	//GameObject* obj3 = CreateGameObject_1("sponza", "Resource\\Objects\\Sponza\\sponza.obj");
-	//obj2->transform.SetPosition(0, 5, 0);
 
 	//카메라 
 	this->camera = new GameObject("camera");
 	this->cameraComponent = new Camera3D(camera);
 	camera->AddComponent(cameraComponent);
-	camera->transform.SetPosition(0.0f, 12.0f, -10.0f);
-	this->cameraComponent->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f);
-
+	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
+	this->cameraComponent->initViewMatrix(
+		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
+		100, 100, -1, INFINITE);
 	/**********************************************/
-
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;
 }
 
-GameObject* GraphicManager::CreateGameObject_1(const std::string& name, const std::string& path)
-{
-	//리소스매니저에서 쉐이더를 가져옵니다.
-	PixelShader* ps_1 = res->FindPixelShader("ps_1");
-	VertexShader* vs_1 = res->FindVertexShader("vs_1");
-
-	PixelShader* ps_2 = res->FindPixelShader("ps_2");
-	VertexShader* vs_2 = res->FindVertexShader("vs_2");
-	Sprite* sp = res->FindSprite("ani");
-
-	//오브젝트를 생성합니다.
-	GameObject* obj = new GameObject(name);
-
-	//모델 렌더러를 생성합니다.
-	ModelRenderer* render1 = new ModelRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb2, vs_2, ps_2);
-
-	//모델 렌더러를 등록합니다.
-	obj->AddComponent(render1);
-
-	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), ps_1,vs_1,res->cb1));
-
-	//SpriteRenderer* render2 = new SpriteRenderer(obj);
-	//render2->AddSprite(sp);
-	//render2->AddAnimation2D("motion1", 200, 200, 100, 100, 4, 1000.f, DirectX::Colors::Magenta);
-	//render2->SelectAnimation("motion1");
-	//obj->AddComponent(render2);
-
-	//게임오브젝트를 등록합니다.
-	gameObjectManager->gameObjects.insert(std::make_pair<>(name, obj));
-
-	return obj;
-}
-
-/*
- 스키닝 메시 테스트 함수
-*/
-GameObject* GraphicManager::CreateGameObject_2(const std::string& name, const std::string& path)
-{
-	PixelShader* ps_2 = res->FindPixelShader("ps_2");
-	VertexShader* vs_3 = res->FindVertexShader("vs_3");
-
-	GameObject* obj = new GameObject(name);
-	obj->SetActive(false);
-	SkinnedMeshRenderer* render1 = new SkinnedMeshRenderer(obj);
-	render1->Init(path, this->device.Get(), this->deviceContext.Get(), res->cb_skinning_1, res->cb_skinning_2, vs_3, ps_2);
-	obj->AddComponent(render1);
-	//obj->AddComponent(new BoundingBoxRenderer(obj, this->device.Get(), this->deviceContext.Get(), &ps_1));
-
-	gameObjectManager->gameObjects.insert(std::make_pair(name, obj));
-
-	return obj;
-}
 
 bool GraphicManager::doTreeNode(GameObject* obj, int index) {
 

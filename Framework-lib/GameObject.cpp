@@ -7,21 +7,26 @@ using namespace DirectX;
 
 void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-	if (isActive)
-	{
-		for (auto it : this->render)
-		{
-			it->Draw(viewProjectionMatrix);
-		}
-	}
 
-	if (!this->child.empty())
-	{
-		for (auto it : this->child)
+		if (isActive)
 		{
-			it->Draw(viewProjectionMatrix);
+			for (auto it : this->components)
+			{
+				it.second->Draw(viewProjectionMatrix);
+			}
 		}
-	}
+
+		if (bbox != nullptr && bbox->isActive())
+			bbox->Draw(viewProjectionMatrix);
+
+		if (!this->child.empty())
+		{
+			for (auto it : this->child)
+			{
+				it->Draw(viewProjectionMatrix);
+			}
+		}
+	
 }
 
 void GameObject::Update()
@@ -30,6 +35,9 @@ void GameObject::Update()
 	{
 		it.second->Update();
 	}
+
+	if (bbox != nullptr)
+		bbox->Update();
 
 	if (!this->child.empty())
 	{
@@ -40,21 +48,45 @@ void GameObject::Update()
 	}
 }
 
+void GameObject::SetObjectType(GameObject::ObjectType type)
+{
+	this->objectType = type;
+}
+
 void GameObject::AddComponent(Component* pComponent)
 {
 	Component::Type type = pComponent->GetType();
-	if (type == Component::Type::RENDERER_MODEL || type == Component::Type::BOUNDING_BOX)
+
+	if (type == Component::Type::BOUNDING_BOX)
 	{
-		//this->render MapÀ¸·Î ¹Ù²ã¾ßµÊ
-		this->render.push_back(dynamic_cast<Renderer*>(pComponent));
-		//this->render.push_back((Renderer*)pComponent);
+		this->bbox = dynamic_cast<BoundingBoxRenderer*>(pComponent);
+		this->bb3d = dynamic_cast<BoundingBox3D*>(pComponent);
+
+		return;
 	}
+
+
 	components.insert(std::make_pair(type, pComponent));
 }
 
-Component* GameObject::GetComponent(const std::wstring componentID)
+void GameObject::RemoveComponent(const Component::Type componentID)
 {
+	//Component* c = this->GetComponent(componentID);
+	//if (c != nullptr)
+	//	delete c;
+	components.erase(componentID);
+}
 
+Component* GameObject::GetComponent(const std::string componentID)
+{
+	for (auto& a : components)
+	{
+		Component* c = a.second; 
+		if (c->GetName().compare(componentID) == 0)
+		{
+			return c;
+		}
+	}
 	return nullptr;
 }
 
@@ -72,8 +104,32 @@ Component* GameObject::GetComponent(const Component::Type componentID)
 	}
 }
 
+std::unordered_map<Component::Type, Component*, Component::ComponentHash> GameObject::GetComponentMap()
+{
+	return this->components;
+}
+
+int GameObject::GetComponentSize()
+{
+	return components.size();
+}
+
+void GameObject::ComponentForeach(std::function<void(Component*)> callback)
+{
+	for (auto& a : components)
+	{
+		callback(a.second);
+	}
+}
+
 void GameObject::CleanUpComponent()
 {
+	for (auto& a : components)
+	{
+		Component* c = a.second;
+		//delete c;
+	}
+	this->components.clear();
 }
 
 void GameObject::SetActive(bool bActive)

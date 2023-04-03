@@ -21,7 +21,8 @@
   <ItemGroup>
     <ClInclude Include="Animation2D.h" />
     <ClInclude Include="Animation3D.h" />
-    <ClInclude Include="BoundingBoxRenderer.h" />
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
@@ -39,14 +40,14 @@
     <ClInclude Include="IScript.h" />
     <ClInclude Include="LayerManager.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="LuaManager.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Protocols.h" />
-    <ClInclude Include="RenderComponent.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shaders.h" />
@@ -55,7 +56,10 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="StringUtil.h" />
+    <ClInclude Include="TestRenderer.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMapRenderer.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
@@ -64,7 +68,8 @@
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp" />
     <ClCompile Include="Animation3D.cpp" />
-    <ClCompile Include="BoundingBoxRenderer.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Framework.cpp" />
@@ -78,12 +83,12 @@
     <ClCompile Include="IScript.cpp" />
     <ClCompile Include="LayerManager.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="LuaManager.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
-    <ClCompile Include="RenderComponent.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shaders.cpp" />
@@ -92,6 +97,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StringUtil.cpp" />
+    <ClCompile Include="TestRenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />

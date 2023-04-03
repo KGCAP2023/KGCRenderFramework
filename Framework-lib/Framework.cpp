@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Framework.h"
 
-
 float Framework::dt;
 
 void Framework::run()
@@ -28,21 +27,33 @@ void Framework::run()
 		Update(); //업데이트 문입니다.
 		RenderFrame(); //프레임을 렌더링 합니다. 
 	}
-
+	
 }
 
 IGameObjectManager* Framework::GetGameObjectManager()
 {
-	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager;
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
 	return gameObjManager;
 }
 
+IResourceManager* Framework::GetResourceManager()
+{
+	return &this->resourceManager;
+}
+
 GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
-	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager;
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
 	return gameObjManager;
+}
+
+void Framework::ChangeCameraViewType(Camera3D::ViewType _viewType)
+{
+
+	if(this->graphics.cameraComponent != nullptr) this->graphics.cameraComponent->ChangeProjectionValues(_viewType);
+
 }
 
 void Framework::Update()
@@ -53,8 +64,8 @@ void Framework::Update()
 
 	float speed = 0.006f;
 	
-	const auto& kb = this->InputManager.GetKeyboard()->GetState();
-	const auto& mouse = this->InputManager.GetMouse()->GetState();
+	auto kb = this->InputManager.GetKeyboardState();
+	auto mouse = this->InputManager.GetMouseState();
 	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
 	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
 
@@ -67,26 +78,38 @@ void Framework::Update()
 		kv.second->Update();
 	}
 
-	//=========================================
+	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
 
-	auto& io = ImGui::GetIO();
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
-		return;
+	if (mouse.leftButton)
+	{
+		if (!MOUSE_LEFT_BUTTON_PRESSED)
+		{
+			std::cout << "클릭된좌표:  " << mouse.x << "/" << mouse.y << std::endl;
+			this->ray->CalculatePicking(mouse.x, mouse.y);
+			for (auto& kv : this->gameObjManager->gameObjects) {
+				BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
+				if(bbox != nullptr) this->ray->isPicked(bbox);
+			}
+
+		}
+		MOUSE_LEFT_BUTTON_PRESSED = true;
 	}
+	else
+	{
+		MOUSE_LEFT_BUTTON_PRESSED = false;
+	}
+
+	//=========================================
 
 	if (mouse.rightButton)
 	{
-		//std::cout << mouse.x << " " << mouse.y << std::endl;
-
 		while (!yPosRelative.empty())
 		{
-			
 			int yPosRelative2 = yPosRelative.front();
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();
 			xPosRelative.pop();
-			//std::cout << "Pos: " << xPosRelative <<" " << yPosRelative << std::endl;
-			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
+				this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
 	}
@@ -97,9 +120,9 @@ void Framework::Update()
 		xPosRelative.pop();
 	}
 
-	//if(mouse.leftButton)
-	//{
-	//	this->graphics.camera->transform.SetLookAtPos(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	//auto& io = ImGui::GetIO();
+	//if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
+	//	return;
 	//}
 		
 	if (kb.Back) // Backspace key is down
@@ -124,71 +147,24 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		std::cout << "w" << std::endl;
-		//walk->transform.Translate(walk->transform.GetForward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
 	}
 
 	if (kb.A) // A key is down
 	{
-		std::cout << "a" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
 	if (kb.S) // S key is down
 	{
-		std::cout << "s" << std::endl;
-		//walk->transform.Translate(walk->transform.GetBackward() * speed * dt);
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
 	}
 
 	if (kb.D) // D key is down
 	{
-		std::cout << "d" << std::endl;
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}
 		
-	//if (kb.LeftShift)
-			// Left shift key is down
-
-	//if (kb.RightShift)
-			// Right shift key is down
-
-	if (kb.IsKeyDown(Keyboard::Keys::Enter) == true) // Keyboard::Keys
-			std::cout << "Enter" << std::endl;
-
-
-	
-	
-	
-	//this->graphics.obj->Translate(0, 0, 0.008 * dt);
-	
-	//this->graphics.obj3->SetPosition(0,-13,-3);
-	
-	//this->graphics.camera.Translate(0,0,0.008*dt);
-
-	
-
-	bool change = true;
-
-	
-
-	//for (const auto& kv : GameObject::gameObjects) {
-
-	//	if (change)
-	//	{
-	//		kv.second->SetPosition(10, 0, 10);
-	//		kv.second->Rotate(speed * dt,0, 0);
-	//		change = false;
-	//	}
-	//	else
-	//	{
-	//		kv.second->SetPosition(5, 0, 5);
-	//		kv.second->Rotate(speed * dt, 0, speed * dt);
-	//	}
-	//}
-
-	//this->graphics.camera.Rotate(0, speed * dt,0);
 
 }
 
@@ -274,6 +250,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	//인풋 매니저 초기화
 	this->InputManager.Init(this);
+
 	//레이어 매니저 초기화
 	this->layerManager.Init(this);
 	this->layerManager.SetImGuiDemo(true);
@@ -284,6 +261,31 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		std::cout << "[X] FAILED Graphics Manager Initialize!" << std::endl;
 		return false;
 	}
+
+	//오디오 매니저 초기화
+	if (!this->audioManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED Audio Manager Initialize!" << std::endl;
+		return false;
+	}
+
+	//루아 스크립트 매니저 초기화
+	if (!this->luaManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED LUA Manager Initialize!" << std::endl;
+		return false;
+	}
+
+
+	ray = new Ray(this);
+
+	//오디오 테스트 및 초기화 완료
+	#pragma region MyRegion
+		audioManager.LoadAudio("test", "..//Resource/Audios/bgm.mp3");
+		audioManager.PlayAudio("test",5000,5000);
+	#pragma endregion
+
+
 
 	std::cout << "[O] Successfully Completed Manager Initialize!" << std::endl;
 

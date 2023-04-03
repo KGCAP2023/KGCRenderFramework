@@ -161,7 +161,10 @@
     <ClCompile Include="KGCRenderFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hierarchy.h" />
+    <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

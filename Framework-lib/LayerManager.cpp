@@ -13,6 +13,7 @@ void LayerManager::Init(Framework* framework)
 
 void LayerManager::RegisterLayer(const std::string& key, ILayer* layer)
 {
+	layer->Init();
 	this->_layerMap.insert(std::make_pair<>(key,layer));
 }
 
@@ -112,7 +113,7 @@ void LayerManager::DockingSpace()
 	//===========================================================================
 
 	static bool zzz = true;
-	ImGui::Begin(u8"GameView", &zzz, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
+	ImGui::Begin(u8"GameView", &zzz, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	windowSize.x -= 10;
@@ -133,7 +134,10 @@ void LayerManager::DockingSpace()
 	float view_x = vMax.x - vMin.x;
 	float view_y = vMax.y - vMin.y;
 
-	const auto& mouse = InputManager::GetMouse()->GetState();
+
+	InputManager::isDockingSpace = true;
+
+	auto mouse = InputManager::GetRawMouse()->GetState();
 
 	ImVec2 temp;
 	temp.x = mouse.x - vMin.x;
@@ -143,6 +147,9 @@ void LayerManager::DockingSpace()
 	float normalY = temp.y * (this->framework->height / view_y);
 
 	//std::cout <<"ÁÂÇ¥:  " << normalX << "/" << normalY << std::endl;
+
+	InputManager::viewX = normalX;
+	InputManager::viewY = normalY;
 
 	ImGui::Image((void*)framework->graphics.refRes, windowSize);
 	ImGui::End();

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "IFramework.h"
+#include "Camera.h"
+
 
 void IFramework::RegisterLayer(const std::string& key, ILayer* layer)
 {
@@ -22,3 +24,8 @@ bool IFramework::Initialize(HINSTANCE hInstance, std::string window_title, std::
 void IFramework::run()
 {
 }
+
+void IFramework::ChangeCameraViewType(Camera3D::ViewType viewType)
+{
+}
+

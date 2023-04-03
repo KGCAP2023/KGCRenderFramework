@@ -13,8 +13,8 @@ std::string Renderer::GetPath()
 	return "";
 }
 
-const aiScene* Renderer::GetAiScene()
-{
-	assert("해당 업데이트문은 Renderer 구현체가 필요합니다." && 0);
-	return nullptr;
-}
+//const aiScene* Renderer::GetAiScene()
+//{
+//	assert("해당 업데이트문은 Renderer 구현체가 필요합니다." && 0);
+//	return nullptr;
+//}

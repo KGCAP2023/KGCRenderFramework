@@ -34,15 +34,15 @@
     <Filter Include="헤더 파일\Manager">
       <UniqueIdentifier>{f565d208-7870-4979-b51f-801bd9dd7e51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Audio">
+      <UniqueIdentifier>{51c575f2-acc3-4ff8-a3f4-e193a3b2fd31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Lua">
+      <UniqueIdentifier>{ccbb0d4c-5195-40e7-b631-2bef68d921eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoundingBoxRenderer.h">
-      <Filter>헤더 파일\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>헤더 파일\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
       <Filter>헤더 파일\Component</Filter>
     </ClInclude>
     <ClInclude Include="Animation2D.h">
@@ -78,9 +78,6 @@
     <ClInclude Include="Matrix.h">
       <Filter>헤더 파일\Util</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>헤더 파일\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
@@ -92,9 +89,6 @@
     </ClInclude>
     <ClInclude Include="Protocols.h">
       <Filter>헤더 파일\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderComponent.h">
-      <Filter>헤더 파일\Component</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedMesh.h">
       <Filter>헤더 파일\Scene</Filter>
@@ -156,8 +150,32 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>헤더 파일\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>헤더 파일\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapRenderer.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRenderer.h">
+      <Filter>헤더 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>헤더 파일\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="GraphicManager.h">
-      <Filter>헤더 파일\Manager</Filter>
+      <Filter>헤더 파일\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaManager.h">
+      <Filter>헤더 파일\Lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -165,9 +183,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Animation3D.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="BoundingBoxRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -197,16 +212,10 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ModelRenderer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
@@ -261,6 +270,21 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ray.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRenderer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

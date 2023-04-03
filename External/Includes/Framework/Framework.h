@@ -1,11 +1,15 @@
 #pragma once
 #include "IFramework.h"
 #include "GraphicManager.h"
+#include "AudioManager.h"
 #include "Timer.h"
 #include "InputManager.h"
 #include "LayerManager.h"
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
+#include "LuaManager.h"
+#include "Ray.h"
+
 /*
 * 프레임 워크 입니다.
 */
@@ -33,12 +37,21 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() override;
-
+	/// <summary>
+	/// 리소스 매니저를 반환합니다. 
+	/// </summary>
+	/// <returns></returns>
+	virtual IResourceManager* GetResourceManager() override;
 	/// <summary>
 	/// 백엔드 개발용 인스턴스 반환
 	/// </summary>
 	/// <returns></returns>
 	GameObjectManager* GetGameObjectManagerInstance();
+	/// <summary>
+	/// 카메라 모드 전환
+	/// </summary>
+	/// <param name="">viewType::_2D 또는 viewType::_3D 전달</param>
+	virtual void ChangeCameraViewType(Camera3D::ViewType viewType);
 
 //INTERNAL
 public:
@@ -56,7 +69,10 @@ public:
 	LayerManager layerManager;
 	GraphicManager graphics;
 	ResourceManager resourceManager;
+	AudioManager audioManager;
+	LuaManager luaManager;
 	GameObjectManager* gameObjManager;
+	Ray* ray;
 
 	~Framework();
 

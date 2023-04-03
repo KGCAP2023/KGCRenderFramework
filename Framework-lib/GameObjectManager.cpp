@@ -1,22 +1,59 @@
 #include "pch.h"
 #include "GameObjectManager.h"
+#include "Framework.h"
+
+
+GameObjectManager::GameObjectManager(Framework* framework)
+{
+		this->framework = framework;
+		this->graphicManager = &framework->graphics;
+		this->res = &framework->resourceManager;
+}
 
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
-    if (this->FindGameObject(_name) != nullptr) {
-        //std::cout << "object already exists" << std::endl;
-        return nullptr; 
-    }
+	//이름 같은 거 존재시 생성 거부
 
-    GameObject* obj = new GameObject(_name);
+	if (this->FindGameObject(_name) != nullptr) {
 
+		
+		return nullptr;
+	}
 
-    this->gameObjects.insert(std::make_pair<>(_name, obj));
+	//오브젝트를 생성합니다.
+	GameObject* obj = new GameObject(_name);
+	//게임오브젝트를 등록합니다.
+	this->gameObjects.insert(std::make_pair<>(_name, obj));
 
-    //std::cout << "add success" << std::endl;
+	obj->AddComponent(new BoundingBox3D(obj, res));
 
-    return obj;
+	return obj;
+}
+
+GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& modelName)
+{
+
+	//이름 같은 거 존재시 생성 거부
+	if (this->FindGameObject(_name) != nullptr) {
+		return nullptr;
+	}
+
+	//오브젝트를 생성합니다.
+	GameObject* obj = CreateGameObject(_name);
+	//모델 렌더러를 생성합니다.
+	ModelRenderer* render = new ModelRenderer(obj);
+	Model* model = res->FindModel(modelName);
+	render->SetModel(model);
+	//모델 렌더러를 등록합니다.
+	obj->AddComponent(render);
+	//바운딩 박스 렌더러를 생성&등록합니다.
+	obj->AddComponent(new BoundingBox3D(obj, res));
+
+	//게임오브젝트를 등록합니다.
+	this->gameObjects.insert(std::make_pair<>(_name, obj));
+
+	return obj;
 }
 
 GameObject* GameObjectManager::FindGameObject(const std::string& _name)

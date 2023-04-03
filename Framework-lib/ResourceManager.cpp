@@ -64,7 +64,20 @@ Sprite* ResourceManager::FindSprite(const std::string& key)
 	}
 	return nullptr;
 }
-;
+
+void ResourceManager::RegisterTileMap(const std::string& name, TileMap* tileMap)
+{
+	if(tileMap != nullptr)
+		this->_TileMap.insert(std::make_pair<>(name, tileMap));
+}
+
+TileMap* ResourceManager::FindTileMap(const std::string& name)
+{
+	if (this->_TileMap.find(name) != this->_TileMap.end()) {
+		return this->_TileMap[name];
+	}
+	return nullptr;
+}
 
 VertexShader* ResourceManager::FindVertexShader(const std::string& key)
 {
@@ -81,3 +94,110 @@ PixelShader* ResourceManager::FindPixelShader(const std::string& key)
 	}
 	return nullptr;
 }
+
+bool ResourceManager::LoadSkinnedModel(const std::string& modelName, const std::string& filePath)
+{
+	if (this->_skinnedMap.find(modelName) != this->_skinnedMap.end()) {
+		std::cout << "[x] 이미 <"<< modelName <<"> 모델이 존재합니다!" << std::endl;
+		return false; 
+	}
+	else
+	{
+		SkinnedMesh* model = new SkinnedMesh();
+		if (!model->LoadMesh(modelName, filePath, this))
+		{
+			std::cout << "[x] 모델 <" << modelName <<">를 로드하는데 실패하였습니다."<< std::endl;
+			return false;
+		}
+		else
+		{
+			this->_skinnedMap.insert(std::make_pair<>(modelName, model));
+			return true;
+		}	
+	}
+}
+
+bool ResourceManager::LoadModel(const std::string& modelName, const std::string& filePath)
+{
+	if (this->_modelMap.find(modelName) != this->_modelMap.end()) {
+		std::cout << "[x] 이미 <" << modelName << "> 모델이 존재합니다!" << std::endl;
+		return false;
+	}
+	else
+	{
+		Model* model = new Model();
+		if (!model->Init(modelName, filePath, this))
+		{
+			std::cout << "[x] 모델 <" << modelName << ">를 로드하는데 실패하였습니다." << std::endl;
+			return false;
+		}
+		else
+		{
+			this->_modelMap.insert(std::make_pair<>(modelName, model));
+			return true;
+		}
+			
+	}
+}
+
+SkinnedMesh* ResourceManager::FindSkinnedModel(const std::string& modelName)
+{
+	if (this->_skinnedMap.find(modelName) != this->_skinnedMap.end()) {
+		SkinnedMesh* skinned = new SkinnedMesh(*(this->_skinnedMap[modelName]));
+		return skinned;
+	}
+	else return nullptr;
+}
+
+Model* ResourceManager::FindModel(const std::string& modelName)
+{
+	if (this->_modelMap.find(modelName) != this->_modelMap.end()) {
+		Model* model = new Model(*(this->_modelMap[modelName]));
+		return model;
+	}
+	else return nullptr;
+}
+
+std::vector<Texture>* ResourceManager::GetCachedTexture(const std::string& modelName)
+{
+	if (this->_textures_loaded.find(modelName) != this->_textures_loaded.end()) {
+		return this->_textures_loaded[modelName];
+	}
+	else
+	{
+		std::vector<Texture>* tex = new std::vector<Texture>();
+		this->_textures_loaded.insert(std::make_pair<>(modelName, tex));
+		return tex;
+	}
+}
+
+void ResourceManager::SpriteForeach(std::function<void(Sprite*)> callback)
+{
+	for (auto& pair : this->_spriteMap)
+	{
+		Sprite* sp = pair.second;
+		callback(sp);
+	}
+}
+
+std::unordered_map<std::string, Sprite*> ResourceManager::GetSpriteMap()
+{
+	return this->_spriteMap;
+}
+
+void ResourceManager::TileMapForeach(std::function<void(TileMap*)> callback)
+{
+	for (auto& pair : this->_TileMap)
+	{
+		TileMap* tile = pair.second;
+		callback(tile);
+	}
+}
+
+std::unordered_map<std::string, TileMap*> ResourceManager::GetTileMap()
+{
+	return this->_TileMap;
+}
+
+
+

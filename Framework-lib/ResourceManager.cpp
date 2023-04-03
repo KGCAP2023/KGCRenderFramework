@@ -4,6 +4,7 @@
 
 void ResourceManager::Init(Framework* framework)
 {
+	this->framework = framework;
 	device = framework->graphics.device;
 	deviceContext = framework->graphics.deviceContext;
 	spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
@@ -197,6 +198,16 @@ void ResourceManager::TileMapForeach(std::function<void(TileMap*)> callback)
 std::unordered_map<std::string, TileMap*> ResourceManager::GetTileMap()
 {
 	return this->_TileMap;
+}
+
+void ResourceManager::LoadAudio(const char* audioName, const char* audioFilePath)
+{
+	framework->audioManager.LoadAudio(audioName, audioFilePath);
+}
+
+void ResourceManager::DeleteAudio(const char* audioName)
+{
+	framework->audioManager.DeleteAudio(audioName);
 }
 
 

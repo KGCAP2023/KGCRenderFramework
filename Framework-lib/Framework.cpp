@@ -281,8 +281,12 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	//오디오 테스트 및 초기화 완료
 	#pragma region MyRegion
-		audioManager.LoadAudio("test", "..//Resource/Audios/bgm.mp3");
-		audioManager.PlayAudio("test",5000,5000);
+		resourceManager.LoadAudio("test", "..//Resource/Audios/test.mp3");
+		audioManager.PlayAudio("test");
+		audioManager.PauseAudio("test");
+		audioManager.SetVolume("test", 0.1f);
+		audioManager.ResumeAudio("test");
+		
 	#pragma endregion
 
 

@@ -91,9 +91,5 @@ void TestRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 
 void TestRenderer::Update()
 {
-    //행렬 업데이트
-    //Scale * Rotate * Translation
-	GameObject* owner = this->owner;
-	owner->transform.worldMatrix = DirectX::XMMatrixScaling(owner->transform.scale.x, owner->transform.scale.y, owner->transform.scale.z) * XMMatrixRotationRollPitchYaw(owner->transform.rotation.x, owner->transform.rotation.y, owner->transform.rotation.z) * XMMatrixTranslation(owner->transform.position.x, owner->transform.position.y, owner->transform.position.z);
-	owner->transform.UpdateDirection();
+
 }

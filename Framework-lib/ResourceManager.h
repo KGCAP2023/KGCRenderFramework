@@ -124,12 +124,25 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual std::unordered_map<std::string, TileMap*> GetTileMap() { return std::unordered_map<std::string, TileMap*>(); };
+	/// <summary>
+	/// 오디오 파일을 불러와 map에 저장합니다.
+	/// </summary>
+	/// <param name="audioName">map에 저장될 이름입니다.</param>
+	/// <param name="audioFilePath">오디오 파일의 경로입니다.</param>
+	virtual void LoadAudio(const char* audioName, const char* audioFilePath) {};
+
+	/// <summary>
+	/// 불러온 오디오를 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 오디오 이름입니다.</param>
+	virtual void DeleteAudio(const char* audioName) {};
 };
 
 
 class ResourceManager : public IResourceManager
 {
 public:
+	Framework* framework;
 	ResourceManager() {};
 
 	void Init(Framework *framework);
@@ -165,6 +178,10 @@ public:
 
 	void TileMapForeach(std::function<void(TileMap*)> callback) override;
 	std::unordered_map<std::string, TileMap*> GetTileMap() override;
+
+	//Audio
+	void LoadAudio(const char* audioName, const char* audioFilePath) override;
+	void DeleteAudio(const char* audioName) override;
 
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;

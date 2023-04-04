@@ -11,7 +11,7 @@ class SpriteRenderer : public Component
 public:
 	SpriteRenderer(GameObject* owner) : Component(owner)
 	{
-		this->type = Component::Type::RENDERER_MODEL;
+		this->type = Component::Type::RENDERER_SPRITE;
 		this->name = "SpriteRenderer";
 	}
 

@@ -18,9 +18,13 @@ class ResourceManager;
 class BoundingBoxRenderer : public Component
 {
 public:
+	static enum class ShapeType { CUBE, HOUR_GLASS };
+
 	BoundingBoxRenderer(GameObject* owner) : Component(owner) {}
 	virtual void Update() {};
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) {};
+	virtual void ChangeDrawShape(ShapeType _type) {};
+	virtual std::vector<DWORD>* GetIndices() { return nullptr; }
 
 	void SetBoundingBoxActive(bool value)
 	{
@@ -32,6 +36,7 @@ public:
 		return isActiveBoundingBox;
 	}
 
+	
 
 
 protected:
@@ -42,8 +47,6 @@ class BoundingBox3D : public BoundingBoxRenderer
 {
 public:
 	virtual void Update() override;
-
-	static enum class ShapeType { CUBE, HOUR_GLASS };
 
 
 	BoundingBox3D(GameObject* owner, ResourceManager* res);
@@ -85,12 +88,10 @@ public:
 
 	//도형을 그립니다.
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
-
+	virtual std::vector<DWORD>* GetIndices() override;
 
 	DirectX::XMFLOAT3 min = { -3,-3,-3 };
 	DirectX::XMFLOAT3 max = { 3,3,3 };
-
-	bool isActive = true;
 
 	std::vector<SimpleVertex> vertices;
 
@@ -128,20 +129,19 @@ public:
 
 	//컨텍스트 - 외부에서 끌어다 옵니다. 
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
+	Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 	/// <summary>
 	/// 그리기 버퍼 세팅, 버퍼 변경점 갱신
 	/// </summary>
-	/// <param name="res">resourceManager (res)</param>
-	void DrawSetting(ResourceManager* res);
+	void DrawSetting();
 
 	/// <summary>
 	/// 그려지는 모양 변경
 	/// </summary>
 	/// <param name="_type">enum 참조하여 선택</param>
 	/// <param name="_g">대상 게임오브젝트</param>
-	/// <param name="res">resourceManager 전달(res)</param>
-	void ChangeDrawShape(ShapeType _type, ResourceManager* res);
+	virtual void ChangeDrawShape(ShapeType _type) override;
 
 private:
 

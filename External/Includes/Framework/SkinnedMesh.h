@@ -107,6 +107,7 @@ public:
 
     std::string GetPath();
     const aiScene* GetAiScene();
+    std::string GetName();
 
     void InitDefaultPose();
     bool isDefaultPose() { return _isDefaultPose; }

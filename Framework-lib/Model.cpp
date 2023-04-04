@@ -58,6 +58,11 @@ std::string Model::GetPath()
 	return this->filePath;
 }
 
+std::string Model::GetName()
+{
+	return this->modelName;
+}
+
 bool Model::loadModel(const std::string & path)
 {
 	pScene = Importer.ReadFile(path,

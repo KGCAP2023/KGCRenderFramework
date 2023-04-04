@@ -476,6 +476,11 @@ const aiScene* SkinnedMesh::GetAiScene()
 	return this->pScene;
 }
 
+std::string SkinnedMesh::GetName()
+{
+	return this->modelName;
+}
+
 
 void SkinnedMesh::ReadNodeHierarchy(float AnimationTimeTicks, const aiNode* pNode, const XMMATRIX& ParentTransform, const aiAnimation* pAnimation, Animation3D* selectedAnimation)
 {

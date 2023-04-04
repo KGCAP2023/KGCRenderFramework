@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "Sprite.h"
 
-bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::string spritePath,SpriteBatch* spriteBatch)
+bool Sprite::Init(const std::string& name,ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::string spritePath,SpriteBatch* spriteBatch)
 {
+	this->name = name;
 	this->spriteBatch = spriteBatch;
 	Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 

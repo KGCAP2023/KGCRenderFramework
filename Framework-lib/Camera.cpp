@@ -65,13 +65,11 @@ void Camera3D::cameraLerp()
 		this->projectionMatrix = this->projectionMatrix + view3DMatrix/8000;
 	else
 		this->projectionMatrix = this->projectionMatrix + view2DMatrix / 2.8f;
-
 }
 
 const XMMATRIX& Camera3D::GetProjectionMatrix()
 {
-
-	cameraLerp();
+	//cameraLerp();
 	return this->projectionMatrix;
 }
 

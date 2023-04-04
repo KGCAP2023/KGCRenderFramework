@@ -7,7 +7,6 @@ using namespace DirectX;
 
 void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-
 		if (isActive)
 		{
 			for (auto it : this->components)
@@ -46,6 +45,10 @@ void GameObject::Update()
 			it->Update();
 		}
 	}
+
+	//행렬 업데이트
+	transform.worldMatrix = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z) * XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z) * XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
+	transform.UpdateDirection();
 }
 
 void GameObject::SetObjectType(GameObject::ObjectType type)
@@ -60,11 +63,8 @@ void GameObject::AddComponent(Component* pComponent)
 	if (type == Component::Type::BOUNDING_BOX)
 	{
 		this->bbox = dynamic_cast<BoundingBoxRenderer*>(pComponent);
-		this->bb3d = dynamic_cast<BoundingBox3D*>(pComponent);
-
 		return;
 	}
-
 
 	components.insert(std::make_pair(type, pComponent));
 }

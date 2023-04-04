@@ -24,6 +24,7 @@ public:
 		isActive = true;
 		isDestroy = false;
 		this->objectType = GameObject::ObjectType::OBJECT_DEFAULT;
+		transform.SetScale(1.0f, 1.0f, 1.0f);
 	}
 
 	~GameObject();
@@ -35,8 +36,6 @@ public:
 	Transform transform;
 	GameObject::ObjectType objectType = GameObject::ObjectType::OBJECT_DEFAULT;
 	BoundingBoxRenderer* bbox = nullptr;
-
-	BoundingBox3D* bb3d = nullptr;
 
 	void SetObjectType(GameObject::ObjectType type);
 

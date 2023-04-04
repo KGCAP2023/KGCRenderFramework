@@ -13,15 +13,27 @@
 class Sprite
 {
 public:
-	bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::string spritePath, SpriteBatch* spriteBatch);
+	bool Init(const std::string& name, ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::string spritePath, SpriteBatch* spriteBatch);
 	float GetWidth();
 	float GetHeight();
 	DirectX::SimpleMath::Vector2 origin;
+	/// <summary>
+	/// 텍스쳐를 주소를 가져옵니다.
+	/// ImGui에서 사용하세요
+	/// </summary>
+	/// <returns></returns>
 	ID3D11ShaderResourceView* Get();
+	/// <summary>
+	/// 텍스쳐를 가리키는 포인터 변수의 주소를 가져옵니다.
+	/// </summary>
+	/// <returns></returns>
 	ID3D11ShaderResourceView** GetTextureResourceViewAddress();
 	SpriteBatch* GetSpriteBatch();
+	std::string GetName() { return name; }
 
 private:
+
+	std::string name;
 	SpriteBatch* spriteBatch;
 	ID3D11DeviceContext* deviceContext = nullptr;
 

@@ -50,6 +50,7 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : Bounding
 {
 	this->type = Component::Type::BOUNDING_BOX;
 	this->deviceContext = res->deviceContext;
+	this->device = res->device;
 	this->ps = res->FindPixelShader("ps_1");
 	this->vs = res->FindVertexShader("vs_1");
 	this->constantBuffer = &res->cb1;
@@ -107,23 +108,18 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : Bounding
 	indices = cube;
 
 	//정점에대한 인덱스를 정의합니다. 
-	DrawSetting(res);
+	DrawSetting();
 	
 }
 
-
-void BoundingBox3D::DrawSetting(ResourceManager* res)
+void BoundingBox3D::DrawSetting()
 {
-	
 	//버텍스 버퍼와 인덱스 버퍼에 등록합니다.
-	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), res->device.Get());
-	hr = this->indexbuffer.Init(indices.data(), indices.size(), res->device.Get());
-
+	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), this->device.Get());
+	hr = this->indexbuffer.Init(indices.data(), indices.size(), this->device.Get());
 }
 
-
-
-void BoundingBox3D::ChangeDrawShape(ShapeType _type,  ResourceManager* res)
+void BoundingBox3D::ChangeDrawShape(ShapeType _type)
 {
 
 	switch (_type)
@@ -138,7 +134,7 @@ void BoundingBox3D::ChangeDrawShape(ShapeType _type,  ResourceManager* res)
 		break;
 	}
 
-	DrawSetting(res);
+	DrawSetting();
 
 }
 
@@ -146,7 +142,7 @@ void BoundingBox3D::ChangeDrawShape(ShapeType _type,  ResourceManager* res)
 void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 
-    if (isActive)
+    if (isActiveBoundingBox)
     {
         // 버텍스 쉐이더에 들어가는 구조체는 버텍스 레이아웃과 동일해야합니다.
         // 버텍스 레이아웃은 GraphicManager.cpp의 InitializeShaders()를 참조하십시요
@@ -188,6 +184,11 @@ void BoundingBox3D::Draw(const XMMATRIX& viewProjectionMatrix)
         this->deviceContext->DrawIndexed(this->indexbuffer.IndexCount(), 0, 0);
   
     }
+}
+
+std::vector<DWORD>* BoundingBox3D::GetIndices()
+{
+	return &this->indices;
 }
 
 void BoundingBox3D::Update()

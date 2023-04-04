@@ -13,6 +13,7 @@ public:
 
 	static enum class Type
 	{
+		UNKNOWN,
 		RENDERER_MESH_,
 		RENDERER_MODEL,
 		RENDERER_SKINNED_MODEL,

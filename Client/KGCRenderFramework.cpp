@@ -15,25 +15,20 @@ class Example : public ILayer
 {
 public:
 	IGameObjectManager* _manager;
+	bool debug = true;
 
 	Example(IGameObjectManager* manager, const std::string name) : ILayer(name)
 	{
 		this->_manager = manager;
-
-
 	}
-	virtual ~Example() {};
-
-
-
-
+	virtual ~Example() 
+	{
+	
+	};
 	virtual void Init()
 	{
 
-
-
 	};
-
 	virtual void Update()
 	{
 
@@ -41,23 +36,10 @@ public:
 	virtual void draw()
 	{
 
-
 	}
 	virtual void Render()
 	{
-		auto keyboard = InputManager::GetKeyboardState();
-		auto mouse = InputManager::GetMouseState();
-
-
-
-		ImGui::SetNextWindowSize(ImVec2(520, 600));
-
-
-		ImGui::Begin(u8"Debug View");
-		ImGui::Text(u8"평균 프레임: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text(u8"마우스 좌표: X: %d, Y: %d", mouse.x, mouse.y);
-		ImGui::Text(u8"입력 키 W: %d A: %d S: %d D: %d", keyboard.W, keyboard.A, keyboard.S, keyboard.D);
-		ImGui::End();
+		
 	};
 };
 
@@ -75,8 +57,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		uiMgr->Init();
 		uiMgr->RegisterAllUI();
 	}
-
-
 
 	//Example* temp = new Example(objM, "example");
 

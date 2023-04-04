@@ -10,6 +10,8 @@
 #include <Framework/TileMap.h>
 #include "LevelEditor.h"
 #include "hierarchy.h"
+#include "DebugView.h"
+#include "ResourceManagerView.h"
 
 class UIManager 
 {
@@ -28,6 +30,10 @@ public:
 		uiList.push_back(temp2);
 		Hierarchy* hierarachy = new Hierarchy(this->objMgr,this->resMgr, "hierarachy", this->framework);
 		uiList.push_back(hierarachy);
+		DebugView* debug = new DebugView(this->objMgr, "DebugView");
+		uiList.push_back(debug);
+		ResourceManagerView* RMV = new ResourceManagerView(this->objMgr, resMgr, "RMV");
+		uiList.push_back(RMV);
 	}
 
 	void InitResource()

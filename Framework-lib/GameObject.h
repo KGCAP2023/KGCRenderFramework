@@ -24,6 +24,7 @@ public:
 		isActive = true;
 		isDestroy = false;
 		this->objectType = GameObject::ObjectType::OBJECT_DEFAULT;
+		transform.SetScale(1.0f, 1.0f, 1.0f);
 	}
 
 	~GameObject();

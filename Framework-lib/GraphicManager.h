@@ -30,6 +30,7 @@ public:
 
 	bool Initialize(Framework* framework,HWND hwnd, int width, int height);
 	void RenderFrame();
+	void ResizeWindow(int width,int height);
 
 	GameObject* camera;
 	Camera3D* cameraComponent;

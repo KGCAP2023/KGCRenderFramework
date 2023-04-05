@@ -17,10 +17,12 @@ public:
     void SetImGuiDemo(bool value);
     void SetDockingSpace(bool value);
     void DockingSpace();
+    bool isGameViewFocus() { return _isGameViewFocus; }
 private:
 
     bool _isActiveDemo = false;
     bool _isActiveDockingSpace = false;
+    bool _isGameViewFocus = false;
 
     Framework* framework;
     std::unordered_map<std::string, ILayer*> _layerMap;

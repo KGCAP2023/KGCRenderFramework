@@ -21,9 +21,9 @@ public:
 	std::vector<GameObject*> gamelist;
 	std::vector<Component*> componentlist;
 	int selected = 0;
-	bool check1 = false;
-	bool check2 = false;
-	bool check3 = false;
+	bool check1 = true;
+	bool check2 = true;
+	bool check3 = true;
 	int component_selected = 0;
 	bool my_tool_active = true;
 	bool active = false;
@@ -111,6 +111,7 @@ public:
 		gamelist.push_back(obj10);
 		gamelist.push_back(obj11);
 		gamelist.push_back(obj12);
+
 	}
 
 	virtual ~Hierarchy()
@@ -182,7 +183,8 @@ public:
 				ImGui::Text(const_cast<char*>(gamelist.at(selected)->ObjectName.c_str()));
 				ImGui::Separator();
 				ImGui::Text("TRANSFORM");
-
+				const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO", "PPPP", "QQQQQQQQQQ", "RRR", "SSSS" };
+				static const char* current_item = NULL;
 				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
 				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
 				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
@@ -191,6 +193,7 @@ public:
 
 				ImGui::Text("Other Component");
 				ImGui::Separator();
+			
 				if (gamelist.at(selected)->GetComponentSize() != 0)
 				{
 					GameObject* obj = gamelist.at(selected);
@@ -208,12 +211,24 @@ public:
 							SpriteRenderer* render4 = dynamic_cast<SpriteRenderer*>(c);
 							render4->AddSprite(res->FindSprite("test"));
 							componentlist.push_back(c);
-
 							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
+							{
+								for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+								{
+									bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+									if (ImGui::Selectable(items[n], is_selected))
+										current_item = items[n];
+									if (is_selected)
+										ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+								}
+								ImGui::EndCombo();
+							}
 							ImGui::SameLine();
 							if (ImGui::Checkbox(" ", &check1))
 							{
-								if(check1 ==true)
+								if (check1 == true)
 									c->SetDeleteType(Component::Type::UNKNOWN);
 								else
 									c->SetDeleteType(Component::Type::RENDERER_SPRITE);
@@ -229,6 +244,19 @@ public:
 							render5->SetModel(res->FindModel("test"));
 							componentlist.push_back(c);
 							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
+							{
+								for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+								{
+									bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+									if (ImGui::Selectable(items[n], is_selected))
+										current_item = items[n];
+									if (is_selected)
+										ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+								}
+								ImGui::EndCombo();
+							}
 							ImGui::SameLine();
 							if(ImGui::Checkbox("  ", &check2))
 							{
@@ -249,6 +277,19 @@ public:
 							componentlist.push_back(c);
 							ImGui::Text(name.c_str());
 							ImGui::SameLine();
+							if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
+							{
+								for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+								{
+									bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+									if (ImGui::Selectable(items[n], is_selected))
+										current_item = items[n];
+									if (is_selected)
+										ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+								}
+								ImGui::EndCombo();
+							}
+							ImGui::SameLine();
 							if (ImGui::Checkbox("   ", &check3))
 							{
 								if (check3 == true)
@@ -268,18 +309,18 @@ public:
 
 						});
 					
-					if (ImGui::Button("delete"))
-					{
-						for (int k = 0; k < componentlist.size(); k++)
+						if (ImGui::Button("delete"))
 						{
-							if (componentlist.at(k)->GetDeleteType() == Component::Type::UNKNOWN)
+							for (int k = 0; k < componentlist.size(); k++)
 							{
-								gamelist.at(selected)->RemoveComponent(componentlist.at(k)->GetType());
-								componentlist.erase(componentlist.begin() + k);
+								if (componentlist.at(k)->GetDeleteType() == Component::Type::UNKNOWN)
+								{
+									gamelist.at(selected)->RemoveComponent(componentlist.at(k)->GetType());
+									componentlist.erase(componentlist.begin() + k);
 
+								}
 							}
 						}
-					}
 
 				}
 				ImGui::Separator();

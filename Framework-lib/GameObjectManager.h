@@ -43,7 +43,11 @@ public:
 	/// <returns></returns>
 	virtual std::string GetObjectNames() { return 0; };
 
-
+	/// <summary>
+	/// 포커스 된 오브젝트를 가져옴 [ 존재하지 않을 시 nullptr 반환 ]
+	/// </summary>
+	/// <returns></returns>
+	virtual GameObject* GetFocusedObject() { return nullptr; };
 };
 
 
@@ -68,6 +72,9 @@ public:
 	virtual void DestroyGameObject(const std::string& _name) override;
 	
 	virtual std::string GetObjectNames() override;
+
+	virtual GameObject* GetFocusedObject() override;
+
 
 	//의존성
 	Framework* framework;

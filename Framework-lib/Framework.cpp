@@ -90,7 +90,9 @@ void Framework::Update()
 				this->ray->CalculatePicking(mouse.x, mouse.y);
 				for (auto& kv : this->gameObjManager->gameObjects) {
 					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
-					if (bbox != nullptr) this->ray->isPicked(bbox);
+					if (bbox != nullptr)
+						if (this->ray->isPicked(bbox))
+							bbox->ChangeColor(1,0,0);
 				}
 			}
 		}

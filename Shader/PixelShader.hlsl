@@ -24,7 +24,7 @@ struct VS_OUTPUT
 float4 main(VS_OUTPUT input) : SV_Target
 {
     
-    float4 color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 color = input.Color;
     return color;
 
 

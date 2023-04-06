@@ -10,6 +10,7 @@
 #include <Framework/IFramework.h>
 #include <imgui.h>
 
+
 class Hierarchy : public ILayer
 {
 public:
@@ -18,12 +19,17 @@ public:
 	IResourceManager* res;
 	Sprite* sp;
 	std::vector<GameObject*> gamelist;
+	std::vector<Component*> componentlist;
 	int selected = 0;
+	bool check1 = false;
+	bool check2 = false;
+	bool check3 = false;
 	int component_selected = 0;
 	bool my_tool_active = true;
 	bool active = false;
 	bool component_active = false;
 	char a[20]{};
+
 	DirectX::XMFLOAT3 pos{};
 	DirectX::XMFLOAT3 rot{};
 	DirectX::XMFLOAT3 scale{};
@@ -189,51 +195,96 @@ public:
 				{
 					GameObject* obj = gamelist.at(selected);
 
-					int count = 0;
-
 
 					obj->ComponentForeach([&](Component* c) {
-
+						int count = 0;
 						std::string name = c->GetName();
 						Component::Type type = c->GetType();
 						
 						switch (type)
 						{
-							case Component::Type::RENDERER_SPRITE:
+						case Component::Type::RENDERER_SPRITE:
+						{
+							SpriteRenderer* render4 = dynamic_cast<SpriteRenderer*>(c);
+							render4->AddSprite(res->FindSprite("test"));
+							componentlist.push_back(c);
 
+							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if (ImGui::Checkbox(" ", &check1))
+							{
+								if(check1 ==true)
+									c->SetDeleteType(Component::Type::UNKNOWN);
+								else
+									c->SetDeleteType(Component::Type::RENDERER_SPRITE);
+							}
+							ImGui::Separator();
 
-								break;
-							case Component::Type::RENDERER_MODEL:
-								SpriteRenderer* render2 = dynamic_cast<SpriteRenderer*>(c);
-								render2->AddSprite(res->FindSprite("test"));
-								ImGui::Text(name.c_str());
-								if (ImGui::Button("Del"))
-									obj->RemoveComponent(type);
-								ImGui::Separator();
-								
-								break;
-								/*
-							case Component::Type::RENDERER_TILEMAP:
-								TileMapRenderer* render1 = dynamic_cast<TileMapRenderer*>(c);
+							break;
+						}
 
-								render1->(res->FindSprite("test"));
-								
-								ImGui::Text(name.c_str());
-								ImGui::Separator();
-						
-								break;
-								*/
-  
+						case Component::Type::RENDERER_MODEL:
+						{
+							ModelRenderer* render5 = dynamic_cast<ModelRenderer*>(c);
+							render5->SetModel(res->FindModel("test"));
+							componentlist.push_back(c);
+							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if(ImGui::Checkbox("  ", &check2))
+							{
+								if (check2 == true)
+									c->SetDeleteType(Component::Type::UNKNOWN);
+								else
+									c->SetDeleteType(Component::Type::RENDERER_MODEL);
+							}
+							ImGui::Separator();
+
+							break;
+						}
+
+						case Component::Type::RENDERER_TILEMAP:
+						{
+							TileMapRenderer* render6 = dynamic_cast<TileMapRenderer*>(c);
+							render6->AddTileMap(res->FindTileMap("test"));
+							componentlist.push_back(c);
+							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if (ImGui::Checkbox("   ", &check3))
+							{
+								if (check3 == true)
+									c->SetDeleteType(Component::Type::UNKNOWN);
+								else
+									c->SetDeleteType(Component::Type::RENDERER_TILEMAP);
+							}
+							ImGui::Separator();
+
+							break;
+						}
+
 						}
 
 
-		
-						
-					});
+
+
+						});
+					
+					if (ImGui::Button("delete"))
+					{
+						for (int k = 0; k < componentlist.size(); k++)
+						{
+							if (componentlist.at(k)->GetDeleteType() == Component::Type::UNKNOWN)
+							{
+								gamelist.at(selected)->RemoveComponent(componentlist.at(k)->GetType());
+								componentlist.erase(componentlist.begin() + k);
+
+							}
+						}
+					}
 
 				}
 				ImGui::Separator();
 
+				ImGui::Separator();
 				if (ImGui::Button("Add Component"))
 				{
 					component_active = true;
@@ -273,31 +324,30 @@ public:
 			}
 			if (component_active)
 			{
-				ImGui::Begin("add2", &active, ImGuiWindowFlags_MenuBar);
+				ImGui::Begin("add3", &active, ImGuiWindowFlags_MenuBar);
 
 				if (ImGui::Button("SpriteRenderer"))
 				{
 					GameObject* temp = gamelist.at(selected);
-					SpriteRenderer* render = new SpriteRenderer(temp);
-					//render->Init();
-					gamelist.at(selected)->AddComponent(render);
+					SpriteRenderer* render1 = new SpriteRenderer(temp);
+					gamelist.at(selected)->AddComponent(render1);
 
 				}
 				if (ImGui::Button("ModelRenderer"))
 				{
 					GameObject* temp = gamelist.at(selected);
-					ModelRenderer* render = new ModelRenderer(temp);
+					ModelRenderer* render2 = new ModelRenderer(temp);
 					//render->Init();
-					gamelist.at(selected)->AddComponent(render);
+					gamelist.at(selected)->AddComponent(render2);
 
 
 				}
 				if (ImGui::Button("TileMapRender"))
 				{
 					GameObject* temp1 = gamelist.at(selected);
-					TileMapRenderer* render1 = new TileMapRenderer(temp1);
+					TileMapRenderer* render3 = new TileMapRenderer(temp1);
 					//render->Init();
-					gamelist.at(selected)->AddComponent(render1);
+					gamelist.at(selected)->AddComponent(render3);
 				}
 				ImGui::End();
 			}

@@ -153,7 +153,7 @@ void GameObject::SetFocus()
 
 void GameObject::ReleaseFocus()
 {
-	if (this->game != nullptr && this->bbox != nullptr && this->game == this) {
+	if (this->bbox != nullptr && this->game == this) {
 		this->bbox->ChangeColor(0, 0, 0);
 		this->game = nullptr;
 	}

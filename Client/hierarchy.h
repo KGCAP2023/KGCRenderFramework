@@ -228,10 +228,10 @@ public:
 							ImGui::SameLine();
 							if (ImGui::Checkbox(" ", &check1))
 							{
-								if (check1 == true)
-									c->SetDeleteType(Component::Type::UNKNOWN);
-								else
-									c->SetDeleteType(Component::Type::RENDERER_SPRITE);
+								//if (check1 == true)
+									//c->SetDeleteType(Component::Type::UNKNOWN);
+								//else
+									//c->SetDeleteType(Component::Type::RENDERER_SPRITE);
 							}
 							ImGui::Separator();
 
@@ -260,10 +260,10 @@ public:
 							ImGui::SameLine();
 							if(ImGui::Checkbox("  ", &check2))
 							{
-								if (check2 == true)
-									c->SetDeleteType(Component::Type::UNKNOWN);
-								else
-									c->SetDeleteType(Component::Type::RENDERER_MODEL);
+								//if (check2 == true)
+								//	c->SetDeleteType(Component::Type::UNKNOWN);
+								//else
+								//	c->SetDeleteType(Component::Type::RENDERER_MODEL);
 							}
 							ImGui::Separator();
 
@@ -292,10 +292,10 @@ public:
 							ImGui::SameLine();
 							if (ImGui::Checkbox("   ", &check3))
 							{
-								if (check3 == true)
-									c->SetDeleteType(Component::Type::UNKNOWN);
-								else
-									c->SetDeleteType(Component::Type::RENDERER_TILEMAP);
+								//if (check3 == true)
+								//	c->SetDeleteType(Component::Type::UNKNOWN);
+								//else
+								//	c->SetDeleteType(Component::Type::RENDERER_TILEMAP);
 							}
 							ImGui::Separator();
 
@@ -313,12 +313,12 @@ public:
 						{
 							for (int k = 0; k < componentlist.size(); k++)
 							{
-								if (componentlist.at(k)->GetDeleteType() == Component::Type::UNKNOWN)
-								{
-									gamelist.at(selected)->RemoveComponent(componentlist.at(k)->GetType());
-									componentlist.erase(componentlist.begin() + k);
-
-								}
+								//if (componentlist.at(k)->GetDeleteType() == Component::Type::UNKNOWN)
+								//{
+								//	gamelist.at(selected)->RemoveComponent(componentlist.at(k)->GetType());
+								//	componentlist.erase(componentlist.begin() + k);
+								//
+								//}
 							}
 						}
 

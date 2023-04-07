@@ -25,6 +25,7 @@ public:
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) {};
 	virtual void ChangeDrawShape(ShapeType _type) {};
 	virtual std::vector<DWORD>* GetIndices() { return nullptr; }
+	virtual void ChangeColor(float r, float g, float b, float alpha = 1.0f) {}
 
 	void SetBoundingBoxActive(bool value)
 	{
@@ -35,9 +36,6 @@ public:
 	{
 		return isActiveBoundingBox;
 	}
-
-	
-
 
 protected:
 	bool isActiveBoundingBox = true;
@@ -89,6 +87,7 @@ public:
 	//도형을 그립니다.
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual std::vector<DWORD>* GetIndices() override;
+	virtual void ChangeColor(float r, float g, float b, float alpha = 1.0f) override;
 
 	DirectX::XMFLOAT3 min = { -3,-3,-3 };
 	DirectX::XMFLOAT3 max = { 3,3,3 };

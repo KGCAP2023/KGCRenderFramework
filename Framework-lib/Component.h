@@ -1,4 +1,5 @@
 #pragma once
+
 class GameObject;
 
 class Component
@@ -25,7 +26,7 @@ public:
 		COLLIDER_RECT,
 		COLLIDER_SPHERE
 	};
-
+	virtual void SetDeleteType(Component::Type type);
 
 	static struct ComponentHash
 	{
@@ -37,12 +38,14 @@ public:
 	};
 
 	Component::Type GetType();
+	Component::Type GetDeleteType();
+
 	GameObject* GetOwner();
 	std::string GetName();
 
 protected:
 	Component::Type type;
+	Component::Type deleteType;
 	GameObject* owner = nullptr;
 	std::string name;
 };
-

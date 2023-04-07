@@ -10,6 +10,7 @@ class GameObject
 {
 private:
 	std::unordered_map<Component::Type, Component *, Component::ComponentHash> components;
+	static GameObject* game;
 public:
 
 	static enum class ObjectType
@@ -88,6 +89,22 @@ public:
 	/// <주의>아직 기능이 불완전합니다.
 	/// </summary>
 	void CleanUpComponent();
+
+	/// <summary>
+	/// 해당 오브젝트에게 포커스를 부여합니다.
+	/// </summary>
+	void SetFocus();
+
+	/// <summary>
+	/// 포커스된 오브젝트의 포거스를 해제합니다.
+	/// </summary>
+	void ReleaseFocus();
+
+	/// <summary>
+	/// 현재 포커스를 가지고 있는 오브젝트를 반환합니다 [ 없을 시 nullptr 반환 ]
+	/// </summary>
+	/// <returns></returns>
+	static GameObject* GetFocusedObject();
 
 	void Draw(const XMMATRIX& viewProjectionMatrix);
 	void Update();

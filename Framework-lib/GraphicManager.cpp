@@ -191,6 +191,93 @@ void GraphicManager::RenderFrame()
 
 }
 
+void GraphicManager::ResizeWindow(int width, int height)
+{
+	this->width = width;
+	this->height = height;
+
+	this->deviceContext->OMSetRenderTargets(0, 0, 0);
+
+	//백버퍼와 기존 렌더타켓뷰를 자원을 해제합니다.
+	this->renderTargetView->Release();
+	this->backBuffer->Release();
+
+	if (this->depthStencilView.Get() != nullptr)
+		this->depthStencilView->Release();
+
+	if (this->depthStencilBuffer.Get() != nullptr)
+		this->depthStencilBuffer->Release();
+
+	if (this->refRes != nullptr)
+		this->refRes->Release();
+	if (this->refTex != nullptr)
+		this->refTex->Release();
+
+	HRESULT hr;
+	
+	//스왑체인의 버퍼 사이즈를 변경된 해상도 만큼 리사이징합니다.
+	hr = this->swapchain->ResizeBuffers(0, this->width, this->height, DXGI_FORMAT_UNKNOWN, 0);
+
+	//해당 버퍼의 포인터를 가져옵니다.
+	hr = this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+		(LPVOID*)this->backBuffer.GetAddressOf());
+
+	//렌더타켓뷰를 생성합니다.
+	hr = this->device->CreateRenderTargetView(this->backBuffer.Get(), NULL,
+		this->renderTargetView.GetAddressOf());
+
+
+	//뎁스/스텐실 버퍼 디스크립터
+	CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
+	depthStencilTextureDesc.MipLevels = 1;
+	depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilTextureDesc.SampleDesc.Count = 1; //MSAA 4배 샘플링
+	depthStencilTextureDesc.SampleDesc.Quality = 0;
+
+	hr = this->device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->depthStencilBuffer.GetAddressOf());
+	hr = this->device->CreateDepthStencilView(this->depthStencilBuffer.Get(), NULL, this->depthStencilView.GetAddressOf());
+
+	D3D11_TEXTURE2D_DESC descTex;
+	ZeroMemory(&descTex, sizeof(descTex));
+	descTex.Width = width;
+	descTex.Height = height;
+	descTex.MipLevels = 1;
+	descTex.ArraySize = 1;
+	descTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descTex.SampleDesc.Count = 1;
+	descTex.Usage = D3D11_USAGE_DEFAULT;
+	descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	descTex.CPUAccessFlags = 0;
+
+	//백버퍼의 스냅샷을 담을 Texture2D를 생성합니다.
+	this->device->CreateTexture2D(&descTex, nullptr, &this->refTex);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
+	ZeroMemory(&descSRV, sizeof(descSRV));
+	descSRV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	descSRV.Texture2D.MipLevels = 1;
+	descSRV.Texture2D.MostDetailedMip = 0;
+
+	//Texture2D 자원을 가져다 사용하기위해 쉐이더 리소스 뷰를 생성합니다.
+	this->device->CreateShaderResourceView(this->refTex, &descSRV, &this->refRes);
+
+	//렌더타겟과 뎁스스텐실뷰를 OM(출력 병합기)에 셋팅합니다.
+	this->deviceContext->OMSetRenderTargets(1, this->renderTargetView.GetAddressOf(), this->depthStencilView.Get());
+
+	//뷰포트를 다시 셋팅합니다.
+	D3D11_VIEWPORT vp;
+	vp.Width = width;
+	vp.Height = height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+
+	this->deviceContext->RSSetViewports(1, &vp);
+
+}
+
 bool GraphicManager::InitializeDirectX(HWND hwnd)
 {
     //드라이버 타입 

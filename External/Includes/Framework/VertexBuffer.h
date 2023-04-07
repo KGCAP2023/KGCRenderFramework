@@ -62,10 +62,10 @@ public:
 
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(T) * vertexCount;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bd.CPUAccessFlags = 0;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0;
 
         D3D11_SUBRESOURCE_DATA InitData;

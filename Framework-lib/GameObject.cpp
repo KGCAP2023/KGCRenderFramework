@@ -28,6 +28,11 @@ void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 	
 }
 
+GameObject* GameObject::GetFocusedObject()
+{
+	return game;
+}
+
 void GameObject::Update()
 {
 	for (auto& it : this->components)
@@ -132,6 +137,28 @@ void GameObject::CleanUpComponent()
 	this->components.clear();
 }
 
+void GameObject::SetFocus()
+{
+	if (this->bbox != nullptr) {
+
+		this->game->ReleaseFocus();
+		this->bbox->ChangeColor(255, 0, 0);
+		this->game = this;
+		
+	}
+	else {
+		assert("bounding box가 존재하지 않는 객체입니다.");
+	}
+}
+
+void GameObject::ReleaseFocus()
+{
+	if (this->bbox != nullptr && this->game == this) {
+		this->bbox->ChangeColor(0, 0, 0);
+		this->game = nullptr;
+	}
+}
+
 void GameObject::SetActive(bool bActive)
 {
 	this->isActive = bActive;
@@ -148,3 +175,5 @@ void GameObject::AddChild(GameObject* pChild)
 	pChild->transform.Translate(this->transform.positionVector);
 	this->child.push_back(pChild);
 }
+
+GameObject* GameObject::game = nullptr;

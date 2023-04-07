@@ -10,7 +10,7 @@
 #include <Framework/ILayer.h>
 #include <Framework/TileMapRenderer.h>
 #include <Framework/TileMap.h>
-    class ResourceManagerView : public ILayer
+class ResourceManagerView : public ILayer
 {
     IGameObjectManager* ObjM;
     IResourceManager* ResM;

@@ -13,33 +13,33 @@
 class DebugView : public ILayer
 {
 public:
-	IGameObjectManager* ObjM;
-	bool debug = true;
+    IGameObjectManager* ObjM;
+    bool debug = true;
 
-	DebugView(IGameObjectManager* manager, const std::string name) : ILayer(name)
-	{
-		this->ObjM = manager;
-	}
-	virtual ~DebugView()
-	{
+    DebugView(IGameObjectManager* manager, const std::string name) : ILayer(name)
+    {
+        this->ObjM = manager;
+    }
+    virtual ~DebugView()
+    {
 
-	};
+    };
 
-	virtual void Init()
-	{
+    virtual void Init()
+    {
 
-	};
+    };
 
-	virtual void Update()
-	{
+    virtual void Update()
+    {
 
-	};
-	virtual void draw()
-	{
+    };
+    virtual void draw()
+    {
 
-	}
-	virtual void Render()
-	{
+    }
+    virtual void Render()
+    {
 		auto keyboard = InputManager::GetKeyboardState();																		//키보드 상태 값
 		auto mouse = InputManager::GetMouseState();																				//마우스 상태 값
 
@@ -51,6 +51,6 @@ public:
 		ImGui::Text(u8"마우스 좌표: X: %d, Y: %d", mouse.x, mouse.y);															//마우스 좌표 값 x,y 반환
 		ImGui::Text(u8"입력 키 W: %d A: %d S: %d D: %d", keyboard.W, keyboard.A, keyboard.S, keyboard.D);						//키보드 W,A,S,D (누른 상태 = 1),(뗀 상태 = 0) 반환 (다른 자판 추가?)
 
-		ImGui::End();
+        ImGui::End();
 	}
 };

@@ -14,10 +14,11 @@ public:
 		delete[] arr;
 	}
 
-	bool Init(Sprite* sprite, int gridSizeX, int gridSizeY, int tileSize = 32)
+	bool Init(const std::string& name,Sprite* sprite, int gridSizeX, int gridSizeY, int tileSize = 32)
 	{
 		if (AddTileMapImage(sprite))
 		{
+			this->name = name;
 			this->tileSize = tileSize;
 
 			tile.x = sprite->GetWidth() / tileSize;
@@ -77,6 +78,11 @@ public:
 		}
 	}
 
+	std::string GetName()
+	{
+		return this->name;
+	}
+
 	int GetTileSize()
 	{
 		return this->tileSize;
@@ -125,6 +131,7 @@ private:
 	SimpleMath::Vector2 grid;
 	SimpleMath::Vector2 tile;
 
+	std::string name;
 	int tileSize;
 	float scale = 4.f;
 

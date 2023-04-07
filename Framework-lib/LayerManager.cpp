@@ -115,6 +115,11 @@ void LayerManager::DockingSpace()
 	static bool zzz = true;
 	ImGui::Begin(u8"GameView", &zzz, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
+	if (ImGui::IsWindowFocused())
+		this->_isGameViewFocus = true;
+	else
+		this->_isGameViewFocus = false;
+
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	windowSize.x -= 10;
 	windowSize.y -= 32;

@@ -2,6 +2,9 @@
 #include "AudioManager.h"
 #include "Framework.h"
 
+//잠재적 오류사항
+// 오디오 33개 동시 재생시 32번째 재생한 오디오 pop and 33번째가 push 됨(스택)
+// 
 //오디오 매니저 초기화
 bool AudioManager::Initialize(Framework* framework)
 {

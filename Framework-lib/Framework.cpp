@@ -92,7 +92,14 @@ void Framework::Update()
 					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
 					if (bbox != nullptr)
 						if (this->ray->isPicked(bbox))
-							bbox->ChangeColor(1,0,0);
+						{
+							bbox->ChangeColor(1, 0, 0);
+							break;
+						}
+						else
+						{
+							bbox->ChangeColor(0, 0, 0);
+						}
 				}
 			}
 		}
@@ -105,7 +112,7 @@ void Framework::Update()
 
 	//=========================================
 
-	if (mouse.rightButton)
+	if (mouse.rightButton && this->layerManager.isGameViewFocus())
 	{
 		while (!yPosRelative.empty())
 		{
@@ -113,7 +120,7 @@ void Framework::Update()
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();
 			xPosRelative.pop();
-				this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
+			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
 	}

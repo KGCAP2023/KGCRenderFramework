@@ -12,7 +12,6 @@ public:
 	SpriteRenderer(GameObject* owner) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_SPRITE;
-		this->deleteType = Component::Type::RENDERER_SPRITE;
 		this->name = "SpriteRenderer";
 	}
 

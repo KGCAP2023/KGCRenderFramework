@@ -13,7 +13,6 @@ public:
 	ModelRenderer(GameObject* owner) : Component(owner) 
 	{
 		this->type = Component::Type::RENDERER_MODEL;
-		this->deleteType = Component::Type::RENDERER_MODEL;
 		this->name = "ModelRenderer";
 	}
 

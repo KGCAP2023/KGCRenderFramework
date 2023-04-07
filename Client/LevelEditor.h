@@ -17,8 +17,6 @@ public:
 	ImVector<ImVec2> points;
 	Sprite* image;
 	bool opt_enable_grid = true;
-	bool opt_enable_context_menu = true;
-	bool adding_line = false;
 	bool level_edit = true;
 	bool isActiveWindow2 = false;
 
@@ -49,20 +47,18 @@ public:
 
 		static ImVec2 scrolling(0.0f, 0.0f);
 
-		//float x = 32 / image->GetWidth();
-		//float y = 32 / image->GetHeight();
-
 		float width = image->GetWidth();
 		float height = image->GetHeight();
 
-		static float mouse_x, mouse_y, org_x, org_y;
+		static float mouse_x, mouse_y;
+		
+		//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
+		float x_unit = 1 / 9.0f;
+		float y_unit = 1 / 12.0f;
 
 		if (level_edit) {
-			//ImGui::SetNextWindowSize(ImVec2(450, 500));	//사이즈 고정
 			ImGui::Begin(u8"Level Editor", &level_edit, ImGuiWindowFlags_HorizontalScrollbar);	//UI창을 내부 메뉴 선택과 창닫기가 가능하도록 MenuBar로 설정
-
 			ImGui::Checkbox("Grid", &opt_enable_grid);								//캔버스 내부의 grid 표시여부
-			ImGui::Checkbox("Context Menu", &opt_enable_context_menu);				//컨텍스트 메뉴 표시여부
 			
 			ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList가 화면의 좌표를 가져와 사용, UI창 이동시 캔버스의 좌표도 같이 움직임
 			ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // 윈도우 창 사이즈에 맞추어 캔버스 사이즈를 조절
@@ -84,60 +80,26 @@ public:
 
 			//캔버스 draw_list 창 내부에 이미지 삽입, 배경색과 배경테두리보다 나중에 호출되어 상단에 그려짐 
 			//grid보다 먼저 호출되어 이미지 위에 grid가 그려질 수 있게함
-			//캔버스 범위를 벗어나는 경우에도 이미지가 가려지지 않는 문제가 있음 수정이 필요함
 			draw_list->AddImage((void*)image->Get(), origin, 
-				ImVec2(origin.x + width, origin.y + height), ImVec2(0, 0), ImVec2(1, 1));
+				ImVec2(origin.x + width, origin.y + height), 
+				ImVec2(0, 0), ImVec2(1, 1));
 
-			//마우스가 캔버스 내부에 들어와있는 상태에서 좌클릭된 경우
-			if (is_hovered && !adding_line && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			//마우스가 캔버스 내부에서 좌클릭된 경우
+			if (is_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
 				points.push_back(mouse_pos_in_canvas);
 				points.push_back(mouse_pos_in_canvas);
 
-				//현재 마우스 좌표를 Grid 한 칸 크기 32픽셀로 나누어 표현
+				//현재 마우스 좌표를 Grid 한 칸 크기인 32픽셀로 나누어 표현
 				mouse_x = mouse_pos_in_canvas.x / 32;
 				mouse_y = mouse_pos_in_canvas.y / 32;
-							
-				org_x = mouse_pos_in_canvas.x;
-				org_y = mouse_pos_in_canvas.y;
 			}
-
-			ImGui::Begin(u8"Added");
-
-			//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
-			float x_unit = 1 / 9.0f;
-			float y_unit = 1 / 12.0f;
-
-			width /= 32.0f;
-			height /= 32.0f;
-
-			std::cout << mouse_x << std::endl;
-			std::cout << x_unit << std::endl;
-
-			ImGui::Image((void*)image->Get(), ImVec2(125, 125), 
-				ImVec2((int)mouse_x * x_unit, (int)mouse_y * y_unit), 
-				ImVec2((int)mouse_x * x_unit + x_unit, (int)mouse_y * y_unit + y_unit));
-			ImGui::Image((void*)image->Get(), ImVec2(125, 125), 
-				ImVec2((int)org_x / width, (int)org_y / height),
-				ImVec2((int)org_x/width + x_unit, (int)org_y/height + y_unit));
-			if (ImGui::Button("end")) {
-				isActiveWindow2 = false;
-			}
-			ImGui::End();
-
-			//마우스가 캔버스 내부에서 드래깅 없이 우클릭된 경우 캔버스 내부에서 컨텍스트 메뉴 창을 띄움
-			//상단의 체크박스 context menu가 체크 해제된 경우 켜지지 않음
-			ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-			if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-				ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-			if (ImGui::BeginPopup("context"))
-			{
-				if (adding_line)
-					points.resize(points.size() - 2);
-				adding_line = false;
-				if (ImGui::MenuItem("Remove Last One", NULL, false, points.Size > 0)) { points.resize(points.size() - 2); }
-				if (ImGui::MenuItem("Remove All", NULL, false, points.Size > 0)) { points.clear(); }
-				ImGui::EndPopup();
+			{	//Added 창에 선택한 이미지 범위 출력
+				ImGui::Begin(u8"Chosen Grid Block");
+				ImGui::Image((void*)image->Get(), ImVec2(125, 125),
+					ImVec2((int)mouse_x * x_unit, (int)mouse_y * y_unit),
+					ImVec2((int)mouse_x * x_unit + x_unit, (int)mouse_y * y_unit + y_unit));
+				ImGui::End();
 			}
 			//캔버스 내부에 Grid를 표시하는 부분, 체크박스 Grid가 해제된 경우 캔버스 내부에 grid를 그리지 않음
 			draw_list->PushClipRect(canvas_p0, canvas_p1, true);

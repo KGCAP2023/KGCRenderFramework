@@ -136,6 +136,16 @@ public:
 	/// </summary>
 	/// <param name="audioName">삭제할 오디오 이름입니다.</param>
 	virtual void DeleteAudio(const char* audioName) {};
+	/// <summary>
+	/// 모델을 순회합니다.
+	/// </summary>
+	/// <param name="callback"></param>
+	virtual void ModelForeach(std::function<void(Model*)> callback) {};
+	/// <summary>
+	/// 모델맵을 반환합니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual std::unordered_map<std::string, Model*> GetModelMap() { return std::unordered_map<std::string, Model*>(); };
 };
 
 
@@ -172,6 +182,9 @@ public:
 	Model* FindModel(const std::string& modelName) override;
 
 	std::vector<Texture>* GetCachedTexture(const std::string& modelName) override;
+
+	void ModelForeach(std::function<void(Model*)> callback) override;
+	std::unordered_map<std::string, Model*> GetModelMap() override;
 
 	void SpriteForeach(std::function<void(Sprite*)> callback) override;
 	std::unordered_map<std::string, Sprite*> GetSpriteMap() override;
@@ -211,5 +224,9 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState = nullptr;
 
 };

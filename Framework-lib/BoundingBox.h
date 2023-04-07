@@ -89,8 +89,8 @@ public:
 	virtual std::vector<DWORD>* GetIndices() override;
 	virtual void ChangeColor(float r, float g, float b, float alpha = 1.0f) override;
 
-	DirectX::XMFLOAT3 min = { -3,-3,-3 };
-	DirectX::XMFLOAT3 max = { 3,3,3 };
+	DirectX::XMFLOAT3 min = { -1,-1,-1 };
+	DirectX::XMFLOAT3 max = { 1,1,1 };
 
 	std::vector<SimpleVertex> vertices;
 

@@ -53,7 +53,7 @@ public:
 	void TileMapping() 
 	{
 		TileMap* tileMap = new TileMap();
-		tileMap->Init(sp, 5, 5);
+		tileMap->Init("tilemap",sp, 5, 5);
 
 		//타일사이즈 스케일
 		tileMap->SetScale(2.f);

@@ -87,19 +87,35 @@ void Framework::Update()
 			if ((0 <= mouse.x && mouse.x <= this->width) && (0 <= mouse.y && mouse.y <= this->height))
 			{
 				std::cout << "클릭된좌표:  " << mouse.x << "/" << mouse.y << std::endl;
+
+				GameObject* selectedObject = nullptr;
+				float min_dist = 10000;
+
 				this->ray->CalculatePicking(mouse.x, mouse.y);
 				for (auto& kv : this->gameObjManager->gameObjects) {
-					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
+ 					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
 					if (bbox != nullptr)
-						if (this->ray->isPicked(bbox))
+					{
+						float dist = this->ray->isPicked(bbox);
+
+						if (dist != -1 && dist < min_dist)
 						{
-							bbox->ChangeColor(1, 0, 0);
-							break;
+							min_dist = dist;
+							selectedObject = kv.second;
 						}
-						else
-						{
-							bbox->ChangeColor(0, 0, 0);
-						}
+					}
+				}
+
+				std::cout << "distance >" << min_dist << std::endl;
+
+				if (selectedObject != nullptr)
+				{
+					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
+					//implement Set Focus
+				}
+				else
+				{
+					//implement Release Focus
 				}
 			}
 		}

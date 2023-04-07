@@ -52,8 +52,8 @@ void GameObject::Update()
 	}
 
 	//행렬 업데이트
-	transform.worldMatrix = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z) * XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z) * XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
-	transform.UpdateDirection();
+	this->transform.worldMatrix = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z) * XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z) * XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
+	this->transform.UpdateDirection();
 }
 
 void GameObject::SetObjectType(GameObject::ObjectType type)
@@ -139,12 +139,11 @@ void GameObject::CleanUpComponent()
 
 void GameObject::SetFocus()
 {
-	if (this->bbox != nullptr) {
-
+	if (this->bbox != nullptr) 
+	{
 		this->game->ReleaseFocus();
-		this->bbox->ChangeColor(255, 0, 0);
+		this->bbox->ChangeColor(1, 0, 0);
 		this->game = this;
-		
 	}
 	else {
 		assert("bounding box가 존재하지 않는 객체입니다.");
@@ -153,7 +152,9 @@ void GameObject::SetFocus()
 
 void GameObject::ReleaseFocus()
 {
-	if (this->bbox != nullptr && this->game == this) {
+	if (this->game == nullptr) return;
+	else if (this->bbox != nullptr && this->game == this) 
+	{
 		this->bbox->ChangeColor(0, 0, 0);
 		this->game = nullptr;
 	}

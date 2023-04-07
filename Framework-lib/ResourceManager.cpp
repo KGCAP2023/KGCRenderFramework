@@ -7,6 +7,9 @@ void ResourceManager::Init(Framework* framework)
 	this->framework = framework;
 	device = framework->graphics.device;
 	deviceContext = framework->graphics.deviceContext;
+	depthStencilView = framework->graphics.depthStencilView;
+	depthStencilBuffer = framework->graphics.depthStencilBuffer;
+	depthStencilState = framework->graphics.depthStencilState;
 	spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
 	m_states = std::make_unique<CommonStates>(this->device.Get());
 }
@@ -170,6 +173,20 @@ std::vector<Texture>* ResourceManager::GetCachedTexture(const std::string& model
 		this->_textures_loaded.insert(std::make_pair<>(modelName, tex));
 		return tex;
 	}
+}
+
+void ResourceManager::ModelForeach(std::function<void(Model*)> callback)
+{
+	for (auto& pair : this->_modelMap)
+	{
+		Model* sp = pair.second;
+		callback(sp);
+	}
+}
+
+std::unordered_map<std::string, Model*> ResourceManager::GetModelMap()
+{
+	return this->_modelMap;
 }
 
 void ResourceManager::SpriteForeach(std::function<void(Sprite*)> callback)

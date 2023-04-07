@@ -133,7 +133,8 @@ void GraphicManager::RenderFrame()
 
 	//3D오브젝트를 그립니다.
 	{
-		for (const auto& kv : gameObjectManager->gameObjects) {
+		for (const auto& kv : gameObjectManager->gameObjects) 
+		{
 			(kv.second)->Draw(vp);
 		}
 	}

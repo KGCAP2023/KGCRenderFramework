@@ -48,9 +48,9 @@ public:
 
         ImGui::Begin(u8"Resource Manager View", &RMV, ImGuiWindowFlags_HorizontalScrollbar);
         
-        ImGui::Button("add");                                   //addì¡°ê±´ë¬?ê°ì‹¸ê¸?
+        ImGui::Button("add");                                   //add ¹öÆ°
         ImGui::SameLine();
-        ImGui::Button("delete");                                //deleteì¡°ê±´ë¬?ê°ì‹¸ê¸?
+        ImGui::Button("delete");                                //delete ¹öÆ°
         ImGui::SameLine();
         if (ImGui::Button("file"))
         {
@@ -66,7 +66,7 @@ public:
         ImGui::End();
     }
 
-    bool openFile()     // file ë²„íŠ¼ êµ¬í˜„
+    bool openFile()     // file ¹öÆ° ±¸Çö ºÎºĞ
     {
         //  CREATE FILE OBJECT INSTANCE
         HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -111,11 +111,11 @@ public:
         //  FORMAT AND STORE THE FILE PATH
         std::wstring path(f_Path);
         std::string c(path.begin(), path.end());
-        std::string FilePath = c;                               //?Œì¼ ê²½ë¡œ ê°€?¸ì˜´!
+        std::string FilePath = c;                               //ÆÄÀÏ °æ·Î °¡Á®¿È!
 
         //  FORMAT STRING FOR EXECUTABLE NAME
         const size_t slash = sFilePath.find_last_of("/\\");
-        std::string SelectedFile = sFilePath.substr(slash + 1); //? íƒ???Œì¼?´ë¦„ ê°€?¸ì˜´!
+        std::string SelectedFile = sFilePath.substr(slash + 1); //¼±ÅÃµÈ ÆÄÀÏ ÀÌ¸§ °¡Á®¿È
 
         //  SUCCESS, CLEAN UP
         CoTaskMemFree(f_Path);
@@ -126,6 +126,6 @@ public:
         return TRUE;
     }
 
-    std::string sFilePath;                                      //? íƒ???Œì¼??ê²½ë¡œë¥?String?•íƒœë¡??€??
+    std::string sFilePath;                                      //Ãß°¡ÇÏ´Â ÆÄÀÏÀÇ ÀÌ¸§À» string ÇüÅÂ·Î ÀúÀå
 
 };

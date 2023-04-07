@@ -15,7 +15,6 @@ class Example : public ILayer
 {
 public:
 	IGameObjectManager* _manager;
-	bool debug = true;
 
 	Example(IGameObjectManager* manager, const std::string name) : ILayer(name)
 	{

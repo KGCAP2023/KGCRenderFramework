@@ -106,11 +106,13 @@ void Ray::CalculatePicking(int mouseX, int mouseY)
 	}
 }
 
+
+
 float Ray::isPicked(BoundingBox3D* bbox)
 {
 
 	Transform& transform = bbox->GetOwner()->transform;
-	XMMATRIX world = transform.worldMatrix;
+	XMMATRIX world = XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
 
 	if (transform.scale.x == 0 || transform.scale.y == 0 || transform.scale.z == 0)
 		return 0;
@@ -141,6 +143,9 @@ float Ray::isPicked(BoundingBox3D* bbox)
 	//	return false;
 	//}
 
+	XMMATRIX localToworld = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z)*
+		XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z);
+	
 	float min_distance = 1000000;
 
 	for (int i = 0; i < 12; i++)
@@ -154,8 +159,13 @@ float Ray::isPicked(BoundingBox3D* bbox)
 		SimpleVertex& t1 = bbox->vertices[a];
 		SimpleVertex& t2 = bbox->vertices[b];
 		SimpleVertex& t3 = bbox->vertices[c];
+		
+		XMVECTOR x1 = XMVector3TransformCoord(XMVectorSet(t1.Pos.x, t1.Pos.y, t1.Pos.z, 1.0f), localToworld);
+		XMVECTOR x2 = XMVector3TransformCoord(XMVectorSet(t2.Pos.x, t2.Pos.y, t2.Pos.z, 1.0f), localToworld);
+		XMVECTOR x3 = XMVector3TransformCoord(XMVectorSet(t3.Pos.x, t3.Pos.y, t3.Pos.z, 1.0f), localToworld);
 
-		float distance = RayIntersectTri(rayOrigin, rayDirection, XMVectorSet(t1.Pos.x, t1.Pos.y, t1.Pos.z, 1.0f), XMVectorSet(t2.Pos.x, t2.Pos.y, t2.Pos.z, 1.0f), XMVectorSet(t3.Pos.x, t3.Pos.y, t3.Pos.z, 1.0f));
+		float distance = RayIntersectTri(rayOrigin, rayDirection, x1,x2,x3);
+
 		if (distance != -1 && distance < min_distance)
 		{
 			min_distance = distance;

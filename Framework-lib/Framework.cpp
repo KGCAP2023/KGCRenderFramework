@@ -80,17 +80,44 @@ void Framework::Update()
 
 	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
 
-	if (mouse.leftButton)
+	if (mouse.leftButton && this->layerManager.isGameViewFocus())
 	{
 		if (!MOUSE_LEFT_BUTTON_PRESSED)
 		{
-			std::cout << "클릭된좌표:  " << mouse.x << "/" << mouse.y << std::endl;
-			this->ray->CalculatePicking(mouse.x, mouse.y);
-			for (auto& kv : this->gameObjManager->gameObjects) {
-				BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
-				if(bbox != nullptr) this->ray->isPicked(bbox);
-			}
+			if ((0 <= mouse.x && mouse.x <= this->width) && (0 <= mouse.y && mouse.y <= this->height))
+			{
+				std::cout << "클릭된좌표:  " << mouse.x << "/" << mouse.y << std::endl;
 
+				GameObject* selectedObject = nullptr;
+				float min_dist = 10000;
+
+				this->ray->CalculatePicking(mouse.x, mouse.y);
+				for (auto& kv : this->gameObjManager->gameObjects) {
+ 					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
+					if (bbox != nullptr)
+					{
+						float dist = this->ray->isPicked(bbox);
+
+						if (dist != -1 && dist < min_dist)
+						{
+							min_dist = dist;
+							selectedObject = kv.second;
+						}
+					}
+				}
+
+				std::cout << "distance >" << min_dist << std::endl;
+
+				if (selectedObject != nullptr)
+				{
+					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
+					//implement Set Focus
+				}
+				else
+				{
+					//implement Release Focus
+				}
+			}
 		}
 		MOUSE_LEFT_BUTTON_PRESSED = true;
 	}
@@ -101,7 +128,7 @@ void Framework::Update()
 
 	//=========================================
 
-	if (mouse.rightButton)
+	if (mouse.rightButton && this->layerManager.isGameViewFocus())
 	{
 		while (!yPosRelative.empty())
 		{
@@ -109,7 +136,7 @@ void Framework::Update()
 			int xPosRelative2 = xPosRelative.front();
 			yPosRelative.pop();
 			xPosRelative.pop();
-				this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
+			this->graphics.camera->transform.Rotate((float)yPosRelative2 * 0.001f, (float)xPosRelative2 * 0.001f, 0);
 		}
 
 	}
@@ -374,88 +401,8 @@ LRESULT Framework::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			this->width = nWidth;
 			this->height = nHeight;
 
-			this->graphics.width = nWidth;
-			this->graphics.height = nHeight;
+			this->graphics.ResizeWindow(nWidth, nHeight);
 
-			this->graphics.deviceContext->OMSetRenderTargets(0, 0, 0);
-
-			// Release all outstanding references to the swap chain's buffers.
-			this->graphics.renderTargetView->Release();
-			if (this->graphics.depthStencilView.Get() != nullptr)
-				this->graphics.depthStencilView->Release();
-			if (this->graphics.depthStencilBuffer.Get() != nullptr)
-				this->graphics.depthStencilBuffer->Release();
-
-			this->graphics.backBuffer->Release();
-
-
-			HRESULT hr;
-			// Preserve the existing buffer count and format.
-			// Automatically choose the width and height to match the client rect for HWNDs.
-			hr = this->graphics.swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-			
-			// Perform error handling here!
-
-			// Get buffer and create a render-target-view.
-			hr = this->graphics.swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-				(LPVOID*)this->graphics.backBuffer.GetAddressOf());
-			// Perform error handling here!
-
-
-
-			hr = this->graphics.device->CreateRenderTargetView(this->graphics.backBuffer.Get(), NULL,
-				this->graphics.renderTargetView.GetAddressOf());
-			// Perform error handling here!
-			
-			//뎁스/스텐실 버퍼 디스크립터
-			CD3D11_TEXTURE2D_DESC depthStencilTextureDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, this->width, this->height);
-			depthStencilTextureDesc.MipLevels = 1;
-			depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-			depthStencilTextureDesc.SampleDesc.Count = 1; //MSAA 4배 샘플링
-			depthStencilTextureDesc.SampleDesc.Quality = 0;
-
-			hr = this->graphics.device->CreateTexture2D(&depthStencilTextureDesc, NULL, this->graphics.depthStencilBuffer.GetAddressOf());
-
-
-			hr = this->graphics.device->CreateDepthStencilView(this->graphics.depthStencilBuffer.Get(), NULL, this->graphics.depthStencilView.GetAddressOf());
-			if (FAILED(hr)) return false;
-
-
-			D3D11_TEXTURE2D_DESC descTex;
-			ZeroMemory(&descTex, sizeof(descTex));
-			descTex.Width = nWidth;
-			descTex.Height = nHeight;
-			descTex.MipLevels = 1;
-			descTex.ArraySize = 1;
-			descTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			descTex.SampleDesc.Count = 1;
-			descTex.Usage = D3D11_USAGE_DEFAULT;
-			descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-			descTex.CPUAccessFlags = 0;
-
-			this->graphics.device->CreateTexture2D(&descTex, nullptr, &this->graphics.refTex);
-
-			D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
-			ZeroMemory(&descSRV, sizeof(descSRV));
-			descSRV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			descSRV.Texture2D.MipLevels = 1;
-			descSRV.Texture2D.MostDetailedMip = 0;
-
-			this->graphics.device->CreateShaderResourceView(this->graphics.refTex, &descSRV, &this->graphics.refRes);
-
-
-			this->graphics.deviceContext->OMSetRenderTargets(1, this->graphics.renderTargetView.GetAddressOf(), this->graphics.depthStencilView.Get());
-
-			// Set up the viewport.
-			D3D11_VIEWPORT vp;
-			vp.Width = nWidth;
-			vp.Height = nHeight;
-			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;
-			vp.TopLeftX = 0;
-			vp.TopLeftY = 0;
-			this->graphics.deviceContext->RSSetViewports(1, &vp);
 		}
 		return 1;
 	default:

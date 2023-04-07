@@ -15,11 +15,11 @@ public:
 
 	bool RaySphereIntersect(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, float radius);
 
-	bool RayIntersectTri(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, XMVECTOR v1, XMVECTOR v2, XMVECTOR v3);
+	float RayIntersectTri(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, XMVECTOR v1, XMVECTOR v2, XMVECTOR v3);
 
 	void CalculatePicking(int mouseX, int mouseY);
 
-	bool isPicked(BoundingBox3D* bbox);
+	float isPicked(BoundingBox3D* bbox);
 
 	float screenWidth;
 	float screenHeight;

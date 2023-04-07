@@ -49,11 +49,14 @@ public:
 
 		static ImVec2 scrolling(0.0f, 0.0f);
 
-		float x = 32 / image->GetWidth();
-		float y = 32 / image->GetHeight();
+		//float x = 32 / image->GetWidth();
+		//float y = 32 / image->GetHeight();
 
 		float width = image->GetWidth();
 		float height = image->GetHeight();
+
+		static float mouse_x;
+		static float mouse_y;
 
 		if (level_edit) {
 			//ImGui::SetNextWindowSize(ImVec2(450, 500));	//사이즈 고정
@@ -61,13 +64,6 @@ public:
 
 			if (ImGui::Button("add")) {		//새 창 띄우기, 이미지에서 지정된 부분(크기 32,32)을 출력하도록 설정
 				isActiveWindow2 = true;
-			}
-			if (isActiveWindow2) {
-				ImGui::Begin(u8"Info2");
-				ImGui::Image((void*)image->Get(), ImVec2(128, 128), ImVec2(0, 0), ImVec2(x, y));	//이미지 파일 띄우기 (크기는 512, 512로 고정)
-				ImGui::SameLine();
-				ImGui::Image((void*)image->Get(), ImVec2(128, 128), ImVec2(x, 0), ImVec2(2*x, y));
-				ImGui::End();
 			}
 
 			ImGui::Checkbox("Grid", &opt_enable_grid);								//캔버스 내부의 grid 표시여부
@@ -102,23 +98,31 @@ public:
 			{
 				points.push_back(mouse_pos_in_canvas);
 				points.push_back(mouse_pos_in_canvas);
-				adding_line = true;
-			}
-			//마우스가 캔버스 내부에서 좌클릭되어(드래그 시작시점) 그리기가 활성화된 경우
-			if (adding_line)
-			{
-				points.back() = mouse_pos_in_canvas;
-				if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))	//마우스 클릭이 해제된 경우(드래그 종료시점)
-					adding_line = false;
+
+				mouse_x = mouse_pos_in_canvas.x / 32;
+				mouse_y = mouse_pos_in_canvas.y / 32;
+				
+				//unit size = 32px
+				std::cout << width << std::endl;
+				std::cout << height << std::endl;
+
+				std::cout << (int)mouse_x << std::endl;
+				std::cout << (int)mouse_y << std::endl;
+				isActiveWindow2 = true;
 			}
 
-			//마우스가 캔버스 내부에서 우클릭되어 드래깅 중인 경우 캔버스 내부의 좌표를 변경
-			const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
-			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-			{
-				scrolling.x += io.MouseDelta.x;
-				scrolling.y += io.MouseDelta.y;
+			ImGui::Begin(u8"Added");
+
+			float x_unit = 1 / 9.0f;
+			float y_unit = 1 / 12.0f;
+
+			ImGui::Image((void*)image->Get(), ImVec2(125, 125), 
+				ImVec2((int)mouse_x * x_unit, (int)mouse_y * y_unit), 
+				ImVec2((int)mouse_x * x_unit + x_unit, (int)mouse_y * y_unit + y_unit));
+			if (ImGui::Button("end")) {
+				isActiveWindow2 = false;
 			}
+			ImGui::End();
 
 			//마우스가 캔버스 내부에서 드래깅 없이 우클릭된 경우 캔버스 내부에서 컨텍스트 메뉴 창을 띄움
 			//상단의 체크박스 context menu가 체크 해제된 경우 켜지지 않음

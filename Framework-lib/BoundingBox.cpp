@@ -191,9 +191,26 @@ std::vector<DWORD>* BoundingBox3D::GetIndices()
 	return &this->indices;
 }
 
+void BoundingBox3D::ChangeColor(float r, float g, float b, float alpha)
+{
+	//색깔을 교체합니다.
+	for (SimpleVertex& v : this->vertices)
+	{
+		v.Color = XMFLOAT4(r, g, b, alpha);
+	}
+
+	D3D11_MAPPED_SUBRESOURCE resource;
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	//해당 인덱스 버퍼에 락을 겁니다.
+	this->deviceContext->Map(this->vertexbuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	//새로운 값 메모리 카피
+	memcpy(resource.pData, vertices.data(), sizeof(SimpleVertex) * vertices.size());
+	//락 해제
+	this->deviceContext->Unmap(this->vertexbuffer.Get(), 0);
+}
+
 void BoundingBox3D::Update()
 {
-	owner->transform.worldMatrix = DirectX::XMMatrixScaling(1, 1, 1) *
-		XMMatrixRotationRollPitchYaw(0, 0, 0) *
-		XMMatrixTranslation(owner->transform.position.x, owner->transform.position.y, owner->transform.position.z);
+
 }

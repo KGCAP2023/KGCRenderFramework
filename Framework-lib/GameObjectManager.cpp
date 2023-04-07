@@ -87,3 +87,16 @@ std::string GameObjectManager::GetObjectNames()
 
     return name;
 }
+
+GameObject* GameObjectManager::GetFocusedObject()
+{
+
+	if (gameObjects.size() > 0) {
+
+		return GameObject::GetFocusedObject();
+	}
+
+	std::cout << "오브젝트가 존재하지 않음" << std::endl;
+
+	return nullptr;
+}

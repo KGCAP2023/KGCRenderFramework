@@ -82,12 +82,14 @@ public:
 	int component_selected = 0;
 	bool my_tool_active = true;
 	bool active = false;
+	bool show_warning = false;
+	bool show_delete = false;
 	bool component_active = false;
 	char a[20]{};
 	int g = 0;
 	DirectX::XMFLOAT3 pos{};
 	DirectX::XMFLOAT3 rot{};
-	DirectX::XMFLOAT3 scale{};
+	DirectX::XMFLOAT3 scale{1,1,1};
 	std::vector<std::string> spriteList;
 	std::vector<std::string> tileList;
 	std::vector<std::string> modelList;
@@ -111,10 +113,7 @@ public:
 		GameObject* obj6 = _manager->CreateGameObject("Object7");
 		GameObject* obj7 = _manager->CreateGameObject("Object8");
 		GameObject* obj8 = _manager->CreateGameObject("Object9");
-		GameObject* obj9 = _manager->CreateGameObject("Object10");
-		GameObject* obj10 = _manager->CreateGameObject("Object11");
-		GameObject* obj11 = _manager->CreateGameObject("Object12");
-		GameObject* obj12 = _manager->CreateGameObject("Object13");
+
 
 
 		obj->transform.SetPosition(30, 20, 30);
@@ -126,10 +125,7 @@ public:
 		obj6->transform.SetPosition(63, 20, 30);
 		obj7->transform.SetPosition(71, 20, 30);
 		obj8->transform.SetPosition(32, 20, 30);
-		obj9->transform.SetPosition(10, 20, 30);
-		obj10->transform.SetPosition(10, 20, 30);
-		obj11->transform.SetPosition(10, 20, 30);
-		obj12->transform.SetPosition(10, 20, 30);
+
 
 
 		obj->transform.SetRotation(30, 20, 30);
@@ -141,10 +137,7 @@ public:
 		obj6->transform.SetRotation(63, 20, 30);
 		obj7->transform.SetRotation(71, 20, 30);
 		obj8->transform.SetRotation(32, 20, 30);
-		obj9->transform.SetRotation(10, 20, 30);
-		obj10->transform.SetRotation(10, 20, 30);
-		obj11->transform.SetRotation(10, 20, 30);
-		obj12->transform.SetRotation(10, 20, 30);
+
 
 
 
@@ -380,23 +373,61 @@ public:
 			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -100, 100);
 			ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, -1.58, 1.58);
 			ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 1, 3);
-			if (ImGui::Button("save"))
+			if (ImGui::Button("create"))
 			{
-				GameObject* ob = _manager->CreateGameObject(a);
-				ob->transform.SetPosition(pos.x, pos.y, pos.z);
-				ob->transform.SetRotation(rot.x, rot.y, rot.z);
-				ob->transform.SetScale(scale.x, scale.y, scale.z);
 
-				gamelist.push_back(new HierarchyObject(ob));
-				gamelist.at(gamelist.size() - 1)->GetGameObject();
+				GameObject* ob = _manager->CreateGameObject(a);
+				if (ob != nullptr) {
+					ob->transform.SetPosition(pos.x, pos.y, pos.z);
+					ob->transform.SetRotation(rot.x, rot.y, rot.z);
+					ob->transform.SetScale(scale.x, scale.y, scale.z);
+
+					gamelist.push_back(new HierarchyObject(ob));
+				}
+				else
+				{
+					show_warning = true;
+				}
+
+
+				scale.x = 1;
+				scale.y = 1;
+				scale.z = 1;
+				std::memset(a, 0, IM_ARRAYSIZE(a));
+				active = false;
 
 			}
 
 			ImGui::End();
 		}
+		if (show_warning) {
+			ImGui::OpenPopup("Warning");
+		}
+
+		if (ImGui::BeginPopupModal("Warning", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"중복 오브젝트 생성");
+			if (ImGui::Button("OK")) {
+				ImGui::CloseCurrentPopup();
+				show_warning = false;
+			}
+			ImGui::EndPopup();
+		}
+
+		if (show_delete) {
+			ImGui::OpenPopup("Delete");
+		}
+
+		if (ImGui::BeginPopupModal("Delete", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"삭제 되었습니다.");
+			if (ImGui::Button("OK")) {
+				ImGui::CloseCurrentPopup();
+				show_delete = false;
+			}
+			ImGui::EndPopup();
+		}
 		if (my_tool_active)
 		{
-			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_MenuBar);
+			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_HorizontalScrollbar);
 			if (ImGui::Button("add"))
 			{
 				ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
@@ -407,26 +438,31 @@ public:
 			ImGui::SameLine();
 			if (ImGui::Button("delete"))
 			{
-				//selected=0~12 size 13
-				if (selected > 0) 
+				if (gamelist.size() != 0)
 				{
-					if (selected == gamelist.size() - 1)
+					//selected=0~12 size 13
+					if (selected > 0)
 					{
-						gamelist.at(selected)->GetGameObject()->Destroy();
-						gamelist.pop_back();
-						selected--;
+						if (selected == gamelist.size() - 1)
+						{
+							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
+							gamelist.pop_back();
+							selected--;
+							show_delete = true;
+						}
+						else
+						{
+							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
+							gamelist.erase(gamelist.begin() + selected);
+							show_delete = true;
+						}
 					}
 					else
 					{
-						gamelist.at(selected)->GetGameObject()->Destroy();
+						_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
 						gamelist.erase(gamelist.begin() + selected);
-						
+						show_delete = true;
 					}
-				}
-				else 
-				{
-					gamelist.at(selected)->GetGameObject()->Destroy();
-					gamelist.erase(gamelist.begin() + selected);
 				}
 
 
@@ -437,25 +473,34 @@ public:
 
 			if (gamelist.size() != 0)
 			{
-				ImGui::BeginChild("Scrolling", ImVec2(150, 0));
+				ImGui::BeginChild("Scrolling", ImVec2(150,0),true);
 				for (int i = 0; i < gamelist.size(); i++)
 				{
 					if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
 						selected = i;
 				}
 				ImGui::EndChild();
+				ImGui::SetScrollX(100.0f);
+
 				ImGui::SameLine();
 				ImGui::BeginGroup();
 
 				ImGui::Text(const_cast<char*>(gamelist.at(selected)->GetGameObject()->ObjectName.c_str()));
 				ImGui::Separator();
 				ImGui::Text("TRANSFORM");
-
-
-				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
-				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58, 1.58);
-				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-
+				ImGui::PushItemWidth(180);
+				ImGui::Text("pos     X : Y : Z");
+				ImGui::SameLine();
+				ImGui::SliderFloat3(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
+				
+				ImGui::Text("roation X : Y : Z");
+				ImGui::SameLine();
+				ImGui::SliderFloat3(u8"##rot", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58, 1.58);
+				
+				ImGui::Text("scale :  X : Y : Z");
+				ImGui::SameLine();
+				ImGui::SliderFloat3(u8"##scale ", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
+				ImGui::PopItemWidth();
 				ImGui::Separator();
 
 				ImGui::Text("Other Component");
@@ -468,7 +513,6 @@ public:
 				ImGui::SameLine();
 				ImGui::EndGroup();
 				ImGui::SameLine();
-
 				
 			}
 			ImGui::End();

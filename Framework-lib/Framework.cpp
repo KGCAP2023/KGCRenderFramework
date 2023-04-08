@@ -91,11 +91,13 @@ void Framework::Update()
 			{
 				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
 				cameraType = Camera3D::ViewType::_3D;
+				this->ray->SetOrthoGrahpicProjection(false);
 			}
 			else
 			{
 				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
 				cameraType = Camera3D::ViewType::_2D;
+				this->ray->SetOrthoGrahpicProjection(true);
 			}
 				
 		}

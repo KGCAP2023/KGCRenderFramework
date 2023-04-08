@@ -177,3 +177,8 @@ float Ray::isPicked(BoundingBox3D* bbox)
 	else
 		return min_distance;
 }
+
+void Ray::SetOrthoGrahpicProjection(bool isOrthoGrahpicProjection)
+{
+	this->isOrthoGrahpicProjection = isOrthoGrahpicProjection;
+}

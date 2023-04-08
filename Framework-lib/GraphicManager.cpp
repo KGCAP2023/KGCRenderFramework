@@ -129,26 +129,14 @@ void GraphicManager::RenderFrame()
 	const wchar_t* output = L"캡스톤_프로젝트";
 
 	//Perspective Projection 행렬을 셋팅합니다.
-	this->cameraComponent->cameraLerp();
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 
+	//3D오브젝트를 그립니다.
 	{
-		//Sprite를 그립니다.
-		for (const auto& kv : gameObjectManager->gameObjects)
-		{
-			(kv.second)->DrawSprite(vp);
-		}
-
-		deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0); //뎁스 스텐실 뷰
-		deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
-		deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
-
-		//3D오브젝트를 그립니다.
 		for (const auto& kv : gameObjectManager->gameObjects) 
 		{
 			(kv.second)->Draw(vp);
 		}
-
 	}
 
 	res->spriteBatch->Begin();

@@ -11,7 +11,6 @@ public:
 	{
 		this->type = Component::Type::RENDERER_TILEMAP;
 		this->name = "TileMapRenderer";
-		this->isSpriteRender = true;
 	}
 
 	void AddTileMap(TileMap* tileMap)

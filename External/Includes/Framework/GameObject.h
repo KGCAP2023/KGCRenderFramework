@@ -16,7 +16,7 @@ public:
 	static enum class ObjectType
 	{
 		OBJECT_DEFAULT,
-		OBJECT_SPRITE_BATCH
+		OBJECT_SPRITE
 	};
 
 	GameObject(const std::string& name) : transform(Transform(this)) 
@@ -24,6 +24,7 @@ public:
 		ObjectName = name;
 		isActive = true;
 		isDestroy = false;
+		this->objectType = GameObject::ObjectType::OBJECT_DEFAULT;
 		transform.SetScale(1.0f, 1.0f, 1.0f);
 	}
 
@@ -34,7 +35,10 @@ public:
 	std::string ObjectName;
 
 	Transform transform;
+	GameObject::ObjectType objectType = GameObject::ObjectType::OBJECT_DEFAULT;
 	BoundingBoxRenderer* bbox = nullptr;
+
+	void SetObjectType(GameObject::ObjectType type);
 
 	/// <summary>
 	/// 이름을 반환합니다.
@@ -103,7 +107,6 @@ public:
 	static GameObject* GetFocusedObject();
 
 	void Draw(const XMMATRIX& viewProjectionMatrix);
-	void DrawSprite(const XMMATRIX& viewProjectionMatrix);
 	void Update();
 
 	void Destroy() { this->isDestroy = true; }

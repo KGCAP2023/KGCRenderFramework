@@ -16,8 +16,7 @@ void SpriteRenderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 {
 	if (sprite != nullptr)
 	{
-		Transform& t = this->owner->transform;
-		XMFLOAT3 pos = t.position;
+		XMFLOAT3 pos = this->owner->transform.position;
 
 		if (selectedAnimation != nullptr)
 		{

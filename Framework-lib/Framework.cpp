@@ -74,13 +74,36 @@ void Framework::Update()
 	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
 	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
 
-	//Sprite* sp = resourceManager.FindSprite("ani");
-	//sp->Update(dt);
-
 	this->layerManager.Update();
 
 	for (auto& kv : this->gameObjManager->gameObjects) {
 		kv.second->Update();
+	}
+
+	static bool F2_BUTTON_PRESSED = false;
+	static Camera3D::ViewType cameraType = Camera3D::ViewType::_3D;
+
+	if (kb.F2)
+	{
+		if (!F2_BUTTON_PRESSED)
+		{
+			if (cameraType == Camera3D::ViewType::_2D)
+			{
+				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
+				cameraType = Camera3D::ViewType::_3D;
+			}
+			else
+			{
+				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
+				cameraType = Camera3D::ViewType::_2D;
+			}
+				
+		}
+		F2_BUTTON_PRESSED = true;
+	}
+	else
+	{
+		F2_BUTTON_PRESSED = false;
 	}
 
 	static bool MOUSE_LEFT_BUTTON_PRESSED = false;

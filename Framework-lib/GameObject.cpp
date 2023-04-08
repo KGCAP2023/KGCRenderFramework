@@ -7,10 +7,12 @@ using namespace DirectX;
 
 void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 {
+
 		if (isActive)
 		{
 			for (auto it : this->components)
 			{
+				if (it.second->IsSprite()) continue;
 				it.second->Draw(viewProjectionMatrix);
 			}
 		}
@@ -26,6 +28,26 @@ void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 			}
 		}
 	
+}
+
+void GameObject::DrawSprite(const XMMATRIX& viewProjectionMatrix)
+{
+	if (isActive)
+	{
+		for (auto it : this->components)
+		{
+			if (!it.second->IsSprite()) continue;
+			it.second->Draw(viewProjectionMatrix);
+		}
+	}
+
+	if (!this->child.empty())
+	{
+		for (auto it : this->child)
+		{
+			it->DrawSprite(viewProjectionMatrix);
+		}
+	}
 }
 
 GameObject* GameObject::GetFocusedObject()
@@ -54,11 +76,6 @@ void GameObject::Update()
 	//행렬 업데이트
 	this->transform.worldMatrix = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z) * XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z) * XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
 	this->transform.UpdateDirection();
-}
-
-void GameObject::SetObjectType(GameObject::ObjectType type)
-{
-	this->objectType = type;
 }
 
 void GameObject::AddComponent(Component* pComponent)

@@ -17,15 +17,6 @@ Component::Type Component::GetType()
 	return this->type;
 }
 
-Component::Type Component::GetDeleteType()
-{
-	return this->deleteType;
-}
-void Component::SetDeleteType(Component::Type type)
-{
-	this->deleteType = type;
-}
-
 GameObject* Component::GetOwner()
 {
 	return this->owner;

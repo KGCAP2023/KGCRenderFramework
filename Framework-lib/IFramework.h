@@ -4,6 +4,7 @@
 #include "ILayer.h"
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
+#include "AudioManager.h"
 #include "Camera.h"
 
 class IFramework

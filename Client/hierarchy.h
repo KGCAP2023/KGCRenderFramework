@@ -29,7 +29,10 @@ public:
 	{
 		this->map1.insert(std::make_pair<>(type, value));
 	}
-
+	void DeleteMappingValue(Component::Type type)
+	{
+		this->map1.erase(type);
+	}
 	std::string FindMappingValue(Component::Type name)
 	{
 		if (this->map1.find(name) != this->map1.end()) {
@@ -249,6 +252,7 @@ public:
 					if (ImGui::Button("Sprite Del"))
 					{
 						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
+						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
 					}
 
 
@@ -290,6 +294,7 @@ public:
 					if (ImGui::Button("Model del"))
 					{
 						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_MODEL);
+						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_MODEL);
 					}
 
 					ImGui::Separator();
@@ -329,6 +334,7 @@ public:
 					if (ImGui::Button("Tile del"))
 					{
 						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_TILEMAP);
+						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
 					}
 					ImGui::Separator();
 

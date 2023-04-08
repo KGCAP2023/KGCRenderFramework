@@ -21,6 +21,8 @@ public:
 
 	float isPicked(BoundingBox3D* bbox);
 
+	void SetOrthoGrahpicProjection(bool isOrthoGrahpicProjection);
+
 	float screenWidth;
 	float screenHeight;
 

@@ -42,6 +42,11 @@ IResourceManager* Framework::GetResourceManager()
 	return &this->resourceManager;
 }
 
+IAudioManager* Framework::GetAudioManager()
+{
+	return &this->audioManager;
+}
+
 GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
 	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
@@ -69,13 +74,38 @@ void Framework::Update()
 	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
 	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
 
-	//Sprite* sp = resourceManager.FindSprite("ani");
-	//sp->Update(dt);
-
 	this->layerManager.Update();
 
 	for (auto& kv : this->gameObjManager->gameObjects) {
 		kv.second->Update();
+	}
+
+	static bool F2_BUTTON_PRESSED = false;
+	static Camera3D::ViewType cameraType = Camera3D::ViewType::_3D;
+
+	if (kb.F2)
+	{
+		if (!F2_BUTTON_PRESSED)
+		{
+			if (cameraType == Camera3D::ViewType::_2D)
+			{
+				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
+				cameraType = Camera3D::ViewType::_3D;
+				this->ray->SetOrthoGrahpicProjection(false);
+			}
+			else
+			{
+				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
+				cameraType = Camera3D::ViewType::_2D;
+				this->ray->SetOrthoGrahpicProjection(true);
+			}
+				
+		}
+		F2_BUTTON_PRESSED = true;
+	}
+	else
+	{
+		F2_BUTTON_PRESSED = false;
 	}
 
 	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
@@ -308,11 +338,9 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	//오디오 테스트 및 초기화 완료
 	#pragma region MyRegion
-		resourceManager.LoadAudio("test", "..//Resource/Audios/test.mp3");
-		audioManager.PlayAudio("test");
-		audioManager.PauseAudio("test");
-		audioManager.SetVolume("test", 0.1f);
-		audioManager.ResumeAudio("test");
+		resourceManager.LoadAudio("bgm", "..//Resource/Audios/bgm.mp3");
+		audioManager.PlayAudio("bgm");
+
 		
 	#pragma endregion
 

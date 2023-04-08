@@ -228,7 +228,7 @@ public:
 
 
 					std::string f = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE);
-					
+					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##combo", f.size()==0 ?"":f.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
 						for (int n = 0; n < spriteList.size(); n++)
@@ -247,6 +247,7 @@ public:
 						}
 						ImGui::EndCombo();
 					}
+					ImGui::PopItemWidth();
 					ImGui::SameLine();
 
 					if (ImGui::Button("Sprite Del"))
@@ -265,13 +266,12 @@ public:
 				case Component::Type::RENDERER_MODEL:
 				{
 					ModelRenderer* render5 = dynamic_cast<ModelRenderer*>(c);
-					render5->SetModel(ResM->FindModel("test"));
 					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
 
 					std::string modelName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_MODEL);
-					
+					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##model", modelName.size() == 0 ? "" : modelName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
 						for (int n = 0; n < spriteList.size(); n++)
@@ -290,6 +290,7 @@ public:
 						}
 						ImGui::EndCombo();
 					}
+					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGui::Button("Model del"))
 					{
@@ -305,12 +306,12 @@ public:
 				case Component::Type::RENDERER_TILEMAP:
 				{
 					TileMapRenderer* render6 = dynamic_cast<TileMapRenderer*>(c);
-					render6->AddTileMap(ResM->FindTileMap("test"));
+				
 					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
-					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP);
-
+					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP);\
+					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##tile", tileName.size() == 0 ? "" : tileName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
 						for (int n = 0; n < tileList.size(); n++)
@@ -329,6 +330,8 @@ public:
 						}
 						ImGui::EndCombo();
 					}
+					ImGui::PopItemWidth();
+
 					ImGui::SameLine();
 
 					if (ImGui::Button("Tile del"))

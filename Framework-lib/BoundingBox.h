@@ -46,7 +46,6 @@ class BoundingBox3D : public BoundingBoxRenderer
 public:
 	virtual void Update() override;
 
-
 	BoundingBox3D(GameObject* owner, ResourceManager* res);
 
 	//경계박스 계산 코드

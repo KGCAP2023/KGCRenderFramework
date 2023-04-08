@@ -13,6 +13,7 @@ public:
 	{
 		this->type = Component::Type::RENDERER_SPRITE;
 		this->name = "SpriteRenderer";
+		this->isSpriteRender = true;
 	}
 
 	virtual void Update() override;

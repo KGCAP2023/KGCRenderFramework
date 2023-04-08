@@ -366,10 +366,12 @@ public:
 	
 	virtual void Render()
 	{
+
 		if (active)
 		{
+			ImGui::SetNextWindowSize(ImVec2(700, 600));
 			ImGui::Begin("Add Object", &active, ImGuiWindowFlags_MenuBar);
-
+			
 
 			ImGui::InputText("name", a, IM_ARRAYSIZE(a));
 			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -100, 100);
@@ -394,7 +396,7 @@ public:
 			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_MenuBar);
 			if (ImGui::Button("add"))
 			{
-				ImGui::SetNextWindowSize(ImVec2(550, 350), ImGuiCond_FirstUseEver);
+				ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
 				active = true;
 
 

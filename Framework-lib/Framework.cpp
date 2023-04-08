@@ -42,6 +42,11 @@ IResourceManager* Framework::GetResourceManager()
 	return &this->resourceManager;
 }
 
+IAudioManager* Framework::GetAudioManager()
+{
+	return &this->audioManager;
+}
+
 GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
 	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);

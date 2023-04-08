@@ -100,65 +100,6 @@ public:
 		this->_manager = manager;
 		this->ResM = res;
 
-
-
-		GameObject* obj = _manager->CreateGameObject("Object1");
-		GameObject* obj1 = _manager->CreateGameObject("Object2");
-		GameObject* obj2 = _manager->CreateGameObject("Object3");
-		GameObject* obj3 = _manager->CreateGameObject("Object4");
-		GameObject* obj4 = _manager->CreateGameObject("Object5");
-		GameObject* obj5 = _manager->CreateGameObject("Object6");
-		GameObject* obj6 = _manager->CreateGameObject("Object7");
-		GameObject* obj7 = _manager->CreateGameObject("Object8");
-		GameObject* obj8 = _manager->CreateGameObject("Object9");
-		GameObject* obj9 = _manager->CreateGameObject("Object10");
-		GameObject* obj10 = _manager->CreateGameObject("Object11");
-		GameObject* obj11 = _manager->CreateGameObject("Object12");
-		GameObject* obj12 = _manager->CreateGameObject("Object13");
-
-
-		obj->transform.SetPosition(30, 20, 30);
-		obj1->transform.SetPosition(10, 30, 15);
-		obj2->transform.SetPosition(123, 20, 30);
-		obj3->transform.SetPosition(13, 20, 30);
-		obj4->transform.SetPosition(65, 20, 30);
-		obj5->transform.SetPosition(23, 20, 30);
-		obj6->transform.SetPosition(63, 20, 30);
-		obj7->transform.SetPosition(71, 20, 30);
-		obj8->transform.SetPosition(32, 20, 30);
-		obj9->transform.SetPosition(10, 20, 30);
-		obj10->transform.SetPosition(10, 20, 30);
-		obj11->transform.SetPosition(10, 20, 30);
-		obj12->transform.SetPosition(10, 20, 30);
-
-
-		obj->transform.SetRotation(30, 20, 30);
-		obj1->transform.SetRotation(10, 30, 15);
-		obj2->transform.SetRotation(123, 20, 30);
-		obj3->transform.SetRotation(13, 20, 30);
-		obj4->transform.SetRotation(65, 20, 30);
-		obj5->transform.SetRotation(23, 20, 30);
-		obj6->transform.SetRotation(63, 20, 30);
-		obj7->transform.SetRotation(71, 20, 30);
-		obj8->transform.SetRotation(32, 20, 30);
-		obj9->transform.SetRotation(10, 20, 30);
-		obj10->transform.SetRotation(10, 20, 30);
-		obj11->transform.SetRotation(10, 20, 30);
-		obj12->transform.SetRotation(10, 20, 30);
-
-
-
-	
-
-		gamelist.push_back(new HierarchyObject(obj));
-		gamelist.push_back(new HierarchyObject(obj1));
-		gamelist.push_back(new HierarchyObject(obj2));
-		gamelist.push_back(new HierarchyObject(obj3));
-		gamelist.push_back(new HierarchyObject(obj4));
-		gamelist.push_back(new HierarchyObject(obj5));
-		gamelist.push_back(new HierarchyObject(obj6));
-		gamelist.push_back(new HierarchyObject(obj7));
-		gamelist.push_back(new HierarchyObject(obj8));
 	
 
 
@@ -426,7 +367,7 @@ public:
 				else 
 				{
 					gamelist.at(selected)->GetGameObject()->Destroy();
-					gamelist.pop_back();
+					gamelist.erase(gamelist.begin() + selected);
 				}
 
 

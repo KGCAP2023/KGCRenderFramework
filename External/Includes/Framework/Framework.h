@@ -43,6 +43,11 @@ public:
 	/// <returns></returns>
 	virtual IResourceManager* GetResourceManager() override;
 	/// <summary>
+	/// 오디오 매니저를 반환합니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual IAudioManager* GetAudioManager() override;
+	/// <summary>
 	/// 백엔드 개발용 인스턴스 반환
 	/// </summary>
 	/// <returns></returns>

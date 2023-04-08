@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Camera.h"
-
+#include "Framework.h"
 
 Camera3D::Camera3D(GameObject* owner) : Component(owner)
 {
@@ -51,20 +51,31 @@ const XMMATRIX& Camera3D::GetViewMatrix() const
 	return this->viewMatrix;
 }
 
-
-
 void Camera3D::changeMode(bool _bool) {
 	if (curType == _bool) return;
 	projectionMatrix = _bool ? view2DMatrix : view3DMatrix;
 	curType = _bool;
 }
 
+static float nowtime = 0;
+static float duration = 1.0f;
+
 void Camera3D::cameraLerp()
 {
-	if(curType)
-		this->projectionMatrix = this->projectionMatrix + view3DMatrix/8000;
-	else
-		this->projectionMatrix = this->projectionMatrix + view2DMatrix / 2.8f;
+	float dt = Framework::getDeltaTime();
+
+	if (nowtime <= duration)
+	{
+		float t = nowtime / duration;
+
+		if (curType)
+			this->projectionMatrix = this->projectionMatrix + t * view3DMatrix - t * this->projectionMatrix;
+		else
+			this->projectionMatrix = this->projectionMatrix + t * view2DMatrix - t * this->projectionMatrix;
+
+		nowtime += 0.000001f * dt;
+	}
+
 }
 
 const XMMATRIX& Camera3D::GetProjectionMatrix()

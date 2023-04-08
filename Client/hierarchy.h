@@ -426,7 +426,7 @@ public:
 				else 
 				{
 					gamelist.at(selected)->GetGameObject()->Destroy();
-					gamelist.pop_back();
+					gamelist.erase(gamelist.begin() + selected);
 				}
 
 

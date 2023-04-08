@@ -366,8 +366,31 @@ public:
 	
 	virtual void Render()
 	{
+		if (active)
+		{
+			ImGui::Begin("Add Object", &active, ImGuiWindowFlags_MenuBar);
 
-		if (my_tool_active) {
+
+			ImGui::InputText("name", a, IM_ARRAYSIZE(a));
+			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -100, 100);
+			ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, -1.58, 1.58);
+			ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 1, 3);
+			if (ImGui::Button("save"))
+			{
+				GameObject* ob = _manager->CreateGameObject(a);
+				ob->transform.SetPosition(pos.x, pos.y, pos.z);
+				ob->transform.SetRotation(rot.x, rot.y, rot.z);
+				ob->transform.SetScale(scale.x, scale.y, scale.z);
+
+				gamelist.push_back(new HierarchyObject(ob));
+				gamelist.at(gamelist.size() - 1)->GetGameObject();
+
+			}
+
+			ImGui::End();
+		}
+		if (my_tool_active)
+		{
 			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_MenuBar);
 			if (ImGui::Button("add"))
 			{
@@ -380,7 +403,8 @@ public:
 			if (ImGui::Button("delete"))
 			{
 				//selected=0~12 size 13
-				if (selected >= 0) {
+				if (selected > 0) 
+				{
 					if (selected == gamelist.size() - 1)
 					{
 						gamelist.at(selected)->GetGameObject()->Destroy();
@@ -391,7 +415,13 @@ public:
 					{
 						gamelist.at(selected)->GetGameObject()->Destroy();
 						gamelist.erase(gamelist.begin() + selected);
+						
 					}
+				}
+				else 
+				{
+					gamelist.at(selected)->GetGameObject()->Destroy();
+					gamelist.pop_back();
 				}
 
 
@@ -399,25 +429,19 @@ public:
 
 
 
-			ImGui::BeginChild("Scrolling", ImVec2(150, 0));
+
 			if (gamelist.size() != 0)
 			{
+				ImGui::BeginChild("Scrolling", ImVec2(150, 0));
 				for (int i = 0; i < gamelist.size(); i++)
 				{
 					if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
 						selected = i;
 				}
-			}
-			
-			ImGui::EndChild();
-			ImGui::SameLine();
+				ImGui::EndChild();
+				ImGui::SameLine();
+				ImGui::BeginGroup();
 
-			ImGui::BeginGroup();
-
-			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
-
-			if (gamelist.size() != 0)
-			{
 				ImGui::Text(const_cast<char*>(gamelist.at(selected)->GetGameObject()->ObjectName.c_str()));
 				ImGui::Separator();
 				ImGui::Text("TRANSFORM");
@@ -435,35 +459,16 @@ public:
 				component();
 
 
-				ImGui::EndChild();
+
 				ImGui::SameLine();
 				ImGui::EndGroup();
 				ImGui::SameLine();
 
-				ImGui::End();
+				
+			}
+			ImGui::End();
+		}
 
-				if (active)
-				{
-					ImGui::Begin("Add Object", &active, ImGuiWindowFlags_MenuBar);
-
-
-					ImGui::InputText("name", a, IM_ARRAYSIZE(a));
-					ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -100, 100);
-					ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, -1.58, 1.58);
-					ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 1, 3);
-					if (ImGui::Button("save"))
-					{
-						GameObject* ob = _manager->CreateGameObject(a);
-						ob->transform.SetPosition(pos.x, pos.y, pos.z);
-						ob->transform.SetRotation(rot.x, rot.y, rot.z);
-						ob->transform.SetScale(scale.x, scale.y, scale.z);
-
-						gamelist.push_back(new HierarchyObject(ob));
-
-					}
-
-					ImGui::End();
-				}
 				if (component_active)
 				{
 					ImGui::Begin("Add Component", &component_active, ImGuiWindowFlags_MenuBar);
@@ -493,10 +498,10 @@ public:
 					}
 					ImGui::End();
 				}
-			}
+			
 
 
-		}
+		
 
 	}
 };

@@ -478,6 +478,7 @@ public:
 						GameObject* temp = gamelist.at(selected)->GetGameObject();
 						SpriteRenderer* render1 = new SpriteRenderer(temp);
 						gamelist.at(selected)->GetGameObject()->AddComponent(render1);
+						component_active = false;
 
 					}
 					if (ImGui::Button("ModelRenderer"))
@@ -486,7 +487,7 @@ public:
 						ModelRenderer* render2 = new ModelRenderer(temp);
 						//render->Init();
 						gamelist.at(selected)->GetGameObject()->AddComponent(render2);
-
+						component_active = false;
 
 					}
 					if (ImGui::Button("TileMapRender"))
@@ -495,6 +496,7 @@ public:
 						TileMapRenderer* render3 = new TileMapRenderer(temp1);
 						//render->Init();
 						gamelist.at(selected)->GetGameObject()->AddComponent(render3);
+						component_active = false;
 					}
 					ImGui::End();
 				}

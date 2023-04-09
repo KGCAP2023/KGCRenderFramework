@@ -249,21 +249,51 @@ void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 	{
 		Transform& t = this->owner->transform;
 		float scale = t.scale.x;
+		float rot = t.rotation.z;
+		LONG x = t.position.x ;
+		LONG y = t.position.y;
 
-		RECT rectangle = RECT{(LONG) t.position.x , (LONG)t.position.y ,(LONG)((t.position.x + this->width) * scale ) , (LONG)((t.position.y + this->height) * scale) };
+		RECT rectangle = RECT{ 0 , 0 , (LONG)(this->width * scale) , (LONG)(this->height * scale) };
 
-		RECT a1 = RECT{ rectangle.left, rectangle.top, rectangle.left + lineWidth, rectangle.top + rectangle.bottom };
-		RECT a2 = RECT{ rectangle.left, rectangle.top, rectangle.left + rectangle.right,  rectangle.top + lineWidth };
-		RECT a3 = RECT{ rectangle.left + rectangle.right, rectangle.top, rectangle.left + rectangle.right + lineWidth, rectangle.top + rectangle.bottom + lineWidth };
-		RECT a4 = RECT{ rectangle.left, rectangle.top + rectangle.bottom, rectangle.left + rectangle.right + lineWidth, rectangle.top + rectangle.bottom + lineWidth };
+		RECT a1 = RECT
+		{ 
+			x + rectangle.left,
+			y + rectangle.top,
+			x + rectangle.left + lineWidth,
+			y + rectangle.top + rectangle.bottom 
+		};
 
+		RECT a2 = RECT
+		{ 
+			x + rectangle.left,
+			y + rectangle.top,
+			x + rectangle.left + rectangle.right,
+			y + rectangle.top + lineWidth 
+		};
+
+		RECT a3 = RECT
+		{ 
+			x + rectangle.left + rectangle.right,
+			y + rectangle.top,
+			x + rectangle.left + rectangle.right + lineWidth,
+			y + rectangle.bottom + rectangle.top  + lineWidth 
+		};
+
+		RECT a4 = RECT
+		{ 
+			x + rectangle.left,
+			y + rectangle.top + rectangle.bottom,
+			x + rectangle.left + rectangle.right + lineWidth,
+			y + rectangle.bottom + rectangle.top +  + lineWidth 
+		};
+	
 		this->spriteBatch->Begin();
 
 		{
-			this->spriteBatch->Draw(this->color->Get(), a1, DirectX::Colors::White);
-			this->spriteBatch->Draw(this->color->Get(), a2, DirectX::Colors::White);
-			this->spriteBatch->Draw(this->color->Get(), a3, DirectX::Colors::White);
-			this->spriteBatch->Draw(this->color->Get(), a4, DirectX::Colors::White);
+			this->spriteBatch->Draw(this->color->Get(), a1, nullptr , Colors::White, 0.f, XMFLOAT2(0,0));
+			this->spriteBatch->Draw(this->color->Get(), a2, nullptr, Colors::White, 0.f, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a3, nullptr, Colors::White, 0.f, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a4, nullptr, Colors::White, 0.f, XMFLOAT2(0, 0));
 		}
 
 		this->spriteBatch->End();

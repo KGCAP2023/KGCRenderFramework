@@ -44,6 +44,7 @@ void SpriteRenderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 void SpriteRenderer::InitBoundingBox()
 {
 	this->bbox = new BoundingBox2D(this->owner,this,res);
+	this->owner->bbox = this->bbox;
 }
 
 BoundingBoxRenderer* SpriteRenderer::GetBoundingBox()

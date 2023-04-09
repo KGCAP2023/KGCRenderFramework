@@ -14,6 +14,7 @@ TileMapRenderer::TileMapRenderer(GameObject* owner, ResourceManager* res) : Comp
 void TileMapRenderer::InitBoundingBox()
 {
 	this->bbox = new BoundingBox2D(this->owner, this, res);
+	this->owner->bbox = this->bbox;
 }
 
 BoundingBoxRenderer* TileMapRenderer::GetBoundingBox()

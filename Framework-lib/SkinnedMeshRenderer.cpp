@@ -54,6 +54,7 @@ void SkinnedMeshRenderer::Update()
 void SkinnedMeshRenderer::InitBoundingBox()
 {
 	this->bbox = new BoundingBox3D(this->owner, this, res);
+	this->owner->bbox = this->bbox;
 }
 
 BoundingBoxRenderer* SkinnedMeshRenderer::GetBoundingBox()

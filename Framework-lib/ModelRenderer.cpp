@@ -33,6 +33,7 @@ void ModelRenderer::Update()
 void ModelRenderer::InitBoundingBox()
 {
 	this->bbox = new BoundingBox3D(this->owner, this, this->res);
+	this->owner->bbox = this->bbox;
 }
 
 BoundingBoxRenderer* ModelRenderer::GetBoundingBox()

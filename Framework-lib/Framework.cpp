@@ -123,17 +123,27 @@ void Framework::Update()
 
 				this->ray->CalculatePicking(mouse.x, mouse.y);
 				for (auto& kv : this->gameObjManager->gameObjects) {
- 					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
-					if (bbox != nullptr)
-					{
-						float dist = this->ray->isPicked(bbox);
-
-						if (dist != -1 && dist < min_dist)
+					kv.second->ComponentForeach([&](Component* c) {
+						switch (c->GetType())
 						{
-							min_dist = dist;
-							selectedObject = kv.second;
+							case Component::Type::RENDERER_MODEL:
+							case Component::Type::RENDERER_SKINNED_MODEL:
+							{
+								BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(dynamic_cast<Renderer*>(c)->GetBoundingBox());
+								if (bbox != nullptr)
+								{
+									float dist = this->ray->isPicked(bbox);
+
+									if (dist != -1 && dist < min_dist)
+									{
+										min_dist = dist;
+										selectedObject = kv.second;
+									}
+								}
+							}
+							break;
 						}
-					}
+					});
 				}
 
 				std::cout << "distance >" << min_dist << std::endl;
@@ -141,11 +151,12 @@ void Framework::Update()
 				if (selectedObject != nullptr)
 				{
 					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
-					//implement Set Focus
+					selectedObject->SetFocus();
 				}
 				else
 				{
 					//implement Release Focus
+					GameObject::ReleaseFocus();
 				}
 			}
 		}

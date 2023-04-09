@@ -204,7 +204,12 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
+
+		if (cameraType != Camera3D::ViewType::_2D)
+		{
+			this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
+		}
+
 	}
 
 	if (kb.A) // A key is down
@@ -214,7 +219,10 @@ void Framework::Update()
 
 	if (kb.S) // S key is down
 	{
-		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
+		if (cameraType != Camera3D::ViewType::_2D)
+		{
+			this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
+		}
 	}
 
 	if (kb.D) // D key is down

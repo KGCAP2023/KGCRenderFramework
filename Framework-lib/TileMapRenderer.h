@@ -27,7 +27,7 @@ public:
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 	{
 		if (tileMap != nullptr)
-			tileMap->Draw(viewProjectionMatrix,this->GetOwner()->transform.position);
+			tileMap->Draw(viewProjectionMatrix,this->GetOwner()->transform);
 	}
 
 private:

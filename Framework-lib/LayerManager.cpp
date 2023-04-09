@@ -30,6 +30,11 @@ ILayer* LayerManager::FindLayer(const std::string& key)
 	return nullptr;
 }
 
+void LayerManager::AddMenubar(std::function<void()> callback)
+{
+	this->_menubar.push_back(callback);
+}
+
 void LayerManager::Update()
 {
 	for (auto& layer : this->_layerMap)
@@ -110,13 +115,10 @@ void LayerManager::DockingSpace()
 	}
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("File"))
+		for (auto func : _menubar)
 		{
-			if (ImGui::MenuItem("Open", "Ctrl+O")) { /* 파일 열기 */ }
-			if (ImGui::MenuItem("Save", "Ctrl+S")) { /* 파일 저장 */ }
-			ImGui::EndMenu();
+			func();
 		}
-		ImGui::EndMenuBar();
 	}
 	ImGui::End();
 

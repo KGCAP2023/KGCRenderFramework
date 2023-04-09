@@ -185,9 +185,9 @@ public:
 				ImGui::Text("TRANSFORM");
 				const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO", "PPPP", "QQQQQQQQQQ", "RRR", "SSSS" };
 				static const char* current_item = NULL;
-				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
-				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
-				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 200);
+				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1.58);
+				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 1, 3);
 
 				ImGui::Separator();
 
@@ -209,7 +209,7 @@ public:
 						case Component::Type::RENDERER_SPRITE:
 						{
 							SpriteRenderer* render4 = dynamic_cast<SpriteRenderer*>(c);
-							render4->AddSprite(res->FindSprite("test"));
+							render4->SetSprite(res->FindSprite("test"));
 							componentlist.push_back(c);
 							ImGui::Text(name.c_str());
 							ImGui::SameLine();
@@ -273,7 +273,7 @@ public:
 						case Component::Type::RENDERER_TILEMAP:
 						{
 							TileMapRenderer* render6 = dynamic_cast<TileMapRenderer*>(c);
-							render6->AddTileMap(res->FindTileMap("test"));
+							render6->SetTileMap(res->FindTileMap("test"));
 							componentlist.push_back(c);
 							ImGui::Text(name.c_str());
 							ImGui::SameLine();
@@ -347,9 +347,9 @@ public:
 
 
 				ImGui::InputText("name", a, IM_ARRAYSIZE(a));
-				ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
-				ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
-				ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -200, 200);
+				ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, -1.58, 1.58);
+				ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 1, 3);
 				if (ImGui::Button("save"))
 				{
 					GameObject* ob = _manager->CreateGameObject(a);
@@ -370,14 +370,14 @@ public:
 				if (ImGui::Button("SpriteRenderer"))
 				{
 					GameObject* temp = gamelist.at(selected);
-					SpriteRenderer* render1 = new SpriteRenderer(temp);
+					SpriteRenderer* render1 = new SpriteRenderer(temp,(ResourceManager*)this->res);
 					gamelist.at(selected)->AddComponent(render1);
 
 				}
 				if (ImGui::Button("ModelRenderer"))
 				{
 					GameObject* temp = gamelist.at(selected);
-					ModelRenderer* render2 = new ModelRenderer(temp);
+					ModelRenderer* render2 = new ModelRenderer(temp, (ResourceManager*)this->res);
 					//render->Init();
 					gamelist.at(selected)->AddComponent(render2);
 
@@ -386,7 +386,7 @@ public:
 				if (ImGui::Button("TileMapRender"))
 				{
 					GameObject* temp1 = gamelist.at(selected);
-					TileMapRenderer* render3 = new TileMapRenderer(temp1);
+					TileMapRenderer* render3 = new TileMapRenderer(temp1, (ResourceManager*)this->res);
 					//render->Init();
 					gamelist.at(selected)->AddComponent(render3);
 				}

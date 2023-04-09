@@ -12,6 +12,8 @@ public:
     void DeleteLayer(const std::string& key);
     ILayer* FindLayer(const std::string& key);
 
+    void AddMenubar(std::function<void()> callback);
+
     void Update();
     void Render();
     void SetImGuiDemo(bool value);
@@ -25,5 +27,6 @@ private:
     bool _isGameViewFocus = false;
 
     Framework* framework;
+    std::vector<std::function<void()>> _menubar;
     std::unordered_map<std::string, ILayer*> _layerMap;
 };

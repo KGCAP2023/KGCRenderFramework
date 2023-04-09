@@ -46,7 +46,7 @@ class BoundingBox3D : public BoundingBoxRenderer
 public:
 	virtual void Update() override;
 
-	BoundingBox3D(GameObject* owner, Component* render, ResourceManager* res);
+	BoundingBox3D(GameObject* owner, Component* component, ResourceManager* res);
 
 	//경계박스 계산 코드
 	void processNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix)
@@ -150,7 +150,7 @@ private:
 class BoundingBox2D : public BoundingBoxRenderer
 {
 public:
-	BoundingBox2D(GameObject* owner, Component* render, ResourceManager* res);
+	BoundingBox2D(GameObject* owner, Component* component, ResourceManager* res);
 
 	//도형을 그립니다.
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
@@ -161,8 +161,9 @@ public:
 
 	Texture* color;
 
-	int lineWidth = 3;
-	RECT rectangle = RECT{ 10,  10 , 500, 500 };
+	float width = 0;
+	float height = 0;
+	int lineWidth = 1;
 
 	SpriteBatch* spriteBatch;
 

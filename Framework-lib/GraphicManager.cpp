@@ -602,12 +602,13 @@ bool GraphicManager::InitializeScene()
 	obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
 
 	GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
-	obj2->transform.SetPosition(-1.0f, 0.0f, 0.0f);
-
-	SpriteRenderer* rrr = new SpriteRenderer(obj2);
-	rrr->AddSprite(res->FindSprite("ani"));
+	obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
+	obj2->transform.SetScale(0.5f, 0.5f, 0.0f);
+	SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
+	rrr->SetSprite(res->FindSprite("ani"));
 	obj2->AddComponent(rrr);
-	//obj2->AddComponent(new BoundingBox2D(obj, res));
+
+
 	#pragma endregion
 
 

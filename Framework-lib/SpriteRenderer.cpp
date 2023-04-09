@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SpriteRenderer.h"
 #include "Framework.h"
+#include "ResourceManager.h"
+#include "BoundingBox.h"
 
 void SpriteRenderer::Update()
 {
@@ -21,7 +23,6 @@ void SpriteRenderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 		float rot = t.rotation.z;
 		float scale = t.scale.x;
 
-
 		if (selectedAnimation != nullptr)
 		{
 			selectedAnimation->Draw(t, spriteBatch);
@@ -35,5 +36,17 @@ void SpriteRenderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 
 			spriteBatch->End();
 		}
+
+		this->bbox->Draw(viewProjectionMatrix);
 	}
+}
+
+void SpriteRenderer::InitBoundingBox()
+{
+	this->bbox = new BoundingBox2D(this->owner,this,res);
+}
+
+BoundingBoxRenderer* SpriteRenderer::GetBoundingBox()
+{
+	return this->bbox;
 }

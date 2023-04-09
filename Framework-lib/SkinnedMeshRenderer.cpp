@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "SkinnedMeshRenderer.h"
+#include "ResourceManager.h"
+#include "BoundingBox.h"
 #include <time.h>
 
 
@@ -47,6 +49,16 @@ void SkinnedMeshRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 void SkinnedMeshRenderer::Update()
 {
 
+}
+
+void SkinnedMeshRenderer::InitBoundingBox()
+{
+	this->bbox = new BoundingBox3D(this->owner, this, res);
+}
+
+BoundingBoxRenderer* SkinnedMeshRenderer::GetBoundingBox()
+{
+	return this->bbox;
 }
 
 std::string SkinnedMeshRenderer::GetPath()

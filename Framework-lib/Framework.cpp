@@ -248,6 +248,11 @@ void Framework::DeleteLayer(const std::string& key)
 	this->layerManager.DeleteLayer(key);
 }
 
+void Framework::AddMenubar(std::function<void()> callback)
+{
+	this->layerManager.AddMenubar(callback);
+}
+
 ILayer* Framework::FindLayer(const std::string& key)
 {
 	return this->layerManager.FindLayer(key);

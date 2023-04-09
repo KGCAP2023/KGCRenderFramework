@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ModelRenderer.h"
-
+#include "ResourceManager.h"
+#include "BoundingBox.h"
 
 bool ModelRenderer::SetModel(Model *model)
 {
@@ -10,18 +11,33 @@ bool ModelRenderer::SetModel(Model *model)
 	owner->transform.SetRotation(0.0f, 0.0f, 0.0f);
 	owner->transform.SetScale(1.0f, 1.0f, 1.0f);
 	this->Update();
+	this->InitBoundingBox();
 	return true;
 }
 
 void ModelRenderer::Draw(const XMMATRIX& viewProjectionMatrix)
 {
-	if(model != nullptr)
-		model->Draw(owner->transform.worldMatrix,viewProjectionMatrix);
+	if (model != nullptr)
+	{
+		this->bbox->Draw(viewProjectionMatrix);
+		this->model->Draw(owner->transform.worldMatrix, viewProjectionMatrix);
+	}
+		
 }
 
 void ModelRenderer::Update()
 {
 
+}
+
+void ModelRenderer::InitBoundingBox()
+{
+	this->bbox = new BoundingBox3D(this->owner, this, this->res);
+}
+
+BoundingBoxRenderer* ModelRenderer::GetBoundingBox()
+{
+	return this->bbox;
 }
 
 std::vector<Mesh>& ModelRenderer::GetMeshes()

@@ -19,7 +19,7 @@ public:
 	virtual void RegisterLayer(const std::string& key, ILayer* layer);
 	virtual void DeleteLayer(const std::string& key);
 	virtual ILayer* FindLayer(const std::string& key);
-
+	virtual void AddMenubar(std::function<void()> callback);
 	//RUN
 
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);

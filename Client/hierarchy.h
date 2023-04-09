@@ -146,12 +146,15 @@ public:
 					if (selected == gamelist.size() - 1)
 					{
 						gamelist.at(selected)->Destroy();
+						framework->GetGameObjectManager()->DestroyGameObject(gamelist.at(selected)->GetName());
 						gamelist.pop_back();
 						selected--;
+						
 					}
 					else
 					{
 						gamelist.at(selected)->Destroy();
+						framework->GetGameObjectManager()->DestroyGameObject(gamelist.at(selected)->GetName());
 						gamelist.erase(gamelist.begin() + selected);
 					}
 				}
@@ -358,7 +361,8 @@ public:
 					ob->transform.SetScale(scale.x, scale.y, scale.z);
 
 					gamelist.push_back(ob);
-
+					if (selected == -1)
+						selected = 0;
 				}
 
 				ImGui::End();

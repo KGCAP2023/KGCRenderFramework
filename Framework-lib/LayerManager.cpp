@@ -108,6 +108,16 @@ void LayerManager::DockingSpace()
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Open", "Ctrl+O")) { /* 파일 열기 */ }
+			if (ImGui::MenuItem("Save", "Ctrl+S")) { /* 파일 저장 */ }
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
 	ImGui::End();
 
 	//===========================================================================

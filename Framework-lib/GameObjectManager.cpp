@@ -28,7 +28,7 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));
 
-	obj->AddComponent(new BoundingBox3D(obj, res));
+	//obj->AddComponent(new BoundingBox3D(obj, res));
 
 	return obj;
 }
@@ -53,8 +53,6 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const 
 	render->SetModel(model);
 	//모델 렌더러를 등록합니다.
 	obj->AddComponent(render);
-	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBox3D(obj, res));
 
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));

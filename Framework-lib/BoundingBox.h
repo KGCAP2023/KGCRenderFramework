@@ -8,8 +8,8 @@
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
 #include "ConstantBufferType.h"
-
-
+#include "Texture.h"
+#include <SpriteBatch.h>
 #include <directxcollision.h>
 
 class GameObject;
@@ -46,7 +46,7 @@ class BoundingBox3D : public BoundingBoxRenderer
 public:
 	virtual void Update() override;
 
-	BoundingBox3D(GameObject* owner, ResourceManager* res);
+	BoundingBox3D(GameObject* owner, Component* render, ResourceManager* res);
 
 	//경계박스 계산 코드
 	void processNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix)
@@ -150,5 +150,24 @@ private:
 class BoundingBox2D : public BoundingBoxRenderer
 {
 public:
+	BoundingBox2D(GameObject* owner, Component* render, ResourceManager* res);
 
+	//도형을 그립니다.
+	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
+	virtual std::vector<DWORD>* GetIndices() override;
+	virtual void ChangeColor(float r, float g, float b, float alpha = 1.0f) override;
+
+	std::vector<SimpleVertex> vertices;
+
+	Texture* color;
+
+	int lineWidth = 3;
+	RECT rectangle = RECT{ 10,  10 , 500, 500 };
+
+	SpriteBatch* spriteBatch;
+
+	//컨텍스트 - 외부에서 끌어다 옵니다. 
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
+	Microsoft::WRL::ComPtr<ID3D11Device> device;
+	std::vector<DWORD> indices;
 };

@@ -17,16 +17,22 @@ void SpriteRenderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 	if (sprite != nullptr)
 	{
 		Transform& t = this->owner->transform;
-		XMFLOAT3 pos = t.position;
+		XMFLOAT2 pos(t.position.x, t.position.y);
+		float rot = t.rotation.z;
+		float scale = t.scale.x;
+
 
 		if (selectedAnimation != nullptr)
 		{
-			selectedAnimation->Draw(SimpleMath::Vector2(pos.x, pos.y), spriteBatch);
+			selectedAnimation->Draw(t, spriteBatch);
 		}
 		else
 		{
 			spriteBatch->Begin();
-			spriteBatch->Draw(this->sprite->Get(), SimpleMath::Vector2(pos.x, pos.y));
+
+			spriteBatch->Draw(this->sprite->Get(), pos, nullptr,
+				Colors::White, rot, DirectX::SimpleMath::Vector2(0, 0), scale);
+
 			spriteBatch->End();
 		}
 	}

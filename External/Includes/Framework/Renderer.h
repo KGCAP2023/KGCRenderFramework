@@ -8,5 +8,9 @@ class Renderer
 public:
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 	virtual std::string GetPath();
+
+	//Bounding box init
+	
+	//Bounding box ∏Æ≈œ
 };
 

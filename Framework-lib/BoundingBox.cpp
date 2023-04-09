@@ -46,7 +46,7 @@
 
 
 
-BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : BoundingBoxRenderer(owner)
+BoundingBox3D::BoundingBox3D(GameObject* owner, Component* render, ResourceManager* res) : BoundingBoxRenderer(owner)
 {
 	this->type = Component::Type::BOUNDING_BOX;
 	this->deviceContext = res->deviceContext;
@@ -55,60 +55,60 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : Bounding
 	this->vs = res->FindVertexShader("vs_1");
 	this->constantBuffer = &res->cb1;
 
-	XMMATRIX worldMatrix = owner->transform.worldMatrix;
+	//XMMATRIX worldMatrix = owner->transform.worldMatrix;
 
-	Renderer* render = nullptr;
-	Component* com = owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL);
+	//Renderer* render = nullptr;
+	//Component* com = owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL);
 
-	if (com != nullptr)
-	{
-		min = { 0,0,0 };
-		max = { 0,0,0 };
-		render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL));
-	}
-	else
-	{
-		com = owner->GetComponent(Component::Type::RENDERER_MODEL);
+	//if (com != nullptr)
+	//{
+	//	min = { 0,0,0 };
+	//	max = { 0,0,0 };
+	//	render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL));
+	//}
+	//else
+	//{
+	//	com = owner->GetComponent(Component::Type::RENDERER_MODEL);
 
-		if (com != nullptr)
-		{
-			min = { 0,0,0 };
-			max = { 0,0,0 };
-			render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_MODEL));
-		}
-	}
+	//	if (com != nullptr)
+	//	{
+	//		min = { 0,0,0 };
+	//		max = { 0,0,0 };
+	//		render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_MODEL));
+	//	}
+	//}
 
-	if (render != nullptr)
-	{
-		Assimp::Importer importer;
-		const aiScene* pScene = importer.ReadFile(render->GetPath(),
-			aiProcess_Triangulate |
-			aiProcess_ConvertToLeftHanded);
+	//if (render != nullptr)
+	//{
+	//	Assimp::Importer importer;
+	//	const aiScene* pScene = importer.ReadFile(render->GetPath(),
+	//		aiProcess_Triangulate |
+	//		aiProcess_ConvertToLeftHanded);
 
-		processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
-	}
-
-
-	//버텍스를 정의합니다.
-	//<주의> 
-	// 버텍스 쉐이더에 들어가는 구조체(Vertex.h)와 동일해야합니다
-
-	//조금더 유동적인 방법 찾아보기
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//	processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
+	//}
 
 
-	//초기설정은 cube
-	indices = cube;
+	////버텍스를 정의합니다.
+	////<주의> 
+	//// 버텍스 쉐이더에 들어가는 구조체(Vertex.h)와 동일해야합니다
 
-	//정점에대한 인덱스를 정의합니다. 
-	DrawSetting();
+	////조금더 유동적인 방법 찾아보기
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	//vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+
+
+	////초기설정은 cube
+	//indices = cube;
+
+	////정점에대한 인덱스를 정의합니다. 
+	//DrawSetting();
 	
 }
 
@@ -213,4 +213,54 @@ void BoundingBox3D::ChangeColor(float r, float g, float b, float alpha)
 void BoundingBox3D::Update()
 {
 
+}
+
+BoundingBox2D::BoundingBox2D(GameObject* owner, Component* render, ResourceManager* res) : BoundingBoxRenderer(owner)
+{
+	this->type = Component::Type::BOUNDING_BOX;
+	this->deviceContext = res->deviceContext;
+	this->device = res->device;
+
+	this->color = new Texture();
+	this->color->Initialize1x1ColorTexture(this->device.Get(), RGBColor(0, 0, 0));
+
+	//Sprite 
+
+	XMMATRIX worldMatrix = owner->transform.worldMatrix;
+
+}
+
+void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
+{
+	if (isActiveBoundingBox)
+	{
+
+		RECT a1 = RECT{ rectangle.left, rectangle.top, rectangle.left + lineWidth, rectangle.top + rectangle.bottom };
+		RECT a2 = RECT{ rectangle.left, rectangle.top, rectangle.left + rectangle.right,  rectangle.top + lineWidth };
+		RECT a3 = RECT{ rectangle.left + rectangle.right, rectangle.top, rectangle.left + rectangle.right + lineWidth, rectangle.top + rectangle.bottom + lineWidth };
+		RECT a4 = RECT{ rectangle.left, rectangle.top + rectangle.bottom, rectangle.left + rectangle.right + lineWidth, rectangle.top + rectangle.bottom + lineWidth };
+
+		this->spriteBatch->Begin();
+
+		{
+			this->spriteBatch->Draw(this->color->Get(), a1, DirectX::Colors::White);
+			this->spriteBatch->Draw(this->color->Get(), a2, DirectX::Colors::White);
+			this->spriteBatch->Draw(this->color->Get(), a3, DirectX::Colors::White);
+			this->spriteBatch->Draw(this->color->Get(), a4, DirectX::Colors::White);
+		}
+
+		this->spriteBatch->End();
+	}
+}
+
+std::vector<DWORD>* BoundingBox2D::GetIndices()
+{
+	return &this->indices;
+}
+
+void BoundingBox2D::ChangeColor(float r, float g, float b, float alpha)
+{
+	if (this->color != nullptr) delete this->color;
+	this->color = new Texture();
+	this->color->Initialize1x1ColorTexture(this->device.Get(), RGBColor(r, g, b));
 }

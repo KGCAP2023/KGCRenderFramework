@@ -17,9 +17,8 @@
 #include <shobjidl.h>
 #include <Keyboard.h>
 #include <Mouse.h>
-#include <SimpleMath.h>
 #include "GameObjectManager.h"
-
+#include "Color.h"
 
 class Framework;
 class ResourceManager;

@@ -13,11 +13,13 @@ GameObjectManager::GameObjectManager(Framework* framework)
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
+	//이름이 없을 경우 생성 거부
+	if (_name.size() == 0) {
+		return nullptr;
+	}
+
 	//이름 같은 거 존재시 생성 거부
-
 	if (this->FindGameObject(_name) != nullptr) {
-
-		
 		return nullptr;
 	}
 
@@ -33,6 +35,10 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& modelName)
 {
+	//이름이 없을 경우 생성 거부
+	if (_name.size() == 0) {
+		return nullptr;
+	}
 
 	//이름 같은 거 존재시 생성 거부
 	if (this->FindGameObject(_name) != nullptr) {

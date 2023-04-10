@@ -251,6 +251,49 @@ XMFLOAT2 BoundingBox2D::CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatr
 	return result;
 }
 
+int BoundingBox2D::CalculatePointInBoundingBox(float pointX, float pointY)
+{
+	Transform& t = this->owner->transform;
+	XMFLOAT3 pos = t.position;
+	float scale = t.scale.x;
+	float rot = t.rotation.z;
+	RECT rectangle = RECT{ 0 , 0 , (LONG)(this->width * scale) , (LONG)(this->height * scale) };
+
+	XMMATRIX rotationMatrix = XMMatrixRotationZ(rot);
+	XMFLOAT2 result = CalculateRotation(rectangle.right, 0, rotationMatrix);
+	XMFLOAT2 result2 = CalculateRotation(rectangle.right, rectangle.bottom, rotationMatrix);
+	XMFLOAT2 result3 = CalculateRotation(0, rectangle.bottom, rotationMatrix);
+	
+	float x[4] = 
+	{
+		pos.x,
+		pos.x + result.x,
+		pos.x + result2.x,
+		pos.x + result3.x
+	};
+
+	float y[4] = 
+	{
+		pos.y,
+		pos.y + result.y,
+		pos.y + result2.y,
+		pos.y + result3.y
+	};
+
+	return pnpoly(4,x,y, pointX, pointY);
+}
+
+int BoundingBox2D::pnpoly(int nvert, float* vertx, float* verty, float testx, float testy)
+{
+	int i, j, c = 0;
+	for (i = 0, j = nvert - 1; i < nvert; j = i++) {
+		if (((verty[i] > testy) != (verty[j] > testy)) &&
+			(testx < (vertx[j] - vertx[i]) * (testy - verty[i]) / (verty[j] - verty[i]) + vertx[i]))
+			c = !c;
+	}
+	return c;
+}
+
 void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 	if (isActiveBoundingBox)
@@ -300,7 +343,7 @@ void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 			x + (LONG)result2.x + rectangle.left + rectangle.right + lineWidth,
 			y + (LONG)result2.y + rectangle.top  + lineWidth
 		};
-	
+
 		this->spriteBatch->Begin();
 
 		{

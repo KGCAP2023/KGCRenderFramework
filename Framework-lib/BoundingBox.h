@@ -159,6 +159,9 @@ public:
 
 	XMFLOAT2 CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatrix);
 
+	int CalculatePointInBoundingBox(float pointX, float pointY);
+	int pnpoly(int nvert, float* vertx, float* verty, float testx, float testy);
+
 	std::vector<SimpleVertex> vertices;
 
 	Texture* color;

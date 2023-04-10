@@ -63,6 +63,7 @@ public:
 	void Draw(const DirectX::XMMATRIX& viewProjectionMatrix , Transform& t)
 	{
 		XMFLOAT3&  gameObjpos = t.position;
+		this->SetScale(t.scale.x);
 
 		if (sprite != nullptr)
 		{
@@ -97,12 +98,12 @@ public:
 
 	int GetTileMapWidth()
 	{
-		return grid.x * scale * tileSize;
+		return grid.x * tileSize;
 	}
 
 	int GetTileMapHeight()
 	{
-		return grid.y * scale * tileSize;
+		return grid.y * tileSize;
 	}
 
 	int GetSpriteWidth()
@@ -135,7 +136,7 @@ private:
 
 	std::string name;
 	int tileSize;
-	float scale = 4.f;
+	float scale = 1.f;
 
 	RECT** arr;
 

@@ -56,6 +56,7 @@ public:
         {
             openFile();
         }
+        ImGui::Separator();
 
         for (auto& pair : map) {
             Sprite* sp = pair.second;

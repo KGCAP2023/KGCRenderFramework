@@ -149,14 +149,11 @@ void GameObject::CleanUpComponent()
 
 void GameObject::SetFocus()
 {
-	if (this->bbox != nullptr) 
+	this->game->ReleaseFocus();
+	if (this->bbox != nullptr)
 	{
-		this->game->ReleaseFocus();
 		this->bbox->ChangeColor(255, 0, 0);
 		this->game = this;
-	}
-	else {
-		assert("bounding box가 존재하지 않는 객체입니다.");
 	}
 }
 

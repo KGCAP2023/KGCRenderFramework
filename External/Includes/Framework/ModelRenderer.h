@@ -27,7 +27,7 @@ public:
 	std::vector<Mesh>& GetMeshes();
 	std::string GetPath();
 private:
-	Model* model;
+	Model* model = nullptr;
 	BoundingBoxRenderer* bbox = nullptr;
 	ResourceManager* res = nullptr;
 };

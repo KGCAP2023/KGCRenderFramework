@@ -78,7 +78,7 @@ public:
 	ResourceManager resourceManager;
 	AudioManager audioManager;
 	LuaManager luaManager;
-	GameObjectManager* gameObjManager;
+	GameObjectManager* gameObjManager = nullptr;
 	Ray* ray;
 
 	~Framework();

@@ -48,6 +48,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual GameObject* GetFocusedObject() { return nullptr; };
+	/// <summary>
+	/// 포커스 된 오브젝트 리스너를 등록합니다.
+	/// </summary>
+	/// <param name="callback"></param>
+	virtual void AddFocusedObjectListener(std::function<void(GameObject*)> callback) {};
 };
 
 
@@ -75,6 +80,9 @@ public:
 
 	virtual GameObject* GetFocusedObject() override;
 
+	virtual void AddFocusedObjectListener(std::function<void(GameObject*)> callback) override;
+
+	void notifyFousedObject(GameObject* object);
 
 	//의존성
 	Framework* framework;
@@ -83,6 +91,7 @@ public:
 
 	//맵
 	std::unordered_map<std::string, GameObject*> gameObjects;
+	std::vector<std::function<void(GameObject*)>> _focusedObjectCallback;
 	
 };
 

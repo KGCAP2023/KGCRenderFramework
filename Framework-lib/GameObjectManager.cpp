@@ -102,3 +102,16 @@ GameObject* GameObjectManager::GetFocusedObject()
 
 	return nullptr;
 }
+
+void GameObjectManager::AddFocusedObjectListener(std::function<void(GameObject*)> callback)
+{
+	_focusedObjectCallback.push_back(callback);
+}
+
+void GameObjectManager::notifyFousedObject(GameObject* object)
+{
+	for (auto func : _focusedObjectCallback)
+	{
+		func(object);
+	}
+}

@@ -175,6 +175,7 @@ void Framework::Update()
 				if (selectedObject != nullptr)
 				{
 					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
+					this->gameObjManager->notifyFousedObject(selectedObject);
 					selectedObject->SetFocus();
 				}
 				else
@@ -222,22 +223,22 @@ void Framework::Update()
 		std::cout << "Back" << std::endl;
 	} 
 
-	if (kb.LeftShift) // Backspace key is down
+	if (kb.LeftShift && this->layerManager.isGameViewFocus()) // Backspace key is down
 	{
 		speed = 0.01f;
 	}
 
-	if (kb.C) // Backspace key is down
+	if (kb.C && this->layerManager.isGameViewFocus()) // Backspace key is down
 	{
 		this->graphics.camera->transform.Translate(0, -speed * dt,0);
 	}
 
-	if (kb.Space) // Backspace key is down
+	if (kb.Space && this->layerManager.isGameViewFocus()) // Backspace key is down
 	{
 		this->graphics.camera->transform.Translate(0, +speed * dt, 0);
 	}
 
-	if (kb.W) // W key is down
+	if (kb.W && this->layerManager.isGameViewFocus()) // W key is down
 	{
 
 		if (cameraType != Camera3D::ViewType::_2D)
@@ -247,12 +248,12 @@ void Framework::Update()
 
 	}
 
-	if (kb.A) // A key is down
+	if (kb.A && this->layerManager.isGameViewFocus()) // A key is down
 	{
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
-	if (kb.S) // S key is down
+	if (kb.S && this->layerManager.isGameViewFocus()) // S key is down
 	{
 		if (cameraType != Camera3D::ViewType::_2D)
 		{
@@ -260,7 +261,7 @@ void Framework::Update()
 		}
 	}
 
-	if (kb.D) // D key is down
+	if (kb.D && this->layerManager.isGameViewFocus()) // D key is down
 	{
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}

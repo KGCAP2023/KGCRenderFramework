@@ -60,7 +60,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* 파일 저장 */ }
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenuBar();
 			
 		});
 

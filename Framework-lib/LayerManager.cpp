@@ -119,6 +119,7 @@ void LayerManager::DockingSpace()
 		{
 			func();
 		}
+		ImGui::EndMenuBar();
 	}
 	ImGui::End();
 

@@ -20,9 +20,9 @@ public:
 	/// 오브젝트 리스트에 새 오브젝트를 생성하여 추가
 	/// </summary>
 	/// <param name="_name">추가할 오브젝트 이름</param>
-	/// <param name="path">추가할 오브젝트 파일의 경로</param>
+	/// <param name="modelName">리소스 매니저에 등록된 모델의 이름</param>
 	/// <returns>생성된 오브젝트, 중복시 nullptr 반환</returns>
-	virtual GameObject* CreateGameObject(const std::string& _name, const std::string& path) { return nullptr; };
+	virtual GameObject* CreateGameObject(const std::string& _name, const std::string& modelName) { return nullptr; };
 
 	/// <summary>
 	/// 오브젝트 목록에 특정 오브젝트가 존재하는지 검색

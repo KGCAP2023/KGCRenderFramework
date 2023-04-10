@@ -2,34 +2,42 @@
 #include "Gameobject.h"
 #include "Sprite.h"
 #include "Animation2D.h"
+#include "Renderer.h"
 
 /// <summary>
 /// 2D스프라이트를 가져옵니다.
 /// </summary>
-class SpriteRenderer : public Component
+class SpriteRenderer : public Component , public Renderer
 {
 public:
-	SpriteRenderer(GameObject* owner) : Component(owner)
+	SpriteRenderer(GameObject* owner, ResourceManager* res) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_SPRITE;
 		this->name = "SpriteRenderer";
 		this->isSpriteRender = true;
+		this->res = res;
 	}
 
 	virtual void Update() override;
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 
-	bool AddSprite(Sprite* sprite)
+	virtual void InitBoundingBox() override;
+	virtual BoundingBoxRenderer* GetBoundingBox() override;
+
+	bool SetSprite(Sprite* sprite)
 	{
 		if (sprite != nullptr)
 		{
 			this->sprite = sprite;
 			this->spriteBatch = sprite->GetSpriteBatch();
+			this->InitBoundingBox();
 			return true;
 		}
 		else
 			return false;
 	}
+
+	Sprite* GetSprite() { return this->sprite; };
 
 	//void Draw(const DirectX::SimpleMath::Vector2& pos, SpriteBatch* spriteBatch);
 
@@ -74,4 +82,7 @@ private:
 	SpriteBatch* spriteBatch = nullptr;
 	Animation2D* selectedAnimation = nullptr;
 	std::unordered_map<std::string, Animation2D*> _AnimationMap;
+
+	BoundingBoxRenderer* bbox = nullptr;
+	ResourceManager* res = nullptr;
 };

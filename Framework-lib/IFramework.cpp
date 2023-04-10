@@ -16,6 +16,10 @@ ILayer* IFramework::FindLayer(const std::string& key)
     return nullptr;
 }
 
+void IFramework::AddMenubar(std::function<void()> callback)
+{
+}
+
 bool IFramework::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
 {
     return false;

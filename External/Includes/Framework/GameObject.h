@@ -34,7 +34,6 @@ public:
 	std::string ObjectName;
 
 	Transform transform;
-	BoundingBoxRenderer* bbox = nullptr;
 
 	/// <summary>
 	/// 이름을 반환합니다.
@@ -94,7 +93,7 @@ public:
 	/// <summary>
 	/// 포커스된 오브젝트의 포거스를 해제합니다.
 	/// </summary>
-	void ReleaseFocus();
+	static void ReleaseFocus();
 
 	/// <summary>
 	/// 현재 포커스를 가지고 있는 오브젝트를 반환합니다 [ 없을 시 nullptr 반환 ]
@@ -112,8 +111,6 @@ public:
 	void SetActive(bool bActive);
 	bool IsActive() { return this->isActive; }
 
-	BoundingBoxRenderer* GetBoundingBox() { return bbox; }
-
 	virtual bool IsCollision(GameObject* model) { return false; };
 	virtual void* GetCollider() { return NULL; }
 	Component::Type GetColliderType() { return colliderType; }
@@ -122,9 +119,8 @@ public:
 	GameObject* GetParent() { return parent; }
 	void AddChild(GameObject* pParent);
 
-
+	BoundingBoxRenderer* bbox = nullptr;
 	//콜라이더 추가해야됨 
-	
 	Component::Type colliderType;
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> child;

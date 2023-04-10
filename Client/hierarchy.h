@@ -224,7 +224,7 @@ public:
 							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE) == spriteList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
 							if (ImGui::Selectable(spriteList[n].c_str(), is_selected))
 							{
-								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_SPRITE,spriteList.at(n).c_str()); ;
+								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_SPRITE, spriteList.at(n).c_str()); ;
 								render4->SetSprite(ResM->FindSprite(spriteList.at(n).c_str()));
 							}
 							if (is_selected)
@@ -604,7 +604,7 @@ public:
 			{
 
 				GameObject* temp = gamelist.at(selected)->GetGameObject();
-				SpriteRenderer* render1 = new SpriteRenderer(temp);
+				SpriteRenderer* render1 = new SpriteRenderer(temp,(ResourceManager*)this->ResM);
 				gamelist.at(selected)->GetGameObject()->AddComponent(render1);
 				component_active = false;
 
@@ -612,22 +612,24 @@ public:
 			if (ImGui::Button("ModelRenderer"))
 			{
 
-				GameObject* temp = gamelist.at(selected)->GetGameObject();
-				ModelRenderer* render2 = new ModelRenderer(temp);
+				GameObject* temp1 = gamelist.at(selected)->GetGameObject();
+				ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
 				//render->Init();
 				gamelist.at(selected)->GetGameObject()->AddComponent(render2);
 				component_active = false;
 
-					}
-					if (ImGui::Button("TileMapRender"))
-					{
-						GameObject* temp1 = gamelist.at(selected)->GetGameObject();
-						TileMapRenderer* render3 = new TileMapRenderer(temp1);
-						//render->Init();
-						gamelist.at(selected)->GetGameObject()->AddComponent(render3);
-						component_active = false;
-					}
-					ImGui::End();
+
+			}
+			if (ImGui::Button("TileMapRender"))
+			{
+				GameObject* temp2 = gamelist.at(selected)->GetGameObject();
+				TileMapRenderer* render3 = new TileMapRenderer(temp2,(ResourceManager*)this->ResM);
+				//render->Init();
+				gamelist.at(selected)->GetGameObject()->AddComponent(render3);
+				component_active = false;
+
+			}
+			ImGui::End();
 		}
 	}
 };

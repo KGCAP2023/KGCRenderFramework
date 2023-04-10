@@ -17,9 +17,6 @@ void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
 			}
 		}
 
-		if (bbox != nullptr && bbox->isActive())
-			bbox->Draw(viewProjectionMatrix);
-
 		if (!this->child.empty())
 		{
 			for (auto it : this->child)
@@ -62,9 +59,6 @@ void GameObject::Update()
 		it.second->Update();
 	}
 
-	if (bbox != nullptr)
-		bbox->Update();
-
 	if (!this->child.empty())
 	{
 		for (auto it : this->child)
@@ -84,7 +78,6 @@ void GameObject::AddComponent(Component* pComponent)
 
 	if (type == Component::Type::BOUNDING_BOX)
 	{
-		this->bbox = dynamic_cast<BoundingBoxRenderer*>(pComponent);
 		return;
 	}
 
@@ -159,7 +152,7 @@ void GameObject::SetFocus()
 	if (this->bbox != nullptr) 
 	{
 		this->game->ReleaseFocus();
-		this->bbox->ChangeColor(1, 0, 0);
+		this->bbox->ChangeColor(255, 0, 0);
 		this->game = this;
 	}
 	else {
@@ -169,11 +162,12 @@ void GameObject::SetFocus()
 
 void GameObject::ReleaseFocus()
 {
-	if (this->game == nullptr) return;
-	else if (this->bbox != nullptr && this->game == this) 
+	if (GameObject::game == nullptr) 
+		return;
+	else
 	{
-		this->bbox->ChangeColor(0, 0, 0);
-		this->game = nullptr;
+		GameObject::game->bbox->ChangeColor(0, 0, 0);
+		GameObject::game = nullptr;
 	}
 }
 

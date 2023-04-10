@@ -60,8 +60,11 @@ public:
 		arr[gridX][gridY] = frame;
 	}
 
-	void Draw(const DirectX::XMMATRIX& viewProjectionMatrix , XMFLOAT3& gameObjpos)
+	void Draw(const DirectX::XMMATRIX& viewProjectionMatrix , Transform& t)
 	{
+		XMFLOAT3&  gameObjpos = t.position;
+		this->SetScale(t.scale.x);
+
 		if (sprite != nullptr)
 		{
 			spriteBatch->Begin();
@@ -71,7 +74,7 @@ public:
 				{
 					DirectX::SimpleMath::Vector2 gridPos(gameObjpos.x + j * scale * tileSize, gameObjpos.y + i * scale * tileSize);
 					spriteBatch->Draw(sprite->Get(), gridPos, &arr[i][j],
-						DirectX::Colors::White, 0.f, DirectX::SimpleMath::Vector2(0, 0), scale);
+						DirectX::Colors::White, t.rotation.z, DirectX::SimpleMath::Vector2(0, 0), scale);
 				}
 			}
 			spriteBatch->End();
@@ -95,12 +98,12 @@ public:
 
 	int GetTileMapWidth()
 	{
-		return grid.x * scale * tileSize;
+		return grid.x * tileSize;
 	}
 
 	int GetTileMapHeight()
 	{
-		return grid.y * scale * tileSize;
+		return grid.y * tileSize;
 	}
 
 	int GetSpriteWidth()
@@ -133,7 +136,7 @@ private:
 
 	std::string name;
 	int tileSize;
-	float scale = 4.f;
+	float scale = 1.f;
 
 	RECT** arr;
 

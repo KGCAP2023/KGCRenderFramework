@@ -3,10 +3,15 @@
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
 
+class BoundingBoxRenderer;
+
 class Renderer
 {
 public:
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 	virtual std::string GetPath();
+	virtual void InitBoundingBox() {};
+	virtual BoundingBoxRenderer* GetBoundingBox() { return nullptr; };
+
 };
 

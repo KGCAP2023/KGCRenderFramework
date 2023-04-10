@@ -10,18 +10,24 @@
 class ModelRenderer : public Component, public Renderer
 {
 public:
-	ModelRenderer(GameObject* owner) : Component(owner) 
+	ModelRenderer(GameObject* owner, ResourceManager* res) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_MODEL;
 		this->name = "ModelRenderer";
+		this->res = res;
 	}
 
 	bool SetModel(Model* model);
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual void Update() override;
+
+	virtual void InitBoundingBox() override;
+	virtual BoundingBoxRenderer* GetBoundingBox() override;
+
 	std::vector<Mesh>& GetMeshes();
 	std::string GetPath();
 private:
 	Model* model;
-	
+	BoundingBoxRenderer* bbox = nullptr;
+	ResourceManager* res = nullptr;
 };

@@ -13,11 +13,13 @@ GameObjectManager::GameObjectManager(Framework* framework)
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 {
+	//이름이 없을 경우 생성 거부
+	if (_name.size() == 0) {
+		return nullptr;
+	}
+
 	//이름 같은 거 존재시 생성 거부
-
 	if (this->FindGameObject(_name) != nullptr) {
-
-		
 		return nullptr;
 	}
 
@@ -26,13 +28,15 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name)
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));
 
-	obj->AddComponent(new BoundingBox3D(obj, res));
-
 	return obj;
 }
 
 GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const std::string& modelName)
 {
+	//이름이 없을 경우 생성 거부
+	if (_name.size() == 0) {
+		return nullptr;
+	}
 
 	//이름 같은 거 존재시 생성 거부
 	if (this->FindGameObject(_name) != nullptr) {
@@ -42,13 +46,11 @@ GameObject* GameObjectManager::CreateGameObject(const std::string& _name, const 
 	//오브젝트를 생성합니다.
 	GameObject* obj = CreateGameObject(_name);
 	//모델 렌더러를 생성합니다.
-	ModelRenderer* render = new ModelRenderer(obj);
+	ModelRenderer* render = new ModelRenderer(obj,this->res);
 	Model* model = res->FindModel(modelName);
 	render->SetModel(model);
 	//모델 렌더러를 등록합니다.
 	obj->AddComponent(render);
-	//바운딩 박스 렌더러를 생성&등록합니다.
-	obj->AddComponent(new BoundingBox3D(obj, res));
 
 	//게임오브젝트를 등록합니다.
 	this->gameObjects.insert(std::make_pair<>(_name, obj));

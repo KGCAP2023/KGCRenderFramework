@@ -2,6 +2,10 @@
 #include "BoundingBox.h"
 #include "GameObject.h"
 #include "ResourceManager.h"
+#include "SpriteRenderer.h"
+#include "ModelRenderer.h"
+#include "TileMapRenderer.h"
+#include "SkinnedMeshRenderer.h"
 
 #pragma region 그리기_순서_목록_벡터
 
@@ -46,7 +50,7 @@
 
 
 
-BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : BoundingBoxRenderer(owner)
+BoundingBox3D::BoundingBox3D(GameObject* owner, Component* component, ResourceManager* res) : BoundingBoxRenderer(owner)
 {
 	this->type = Component::Type::BOUNDING_BOX;
 	this->deviceContext = res->deviceContext;
@@ -55,28 +59,22 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, ResourceManager* res) : Bounding
 	this->vs = res->FindVertexShader("vs_1");
 	this->constantBuffer = &res->cb1;
 
-	XMMATRIX worldMatrix = owner->transform.worldMatrix;
-
 	Renderer* render = nullptr;
-	Component* com = owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL);
 
-	if (com != nullptr)
+	switch (component->GetType())
 	{
-		min = { 0,0,0 };
-		max = { 0,0,0 };
-		render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_SKINNED_MODEL));
-	}
-	else
-	{
-		com = owner->GetComponent(Component::Type::RENDERER_MODEL);
-
-		if (com != nullptr)
+		case Component::Type::RENDERER_MODEL:
+		case Component::Type::RENDERER_SKINNED_MODEL:
 		{
-			min = { 0,0,0 };
-			max = { 0,0,0 };
-			render = dynamic_cast<Renderer*>(this->owner->GetComponent(Component::Type::RENDERER_MODEL));
+			render = dynamic_cast<Renderer*>(component);
 		}
+		break;
 	}
+
+	min = { 0,0,0 };
+	max = { 0,0,0 };
+
+	XMMATRIX worldMatrix = owner->transform.worldMatrix;
 
 	if (render != nullptr)
 	{
@@ -214,3 +212,161 @@ void BoundingBox3D::Update()
 {
 
 }
+
+BoundingBox2D::BoundingBox2D(GameObject* owner, Component* component, ResourceManager* res) : BoundingBoxRenderer(owner)
+{
+	this->type = Component::Type::BOUNDING_BOX;
+	this->deviceContext = res->deviceContext;
+	this->device = res->device;
+	this->spriteBatch = res->spriteBatch.get();
+	this->color = new Texture();
+	this->color->Initialize1x1ColorTexture(this->device.Get(), RGBColor(0, 0, 0));
+
+	switch (component->GetType())
+	{
+		case Component::Type::RENDERER_SPRITE:
+		{
+			SpriteRenderer* render = dynamic_cast<SpriteRenderer*>(component);
+			Sprite* sp = render->GetSprite();
+			width = sp->GetWidth();
+			height = sp->GetHeight();
+		}
+		break;
+		case Component::Type::RENDERER_TILEMAP:
+		{
+			TileMapRenderer* render = dynamic_cast<TileMapRenderer*>(component);
+			TileMap* tilemap = render->GetTileMap();
+			width = tilemap->GetTileMapWidth();
+			height = tilemap->GetTileMapHeight();
+		}
+		break;
+	}
+}
+
+XMFLOAT2 BoundingBox2D::CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatrix)
+{
+	XMVECTOR rotatedVector = XMVector2Transform(XMVectorSet(x,y,0.0f,1.0f), rotationMatrix); // 회전된 좌표 계산
+	XMFLOAT2 result;
+	XMStoreFloat2(&result,rotatedVector);
+	return result;
+}
+
+int BoundingBox2D::CalculatePointInBoundingBox(float pointX, float pointY)
+{
+	Transform& t = this->owner->transform;
+	XMFLOAT3 pos = t.position;
+	float scale = t.scale.x;
+	float rot = t.rotation.z;
+	RECT rectangle = RECT{ 0 , 0 , (LONG)(this->width * scale) , (LONG)(this->height * scale) };
+
+	XMMATRIX rotationMatrix = XMMatrixRotationZ(rot);
+	XMFLOAT2 result = CalculateRotation(rectangle.right, 0, rotationMatrix);
+	XMFLOAT2 result2 = CalculateRotation(rectangle.right, rectangle.bottom, rotationMatrix);
+	XMFLOAT2 result3 = CalculateRotation(0, rectangle.bottom, rotationMatrix);
+	
+	float x[4] = 
+	{
+		pos.x,
+		pos.x + result.x,
+		pos.x + result2.x,
+		pos.x + result3.x
+	};
+
+	float y[4] = 
+	{
+		pos.y,
+		pos.y + result.y,
+		pos.y + result2.y,
+		pos.y + result3.y
+	};
+
+	return pnpoly(4,x,y, pointX, pointY);
+}
+
+int BoundingBox2D::pnpoly(int nvert, float* vertx, float* verty, float testx, float testy)
+{
+	int i, j, c = 0;
+	for (i = 0, j = nvert - 1; i < nvert; j = i++) {
+		if (((verty[i] > testy) != (verty[j] > testy)) &&
+			(testx < (vertx[j] - vertx[i]) * (testy - verty[i]) / (verty[j] - verty[i]) + vertx[i]))
+			c = !c;
+	}
+	return c;
+}
+
+void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
+{
+	if (isActiveBoundingBox)
+	{
+		Transform& t = this->owner->transform;
+		float scale = t.scale.x;
+		float rot = t.rotation.z;
+		LONG x = t.position.x;
+		LONG y = t.position.y;
+
+		RECT rectangle = RECT{ 0 , 0 , (LONG)(this->width * scale) , (LONG)(this->height * scale) };
+
+		RECT a1 = RECT
+		{ 
+			x + rectangle.left,
+			y + rectangle.top,
+			x + rectangle.left + lineWidth,
+			y + rectangle.top + rectangle.bottom
+		};
+
+		RECT a2 = RECT
+		{ 
+			x + rectangle.left,
+			y + rectangle.top,
+			x + rectangle.left + rectangle.right,
+			y + rectangle.top + lineWidth
+		};
+
+		XMMATRIX rotationMatrix = XMMatrixRotationZ(rot);
+		XMFLOAT2 result = CalculateRotation(rectangle.right, 0, rotationMatrix);
+		XMFLOAT2 result2 = CalculateRotation(0, rectangle.bottom, rotationMatrix);
+
+		RECT a3;
+
+		a3 = RECT
+		{
+			x + (LONG)result.x + rectangle.left ,
+			y + (LONG)result.y + rectangle.top,
+			x + (LONG)result.x + rectangle.left + lineWidth,
+			y + (LONG)result.y + rectangle.bottom + rectangle.top + lineWidth
+		};
+
+		RECT a4 = RECT
+		{ 
+			x + (LONG)result2.x + rectangle.left,
+			y + (LONG)result2.y + rectangle.top,
+			x + (LONG)result2.x + rectangle.left + rectangle.right + lineWidth,
+			y + (LONG)result2.y + rectangle.top  + lineWidth
+		};
+
+		this->spriteBatch->Begin();
+
+		{
+			this->spriteBatch->Draw(this->color->Get(), a1, nullptr , Colors::White, rot, XMFLOAT2(0,0));
+			this->spriteBatch->Draw(this->color->Get(), a2, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a3, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a4, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
+		}
+
+		this->spriteBatch->End();
+	}
+}
+
+std::vector<DWORD>* BoundingBox2D::GetIndices()
+{
+	return &this->indices;
+}
+
+void BoundingBox2D::ChangeColor(float r, float g, float b, float alpha)
+{
+	if (this->color != nullptr) delete this->color;
+	this->color = new Texture();
+	this->color->Initialize1x1ColorTexture(this->device.Get(), RGBColor(r, g, b));
+}
+
+

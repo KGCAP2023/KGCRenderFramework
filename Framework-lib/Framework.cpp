@@ -123,17 +123,51 @@ void Framework::Update()
 
 				this->ray->CalculatePicking(mouse.x, mouse.y);
 				for (auto& kv : this->gameObjManager->gameObjects) {
- 					BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(kv.second->GetBoundingBox());
-					if (bbox != nullptr)
-					{
-						float dist = this->ray->isPicked(bbox);
-
-						if (dist != -1 && dist < min_dist)
+					kv.second->ComponentForeach([&](Component* c) {
+						switch (c->GetType())
 						{
-							min_dist = dist;
-							selectedObject = kv.second;
+							case Component::Type::RENDERER_MODEL:
+							case Component::Type::RENDERER_SKINNED_MODEL:
+							{
+								BoundingBox3D* bbox = dynamic_cast<BoundingBox3D*>(dynamic_cast<Renderer*>(c)->GetBoundingBox());
+								if (bbox != nullptr)
+								{
+									float dist = this->ray->isPicked(bbox);
+
+									if (dist != -1 && dist < min_dist)
+									{
+										min_dist = dist;
+										selectedObject = kv.second;
+									}
+								}
+							}
+							break;
 						}
+					});
+				}
+
+				if (selectedObject == nullptr)
+				{
+					for (auto& kv : this->gameObjManager->gameObjects) {
+						kv.second->ComponentForeach([&](Component* c) {
+							switch (c->GetType())
+							{
+								case Component::Type::RENDERER_SPRITE:
+								case Component::Type::RENDERER_TILEMAP:
+								{
+									BoundingBox2D* bbox = dynamic_cast<BoundingBox2D*>(dynamic_cast<Renderer*>(c)->GetBoundingBox());
+									int a = bbox->CalculatePointInBoundingBox(mouse.x, mouse.y);
+
+									if (a == 1)
+									{
+										selectedObject = kv.second;
+									}									
+								}
+								break;
+							}
+						});
 					}
+
 				}
 
 				std::cout << "distance >" << min_dist << std::endl;
@@ -141,11 +175,12 @@ void Framework::Update()
 				if (selectedObject != nullptr)
 				{
 					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
-					//implement Set Focus
+					selectedObject->SetFocus();
 				}
 				else
 				{
 					//implement Release Focus
+					GameObject::ReleaseFocus();
 				}
 			}
 		}
@@ -204,7 +239,12 @@ void Framework::Update()
 
 	if (kb.W) // W key is down
 	{
-		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
+
+		if (cameraType != Camera3D::ViewType::_2D)
+		{
+			this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetForward() * speed * dt);
+		}
+
 	}
 
 	if (kb.A) // A key is down
@@ -214,7 +254,10 @@ void Framework::Update()
 
 	if (kb.S) // S key is down
 	{
-		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
+		if (cameraType != Camera3D::ViewType::_2D)
+		{
+			this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetBackward() * speed * dt);
+		}
 	}
 
 	if (kb.D) // D key is down
@@ -238,6 +281,11 @@ void Framework::RegisterLayer(const std::string& key, ILayer* layer)
 void Framework::DeleteLayer(const std::string& key)
 {
 	this->layerManager.DeleteLayer(key);
+}
+
+void Framework::AddMenubar(std::function<void()> callback)
+{
+	this->layerManager.AddMenubar(callback);
 }
 
 ILayer* Framework::FindLayer(const std::string& key)
@@ -336,13 +384,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	ray = new Ray(this);
 
-	//오디오 테스트 및 초기화 완료
-	#pragma region MyRegion
-		resourceManager.LoadAudio("bgm", "..//Resource/Audios/bgm.mp3");
-		audioManager.PlayAudio("bgm");
 
-		
-	#pragma endregion
 
 
 

@@ -157,6 +157,11 @@ public:
 	virtual std::vector<DWORD>* GetIndices() override;
 	virtual void ChangeColor(float r, float g, float b, float alpha = 1.0f) override;
 
+	XMFLOAT2 CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatrix);
+
+	int CalculatePointInBoundingBox(float pointX, float pointY);
+	int pnpoly(int nvert, float* vertx, float* verty, float testx, float testy);
+
 	std::vector<SimpleVertex> vertices;
 
 	Texture* color;

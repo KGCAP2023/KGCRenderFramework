@@ -146,6 +146,30 @@ void Framework::Update()
 					});
 				}
 
+				if (selectedObject == nullptr)
+				{
+					for (auto& kv : this->gameObjManager->gameObjects) {
+						kv.second->ComponentForeach([&](Component* c) {
+							switch (c->GetType())
+							{
+								case Component::Type::RENDERER_SPRITE:
+								case Component::Type::RENDERER_TILEMAP:
+								{
+									BoundingBox2D* bbox = dynamic_cast<BoundingBox2D*>(dynamic_cast<Renderer*>(c)->GetBoundingBox());
+									int a = bbox->CalculatePointInBoundingBox(mouse.x, mouse.y);
+
+									if (a == 1)
+									{
+										selectedObject = kv.second;
+									}									
+								}
+								break;
+							}
+						});
+					}
+
+				}
+
 				std::cout << "distance >" << min_dist << std::endl;
 
 				if (selectedObject != nullptr)

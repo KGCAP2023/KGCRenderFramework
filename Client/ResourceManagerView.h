@@ -15,7 +15,7 @@ class ResourceManagerView : public ILayer
     IGameObjectManager* ObjM;
     IResourceManager* ResM;
     Sprite* image;
-    bool RMV = true;
+
 
 public:
     ResourceManagerView(IGameObjectManager* manager, IResourceManager* res, const std::string name) : ILayer(name)
@@ -45,26 +45,28 @@ public:
         auto keyboard = InputManager::GetKeyboardState();
         auto mouse = InputManager::GetMouseState();
         auto map = ResM->GetSpriteMap();
-
-        ImGui::Begin(u8"Resource Manager View", &RMV, ImGuiWindowFlags_HorizontalScrollbar);
         
-        ImGui::Button("add");                                   //add 버튼
-        ImGui::SameLine();
-        ImGui::Button("delete");                                //delete 버튼
-        ImGui::SameLine();
-        if (ImGui::Button("file"))
-        {
-            openFile();
-        }
-        ImGui::Separator();
+        if (_isActive) {
+            ImGui::Begin(u8"Resource Manager View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
 
-        for (auto& pair : map) {
-            Sprite* sp = pair.second;
-            sp->GetName();
-            ImGui::Image((void*)sp->Get(), ImVec2(128, 128));
-            ImGui::Text(u8"%s", sp->GetName().c_str());
+            ImGui::Button("add");                                   //add 버튼
+            ImGui::SameLine();
+            ImGui::Button("delete");                                //delete 버튼
+            ImGui::SameLine();
+            if (ImGui::Button("file"))
+            {
+                openFile();
+            }
+            ImGui::Separator();
+
+            for (auto& pair : map) {
+                Sprite* sp = pair.second;
+                sp->GetName();
+                ImGui::Image((void*)sp->Get(), ImVec2(128, 128));
+                ImGui::Text(u8"%s", sp->GetName().c_str());
+            }
+            ImGui::End();
         }
-        ImGui::End();
     }
 
     bool openFile()     // file 버튼 구현 부분

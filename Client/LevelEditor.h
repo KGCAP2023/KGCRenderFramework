@@ -17,7 +17,6 @@ public:
 	ImVector<ImVec2> points;
 	Sprite* image;
 	bool opt_enable_grid = true;
-	bool level_edit = true;
 	bool isActiveWindow2 = false;
 
 	//생성자 부분, 추후 변경할 예정
@@ -57,8 +56,9 @@ public:
 		float x_unit = 1 / 9.0f;
 		float y_unit = 1 / 12.0f;
 
-		if (level_edit) {
-			ImGui::Begin(u8"Level Editor", &level_edit, ImGuiWindowFlags_HorizontalScrollbar);	//UI창을 내부 메뉴 선택과 창닫기가 가능하도록 MenuBar로 설정
+
+		if (_isActive) {
+			ImGui::Begin(u8"Level Editor", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);	//UI창을 내부 메뉴 선택과 창닫기가 가능하도록 MenuBar로 설정
 			ImGui::Checkbox("Grid", &opt_enable_grid);								//캔버스 내부의 grid 표시여부
 			
 			ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList가 화면의 좌표를 가져와 사용, UI창 이동시 캔버스의 좌표도 같이 움직임

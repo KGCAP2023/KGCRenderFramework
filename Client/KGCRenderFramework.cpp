@@ -52,21 +52,35 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
 
 	{
-		rw->AddMenubar([]() {
-
-			if (ImGui::BeginMenu("File2222"))
-			{
-				if (ImGui::MenuItem("Open", "Ctrl+O")) { /* 파일 열기 */ }
-				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* 파일 저장 */ }
-				ImGui::EndMenu();
-			}
-			
-		});
+		
 
 		UIManager* uiMgr = new UIManager(rw);
 		uiMgr->InitResource();
 		uiMgr->Init();
 		uiMgr->RegisterAllUI();
+		rw->AddMenubar([&]() {
+
+			if (ImGui::BeginMenu("View"))
+			{
+				if (ImGui::MenuItem("LevelEditor view"))
+				{
+					rw->FindLayer("example2")->Activate();
+				}
+				if (ImGui::MenuItem("Hierarchy View"))
+				{
+					rw->FindLayer("hierarachy")->Activate();
+				}
+				if (ImGui::MenuItem("Debug View"))
+				{
+					rw->FindLayer("DebugView")->Activate();
+				}
+				if (ImGui::MenuItem("ResourceManager View"))
+				{
+					rw->FindLayer("RMV")->Activate();
+				}
+				ImGui::EndMenu();
+			}
+			});
 	}
 
 	//Example* temp = new Example(objM, "example");

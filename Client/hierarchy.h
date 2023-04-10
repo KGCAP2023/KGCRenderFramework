@@ -467,9 +467,9 @@ public:
 		}
 
 
-		if (my_tool_active)
+		if (_isActive)
 		{
-			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_HorizontalScrollbar);
+			ImGui::Begin(u8"Hierarchy View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
 			if (ImGui::Button("add"))
 			{
 				ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);

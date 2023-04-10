@@ -51,6 +51,7 @@ public:
 		float height = image->GetHeight();
 
 		static float mouse_x, mouse_y;
+		float Bitmap_size[2];
 		
 		//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
 		float x_unit = 1 / 9.0f;
@@ -93,14 +94,10 @@ public:
 				//현재 마우스 좌표를 Grid 한 칸 크기인 32픽셀로 나누어 표현
 				mouse_x = mouse_pos_in_canvas.x / 32;
 				mouse_y = mouse_pos_in_canvas.y / 32;
+
+				isActiveWindow2 = true;
 			}
-			{	//Added 창에 선택한 이미지 범위 출력
-				ImGui::Begin(u8"Chosen Grid Block");
-				ImGui::Image((void*)image->Get(), ImVec2(125, 125),
-					ImVec2((int)mouse_x * x_unit, (int)mouse_y * y_unit),
-					ImVec2((int)mouse_x * x_unit + x_unit, (int)mouse_y * y_unit + y_unit));
-				ImGui::End();
-			}
+
 			//캔버스 내부에 Grid를 표시하는 부분, 체크박스 Grid가 해제된 경우 캔버스 내부에 grid를 그리지 않음
 			draw_list->PushClipRect(canvas_p0, canvas_p1, true);
 			if (opt_enable_grid)
@@ -115,6 +112,14 @@ public:
 				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
 			draw_list->PopClipRect();
 
+			ImGui::End();
+		}
+
+		if(isActiveWindow2) {	//Added 창에 선택한 이미지 범위 출력
+			ImGui::Begin(u8"Chosen Grid Block");
+			ImGui::Image((void*)image->Get(), ImVec2(125, 125),
+				ImVec2((int)mouse_x * x_unit, (int)mouse_y * y_unit),
+				ImVec2((int)mouse_x * x_unit + x_unit, (int)mouse_y * y_unit + y_unit));
 			ImGui::End();
 		}
 	};

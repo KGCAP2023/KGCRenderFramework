@@ -243,6 +243,14 @@ BoundingBox2D::BoundingBox2D(GameObject* owner, Component* component, ResourceMa
 	}
 }
 
+XMFLOAT2 BoundingBox2D::CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatrix)
+{
+	XMVECTOR rotatedVector = XMVector2Transform(XMVectorSet(x,y,0.0f,1.0f), rotationMatrix); // 회전된 좌표 계산
+	XMFLOAT2 result;
+	XMStoreFloat2(&result,rotatedVector);
+	return result;
+}
+
 void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 	if (isActiveBoundingBox)
@@ -250,7 +258,7 @@ void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 		Transform& t = this->owner->transform;
 		float scale = t.scale.x;
 		float rot = t.rotation.z;
-		LONG x = t.position.x ;
+		LONG x = t.position.x;
 		LONG y = t.position.y;
 
 		RECT rectangle = RECT{ 0 , 0 , (LONG)(this->width * scale) , (LONG)(this->height * scale) };
@@ -260,7 +268,7 @@ void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 			x + rectangle.left,
 			y + rectangle.top,
 			x + rectangle.left + lineWidth,
-			y + rectangle.top + rectangle.bottom 
+			y + rectangle.top + rectangle.bottom
 		};
 
 		RECT a2 = RECT
@@ -268,32 +276,38 @@ void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 			x + rectangle.left,
 			y + rectangle.top,
 			x + rectangle.left + rectangle.right,
-			y + rectangle.top + lineWidth 
+			y + rectangle.top + lineWidth
 		};
 
-		RECT a3 = RECT
-		{ 
-			x + rectangle.left + rectangle.right,
-			y + rectangle.top,
-			x + rectangle.left + rectangle.right + lineWidth,
-			y + rectangle.bottom + rectangle.top  + lineWidth 
+		XMMATRIX rotationMatrix = XMMatrixRotationZ(rot);
+		XMFLOAT2 result = CalculateRotation(rectangle.right, 0, rotationMatrix);
+		XMFLOAT2 result2 = CalculateRotation(0, rectangle.bottom, rotationMatrix);
+
+		RECT a3;
+
+		a3 = RECT
+		{
+			x + (LONG)result.x + rectangle.left ,
+			y + (LONG)result.y + rectangle.top,
+			x + (LONG)result.x + rectangle.left + lineWidth,
+			y + (LONG)result.y + rectangle.bottom + rectangle.top + lineWidth
 		};
 
 		RECT a4 = RECT
 		{ 
-			x + rectangle.left,
-			y + rectangle.top + rectangle.bottom,
-			x + rectangle.left + rectangle.right + lineWidth,
-			y + rectangle.bottom + rectangle.top +  + lineWidth 
+			x + (LONG)result2.x + rectangle.left,
+			y + (LONG)result2.y + rectangle.top,
+			x + (LONG)result2.x + rectangle.left + rectangle.right + lineWidth,
+			y + (LONG)result2.y + rectangle.top  + lineWidth
 		};
 	
 		this->spriteBatch->Begin();
 
 		{
-			this->spriteBatch->Draw(this->color->Get(), a1, nullptr , Colors::White, 0.f, XMFLOAT2(0,0));
-			this->spriteBatch->Draw(this->color->Get(), a2, nullptr, Colors::White, 0.f, XMFLOAT2(0, 0));
-			this->spriteBatch->Draw(this->color->Get(), a3, nullptr, Colors::White, 0.f, XMFLOAT2(0, 0));
-			this->spriteBatch->Draw(this->color->Get(), a4, nullptr, Colors::White, 0.f, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a1, nullptr , Colors::White, rot, XMFLOAT2(0,0));
+			this->spriteBatch->Draw(this->color->Get(), a2, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a3, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a4, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
 		}
 
 		this->spriteBatch->End();
@@ -311,3 +325,5 @@ void BoundingBox2D::ChangeColor(float r, float g, float b, float alpha)
 	this->color = new Texture();
 	this->color->Initialize1x1ColorTexture(this->device.Get(), RGBColor(r, g, b));
 }
+
+

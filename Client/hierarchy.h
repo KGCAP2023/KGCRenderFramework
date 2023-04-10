@@ -199,59 +199,64 @@ public:
 			std::string name2 = tp->GetName();
 			tileList.push_back(name2);
 
-		}
-		if (gamelist.at(selected)->GetGameObject()->GetComponentSize() != 0)
-		{
-			GameObject* obj = gamelist.at(selected)->GetGameObject();
+			ImGui::BeginGroup();
+
+			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
+			if (gamelist.size() != 0)
+			{
+				ImGui::Text(const_cast<char*>(gamelist.at(selected)->ObjectName.c_str()));
+				ImGui::Separator();
+				ImGui::Text("TRANSFORM");
+				const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO", "PPPP", "QQQQQQQQQQ", "RRR", "SSSS" };
+				static const char* current_item = NULL;
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->transform.position.x, 0, 1600);
+				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->transform.rotation.x, 0, 1600);
+				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->transform.scale.x, 0, 1600);
 
 
-			obj->ComponentForeach([&](Component* c) {
-				int count = 0;
-				std::string name = c->GetName();
-				Component::Type type = c->GetType();
-
-				switch (type)
+				ImGui::Text("Other Component");
+				ImGui::Separator();
+			
+				if (gamelist.at(selected)->GetComponentSize() != 0)
 				{
-				case Component::Type::RENDERER_SPRITE:
-				{
-					SpriteRenderer* render4 = dynamic_cast<SpriteRenderer*>(c);
-					componentlist.push_back(c);
-					ImGui::Text(name.c_str());
-					ImGui::SameLine();
+					GameObject* obj = gamelist.at(selected);
 
 
-					std::string f = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE);
-					ImGui::PushItemWidth(100);
-					if (ImGui::BeginCombo("##combo", f.size()==0 ?"":f.c_str())) // The second parameter is the label previewed before opening the combo.
-					{
-						for (int n = 0; n < spriteList.size(); n++)
+					obj->ComponentForeach([&](Component* c) {
+						int count = 0;
+						std::string name = c->GetName();
+						Component::Type type = c->GetType();
+						
+						switch (type)
 						{
-							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE) == spriteList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
-							if (ImGui::Selectable(spriteList[n].c_str(), is_selected))
+						case Component::Type::RENDERER_SPRITE:
+						{
+							SpriteRenderer* render4 = dynamic_cast<SpriteRenderer*>(c);
+							render4->AddSprite(res->FindSprite("test"));
+							componentlist.push_back(c);
+							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
 							{
-								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_SPRITE,spriteList.at(n).c_str()); ;
-								render4->AddSprite(ResM->FindSprite(spriteList.at(n).c_str()));
+								for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+								{
+									bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+									if (ImGui::Selectable(items[n], is_selected))
+										current_item = items[n];
+									if (is_selected)
+										ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+								}
+								ImGui::EndCombo();
 							}
-							if (is_selected)
+							ImGui::SameLine();
+							if (ImGui::Checkbox(" ", &check1))
 							{
-								ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-
+								//if (check1 == true)
+									//c->SetDeleteType(Component::Type::UNKNOWN);
+								//else
+									//c->SetDeleteType(Component::Type::RENDERER_SPRITE);
 							}
-						}
-						ImGui::EndCombo();
-					}
-					ImGui::PopItemWidth();
-					ImGui::SameLine();
-
-					if (ImGui::Button("Sprite Del"))
-					{
-						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
-						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
-					}
-
-
-
-					ImGui::Separator();
+							ImGui::Separator();
 
 					break;
 				}
@@ -296,43 +301,34 @@ public:
 					break;
 				}
 
-				case Component::Type::RENDERER_TILEMAP:
-				{
-					TileMapRenderer* render6 = dynamic_cast<TileMapRenderer*>(c);
-				
-					componentlist.push_back(c);
-					ImGui::Text(name.c_str());
-					ImGui::SameLine();
-					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP);\
-					ImGui::PushItemWidth(100);
-					if (ImGui::BeginCombo("##tile", tileName.size() == 0 ? "" : tileName.c_str())) // The second parameter is the label previewed before opening the combo.
-					{
-						for (int n = 0; n < tileList.size(); n++)
+						case Component::Type::RENDERER_TILEMAP:
 						{
-							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP) == tileList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
-							if (ImGui::Selectable(tileList[n].c_str(), is_selected))
+							TileMapRenderer* render6 = dynamic_cast<TileMapRenderer*>(c);
+							render6->AddTileMap(res->FindTileMap("test"));
+							componentlist.push_back(c);
+							ImGui::Text(name.c_str());
+							ImGui::SameLine();
+							if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
 							{
-								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_TILEMAP, tileList.at(n).c_str()); ;
-								render6->AddTileMap(ResM->FindTileMap(tileList.at(n).c_str()));
+								for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+								{
+									bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+									if (ImGui::Selectable(items[n], is_selected))
+										current_item = items[n];
+									if (is_selected)
+										ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+								}
+								ImGui::EndCombo();
 							}
-							if (is_selected)
+							ImGui::SameLine();
+							if (ImGui::Checkbox("   ", &check3))
 							{
-								ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-
+								//if (check3 == true)
+								//	c->SetDeleteType(Component::Type::UNKNOWN);
+								//else
+								//	c->SetDeleteType(Component::Type::RENDERER_TILEMAP);
 							}
-						}
-						ImGui::EndCombo();
-					}
-					ImGui::PopItemWidth();
-
-					ImGui::SameLine();
-
-					if (ImGui::Button("Tile del"))
-					{
-						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_TILEMAP);
-						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
-					}
-					ImGui::Separator();
+							ImGui::Separator();
 
 					break;
 				}
@@ -369,115 +365,19 @@ public:
 			ImGui::Begin("Add Object", &active, ImGuiWindowFlags_MenuBar);
 			
 
-			ImGui::InputText("name", a, IM_ARRAYSIZE(a));
-			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -100, 100);
-			ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, -1.58, 1.58);
-			ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 1, 3);
-			if (ImGui::Button("create"))
-			{
-
-				GameObject* ob = _manager->CreateGameObject(a);
-				if (ob != nullptr) {
+				ImGui::InputText("name", a, IM_ARRAYSIZE(a));
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, 0, 1600);
+				ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, 0, 1600);
+				ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 0, 1600);
+				if (ImGui::Button("save"))
+				{
+					GameObject* ob = _manager->CreateGameObject(a);
 					ob->transform.SetPosition(pos.x, pos.y, pos.z);
 					ob->transform.SetRotation(rot.x, rot.y, rot.z);
 					ob->transform.SetScale(scale.x, scale.y, scale.z);
 
-					gamelist.push_back(new HierarchyObject(ob));
-				}
-				else
-				{
-					show_warning = true;
-				}
+					gamelist.push_back(ob);
 
-
-				scale.x = 1;
-				scale.y = 1;
-				scale.z = 1;
-				std::memset(a, 0, IM_ARRAYSIZE(a));
-				active = false;
-
-			}
-
-			ImGui::End();
-		}
-		if (show_warning) {
-			ImGui::OpenPopup("Warning");
-		}
-
-		if (ImGui::BeginPopupModal("Warning", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"중복 오브젝트 생성");
-			if (ImGui::Button("OK")) {
-				ImGui::CloseCurrentPopup();
-				show_warning = false;
-			}
-			ImGui::EndPopup();
-		}
-
-		if (show_delete) {
-			ImGui::OpenPopup("Delete");
-		}
-
-		if (ImGui::BeginPopupModal("Delete", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"삭제 되었습니다.");
-			if (ImGui::Button("OK")) {
-				ImGui::CloseCurrentPopup();
-				show_delete = false;
-			}
-			ImGui::EndPopup();
-		}
-		if (my_tool_active)
-		{
-			ImGui::Begin(u8"Hierarchy View", &my_tool_active, ImGuiWindowFlags_HorizontalScrollbar);
-			if (ImGui::Button("add"))
-			{
-				ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
-				active = true;
-
-
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("delete"))
-			{
-				if (gamelist.size() != 0)
-				{
-					//selected=0~12 size 13
-					if (selected > 0)
-					{
-						if (selected == gamelist.size() - 1)
-						{
-							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-							gamelist.pop_back();
-							selected--;
-							show_delete = true;
-						}
-						else
-						{
-							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-							gamelist.erase(gamelist.begin() + selected);
-							show_delete = true;
-						}
-					}
-					else
-					{
-						_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-						gamelist.erase(gamelist.begin() + selected);
-						show_delete = true;
-					}
-				}
-
-
-			}
-
-
-
-
-			if (gamelist.size() != 0)
-			{
-				ImGui::BeginChild("Scrolling", ImVec2(150,0),true);
-				for (int i = 0; i < gamelist.size(); i++)
-				{
-					if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
-						selected = i;
 				}
 				ImGui::EndChild();
 				ImGui::SetScrollX(100.0f);
@@ -522,34 +422,33 @@ public:
 				{
 					ImGui::Begin("Add Component", &component_active, ImGuiWindowFlags_MenuBar);
 
-					if (ImGui::Button("SpriteRenderer"))
-					{
-						GameObject* temp = gamelist.at(selected)->GetGameObject();
-						SpriteRenderer* render1 = new SpriteRenderer(temp);
-						gamelist.at(selected)->GetGameObject()->AddComponent(render1);
-						component_active = false;
+				if (ImGui::Button("SpriteRenderer"))
+				{
+					GameObject* temp = gamelist.at(selected);
+					SpriteRenderer* render1 = new SpriteRenderer(temp);
+					gamelist.at(selected)->AddComponent(render1);
 
-					}
-					if (ImGui::Button("ModelRenderer"))
-					{
-						GameObject* temp = gamelist.at(selected)->GetGameObject();
-						ModelRenderer* render2 = new ModelRenderer(temp);
-						//render->Init();
-						gamelist.at(selected)->GetGameObject()->AddComponent(render2);
-						component_active = false;
-
-					}
-					if (ImGui::Button("TileMapRender"))
-					{
-						GameObject* temp1 = gamelist.at(selected)->GetGameObject();
-						TileMapRenderer* render3 = new TileMapRenderer(temp1);
-						//render->Init();
-						gamelist.at(selected)->GetGameObject()->AddComponent(render3);
-						component_active = false;
-					}
-					ImGui::End();
 				}
-			
+				if (ImGui::Button("ModelRenderer"))
+				{
+					GameObject* temp = gamelist.at(selected);
+					ModelRenderer* render2 = new ModelRenderer(temp);
+					//render->Init();
+					gamelist.at(selected)->AddComponent(render2);
+
+
+				}
+				if (ImGui::Button("TileMapRender"))
+				{
+					GameObject* temp1 = gamelist.at(selected);
+					TileMapRenderer* render3 = new TileMapRenderer(temp1);
+					//render->Init();
+					gamelist.at(selected)->AddComponent(render3);
+				}
+				ImGui::End();
+			}
+		}
+
 
 
 		

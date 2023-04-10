@@ -48,9 +48,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {	
 	IFramework* rw = IFrameworkFactory::createFramework();
+
 	rw->Initialize(hInstance, "KYONGGI CAPSTONE", "Framework", 1600, 900);
 
 	{
+		rw->AddMenubar([]() {
+
+			if (ImGui::BeginMenu("File2222"))
+			{
+				if (ImGui::MenuItem("Open", "Ctrl+O")) { /* 파일 열기 */ }
+				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* 파일 저장 */ }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+			
+		});
+
 		UIManager* uiMgr = new UIManager(rw);
 		uiMgr->InitResource();
 		uiMgr->Init();

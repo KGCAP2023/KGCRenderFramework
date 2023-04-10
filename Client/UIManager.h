@@ -71,10 +71,10 @@ public:
 		gg->transform.SetPosition(50, 40, 0);
 
 		//Å¸ÀÏ¸Ê ·»´õ·¯ ÄÄÆ÷³ÍÆ® »ý¼º
-		TileMapRenderer* tileRender = new TileMapRenderer(gg);
+		TileMapRenderer* tileRender = new TileMapRenderer(gg,(ResourceManager*)resMgr);
 
 		//Å¸ÀÏ¸Ê ·»´õ·¯ ÄÄÆ÷³ÍÆ®¿¡ Å¸ÀÏ¸ÊÀ» ÀåÂø		Init ´ë½Å AddTileMap »ç¿ë
-		tileRender->AddTileMap(tileMap);
+		tileRender->SetTileMap(tileMap);
 
 		//°ÔÀÓ¿ÀºêÁ§Æ®¿¡ Å¸ÀÏ¸Ê ·»´õ·¯ ÄÄÆ÷³ÍÆ® ÀåÂø
 		gg->AddComponent(tileRender);

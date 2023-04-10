@@ -24,6 +24,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferType.h" />
@@ -71,6 +72,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -99,6 +101,7 @@
     <ClCompile Include="StringUtil.cpp" />
     <ClCompile Include="TestRenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TileMapRenderer.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />

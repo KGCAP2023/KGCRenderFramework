@@ -3,7 +3,6 @@
 #include "Shaders.h"
 #include "Renderer.h"
 #include "SkinnedMesh.h"
-#include "ResourceManager.h"
 
 /// <summary>
 /// 애니메이션이들어있는 동적 3D모델을 로드할때 사용하는 컴포넌트 입니다. 
@@ -12,16 +11,20 @@ class SkinnedMeshRenderer : public Component , public Renderer
 {
 public:
 
-	SkinnedMeshRenderer(GameObject* owner) : Component(owner)
+	SkinnedMeshRenderer(GameObject* owner, ResourceManager* res) : Component(owner)
 	{
 		this->type = Component::Type::RENDERER_SKINNED_MODEL;
 		this->name = "SkinnedMeshRenderer";
+		this->res = res;
 	}
 
 	bool SetSkinnedMesh(SkinnedMesh* model);
 
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual void Update() override;
+
+	virtual void InitBoundingBox() override;
+	virtual BoundingBoxRenderer* GetBoundingBox() override;
 
 	std::string GetPath();
 	const aiScene* GetAiScene();
@@ -94,4 +97,7 @@ private:
 	Animation3D* selectedAnimation = nullptr;
 	std::vector<XMMATRIX> matrix;
 	long long StartTimeMillis = 0;
+
+	BoundingBoxRenderer* bbox = nullptr;
+	ResourceManager* res = nullptr;
 };

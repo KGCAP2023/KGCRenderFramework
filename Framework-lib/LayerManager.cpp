@@ -30,6 +30,11 @@ ILayer* LayerManager::FindLayer(const std::string& key)
 	return nullptr;
 }
 
+void LayerManager::AddMenubar(std::function<void()> callback)
+{
+	this->_menubar.push_back(callback);
+}
+
 void LayerManager::Update()
 {
 	for (auto& layer : this->_layerMap)
@@ -107,6 +112,13 @@ void LayerManager::DockingSpace()
 	{
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+	}
+	if (ImGui::BeginMenuBar())
+	{
+		for (auto func : _menubar)
+		{
+			func();
+		}
 	}
 	ImGui::End();
 

@@ -133,6 +133,8 @@ void GraphicManager::RenderFrame()
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 
 	{
+
+
 		//Sprite를 그립니다.
 		for (const auto& kv : gameObjectManager->gameObjects)
 		{
@@ -182,6 +184,7 @@ void GraphicManager::RenderFrame()
 	//창을 그립니다.
 	framework->layerManager.Render();
 	
+
 	#pragma region LuaTest
 
 	//this->framework->luaManager.ExecuteGUITest();
@@ -598,6 +601,14 @@ bool GraphicManager::InitializeScene()
 	GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
 	obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
 
+	GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
+	obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
+	obj2->transform.SetScale(0.5f, 0.5f, 0.0f);
+	SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
+	rrr->SetSprite(res->FindSprite("ani"));
+	obj2->AddComponent(rrr);
+
+
 	#pragma endregion
 
 
@@ -608,7 +619,7 @@ bool GraphicManager::InitializeScene()
 	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
 	this->cameraComponent->initViewMatrix(
 		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
-		100, 100, -1, INFINITE);
+		100, 100, -10000, INFINITE);
 	/**********************************************/
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;

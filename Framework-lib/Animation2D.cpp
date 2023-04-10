@@ -2,12 +2,16 @@
 #include "Animation2D.h"
 #include "Sprite.h"
 
-void Animation2D::Draw(DirectX::SimpleMath::Vector2 pos, SpriteBatch* spriteBatch)
+void Animation2D::Draw(Transform& transform, SpriteBatch* spriteBatch)
 {
+	XMFLOAT2 pos(transform.position.x, transform.position.y);
+	float rot = transform.rotation.z;
+	float scale = transform.scale.x;
+
 	spriteBatch->Begin();
 
 	spriteBatch->Draw(sprite.Get(), pos, &frames[iCurFrame],
-		Colors::White, 0.f, DirectX::SimpleMath::Vector2(0, 0), 1.f);
+		Colors::White, rot, DirectX::SimpleMath::Vector2(0, 0), scale);
 
 	spriteBatch->End();
 }

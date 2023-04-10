@@ -135,9 +135,6 @@
     <ClInclude Include="ILayer.h">
       <Filter>헤더 파일\API</Filter>
     </ClInclude>
-    <ClInclude Include="LayerManager.h">
-      <Filter>헤더 파일\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="IFrameworkFactory.h">
       <Filter>헤더 파일\API</Filter>
     </ClInclude>
@@ -176,6 +173,12 @@
     </ClInclude>
     <ClInclude Include="LuaManager.h">
       <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>헤더 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="LayerManager.h">
+      <Filter>헤더 파일\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,6 +288,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LuaManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMapRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

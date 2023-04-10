@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Transform.h"
 #include <SimpleMath.h>
 #include <SpriteBatch.h>
 
@@ -25,7 +26,7 @@ public:
 	//Animation2D(const Animation2D& rhs) = delete;
 	//Animation2D& operator=(const Animation2D& ref) = delete;
 
-	void Draw(DirectX::SimpleMath::Vector2 pos, SpriteBatch* spriteBatch);
+	void Draw(Transform& transform, SpriteBatch* spriteBatch);
 	void Update(float dt);
 private:
 	void Advance();

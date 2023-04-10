@@ -49,8 +49,11 @@ public:
 		float width = image->GetWidth();
 		float height = image->GetHeight();
 
-		static float mouse_x, mouse_y;
-		float Bitmap_size[2];
+		//static float mouse_x, mouse_y;
+		static float* mouse_x = nullptr;
+		static float* mouse_y = nullptr;
+		static int mouse_cnt = 0;
+		static int tilemap_size[2];
 		
 		//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
 		float x_unit = 1 / 9.0f;
@@ -61,6 +64,22 @@ public:
 			ImGui::Begin(u8"Level Editor", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);	//UI창을 내부 메뉴 선택과 창닫기가 가능하도록 MenuBar로 설정
 			ImGui::Checkbox("Grid", &opt_enable_grid);								//캔버스 내부의 grid 표시여부
 			
+			ImGui::Text("Tile Map Size");
+			ImGui::SameLine();
+			ImGui::PushItemWidth(100);
+			ImGui::InputInt2(" ", tilemap_size);
+			if (ImGui::Button("Open Tilemap"))
+				isActiveWindow2 = true;
+			ImGui::PopItemWidth();
+
+			for (int i = 0; i < tilemap_size[0]; i++) {
+				for (int j = 0; j < tilemap_size[1]; j++)
+					mouse_cnt++;
+			}
+			mouse_x = (float*)malloc(sizeof(int) * mouse_cnt);
+			mouse_y = (float*)malloc(sizeof(int) * mouse_cnt);
+			mouse_cnt = 0;
+
 			ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList가 화면의 좌표를 가져와 사용, UI창 이동시 캔버스의 좌표도 같이 움직임
 			ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // 윈도우 창 사이즈에 맞추어 캔버스 사이즈를 조절
 			if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
@@ -85,17 +104,19 @@ public:
 				ImVec2(origin.x + width, origin.y + height), 
 				ImVec2(0, 0), ImVec2(1, 1));
 
-			//마우스가 캔버스 내부에서 좌클릭된 경우
-			if (is_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			//마우스가 캔버스 내부에서 좌클릭된 경우 + 타일맵 창이 켜졌을 경우
+			if (is_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&isActiveWindow2)
 			{
 				points.push_back(mouse_pos_in_canvas);
 				points.push_back(mouse_pos_in_canvas);
 
 				//현재 마우스 좌표를 Grid 한 칸 크기인 32픽셀로 나누어 표현
-				mouse_x = mouse_pos_in_canvas.x / 32;
-				mouse_y = mouse_pos_in_canvas.y / 32;
+				mouse_x[mouse_cnt] = mouse_pos_in_canvas.x / 32;
+				mouse_y[mouse_cnt] = mouse_pos_in_canvas.y / 32;
 
-				isActiveWindow2 = true;
+				//std::cout << mouse_x[mouse_cnt] << std::endl;
+				//std::cout << mouse_y[mouse_cnt] << std::endl;
+				mouse_cnt++;
 			}
 
 			//캔버스 내부에 Grid를 표시하는 부분, 체크박스 Grid가 해제된 경우 캔버스 내부에 grid를 그리지 않음
@@ -115,12 +136,30 @@ public:
 			ImGui::End();
 		}
 
-		if(isActiveWindow2) {	//Added 창에 선택한 이미지 범위 출력
-			ImGui::Begin(u8"Chosen Grid Block");
-			ImGui::Image((void*)image->Get(), ImVec2(125, 125),
-				ImVec2((int)mouse_x * x_unit, (int)mouse_y * y_unit),
-				ImVec2((int)mouse_x * x_unit + x_unit, (int)mouse_y * y_unit + y_unit));
+		if(isActiveWindow2) {	//Added 창에 선택한 이미지 범위 출력, 창의 크기는 입력한 타일맵 사이즈 크기에 맞추어 자동으로 지정
+			ImGui::Begin(u8"Chosen Grid Block", &isActiveWindow2, ImGuiWindowFlags_AlwaysAutoResize);
+			//int i = 0, count = 0;
+			//while (i < tilemap_size[0]) {
+			//	ImGui::ImageButton((void*)image->Get(), ImVec2(50, 50),
+			//		ImVec2((int)mouse_x[count] * x_unit, (int)mouse_y[count] * y_unit),
+			//		ImVec2((int)mouse_x[count] * x_unit + x_unit, (int)mouse_y[count] * y_unit + y_unit));
+			//	ImGui::SameLine();
+			//	i++;
+			//}
+			
+			for (int i = 0, k = 0; i < tilemap_size[0]; i++) {
+				for (int j = 0; j < tilemap_size[1]; j++, k++) {
+					ImGui::SameLine();
+					ImGui::ImageButton((void*)image->Get(), ImVec2(50, 50),
+						ImVec2((int)mouse_x[k] * x_unit, (int)mouse_y[k] * y_unit),
+						ImVec2((int)mouse_x[k] * x_unit + x_unit, (int)mouse_y[k] * y_unit + y_unit));
+				}
+				ImGui::Text("");	//줄바꿈을 위해 빈 텍스트 출력
+			}
 			ImGui::End();
 		}
+
+		free(mouse_x);
+		free(mouse_y);
 	};
 };

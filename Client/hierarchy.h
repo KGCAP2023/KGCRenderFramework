@@ -69,6 +69,10 @@ private:
 
 };
 
+
+
+
+
 class Hierarchy : public ILayer
 {
 public:
@@ -78,11 +82,11 @@ public:
 	Sprite* sp;
 	std::vector<HierarchyObject*> gamelist;
 	std::vector<Component*> componentlist;
-	int selected = 0;
 	bool check1 = true;
 	bool check2 = true;
 	bool check3 = true;
 	int component_selected = 0;
+	int selected = 0;
 	bool my_tool_active = true;
 	bool active = false;
 	bool show_warning = false;
@@ -105,8 +109,19 @@ public:
 		this->framework = framework;
 		this->_manager = manager;
 		this->ResM = res;
+		
+		this->_manager->AddFocusedObjectListener([&](GameObject* selectedObject) {
 
+			for (int k = 0; k < gamelist.size(); k++) 
+			{
+				if (selectedObject->GetName() == gamelist.at(k)->GetGameObject()->GetName())
+				{
+					selected = k;
+				}
+			
+			}
 
+		});
 
 		GameObject* obj = _manager->CreateGameObject("Object1");
 		GameObject* obj1 = _manager->CreateGameObject("Object2");
@@ -307,7 +322,7 @@ public:
 					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
-					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP); \
+					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP); 
 						ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##tile", tileName.size() == 0 ? "" : tileName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
@@ -441,9 +456,12 @@ public:
 
 		if (ImGui::BeginPopupModal("Delete", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::Text(u8"삭제 되었습니다.");
-			if (ImGui::Button("OK")) {
+			if (ImGui::Button(u8"확인") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+			{
+
 				ImGui::CloseCurrentPopup();
 				show_delete = false;
+
 			}
 			ImGui::EndPopup();
 		}
@@ -501,7 +519,11 @@ public:
 				for (int i = 0; i < gamelist.size(); i++)
 				{
 					if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
+					{
 						selected = i;
+						gamelist.at(i)->GetGameObject()->SetFocus();
+					}
+						
 				}
 				ImGui::EndChild();
 				ImGui::SetScrollX(100.0f);

@@ -64,9 +64,7 @@ public:
 private:
 	GameObject* obj;
 	std::map<Component::Type, std::string> map1;
-
 	std::vector<Component::Type> _delete;
-
 };
 
 class Hierarchy : public ILayer
@@ -98,15 +96,11 @@ public:
 	std::vector<std::string> tileList;
 	std::vector<std::string> modelList;
 
-
-
 	Hierarchy(IGameObjectManager* manager, IResourceManager* res, const std::string& name, IFramework* framework) : ILayer(name)
 	{
 		this->framework = framework;
 		this->_manager = manager;
 		this->ResM = res;
-
-
 
 		GameObject* obj = _manager->CreateGameObject("Object1");
 		GameObject* obj1 = _manager->CreateGameObject("Object2");
@@ -118,8 +112,6 @@ public:
 		GameObject* obj7 = _manager->CreateGameObject("Object8");
 		GameObject* obj8 = _manager->CreateGameObject("Object9");
 
-
-
 		obj->transform.SetPosition(30, 20, 30);
 		obj1->transform.SetPosition(10, 30, 15);
 		obj2->transform.SetPosition(123, 20, 30);
@@ -129,8 +121,6 @@ public:
 		obj6->transform.SetPosition(63, 20, 30);
 		obj7->transform.SetPosition(71, 20, 30);
 		obj8->transform.SetPosition(32, 20, 30);
-
-
 
 		obj->transform.SetRotation(30, 20, 30);
 		obj1->transform.SetRotation(10, 30, 15);
@@ -142,11 +132,6 @@ public:
 		obj7->transform.SetRotation(71, 20, 30);
 		obj8->transform.SetRotation(32, 20, 30);
 
-
-
-
-
-
 		gamelist.push_back(new HierarchyObject(obj));
 		gamelist.push_back(new HierarchyObject(obj1));
 		gamelist.push_back(new HierarchyObject(obj2));
@@ -156,9 +141,6 @@ public:
 		gamelist.push_back(new HierarchyObject(obj6));
 		gamelist.push_back(new HierarchyObject(obj7));
 		gamelist.push_back(new HierarchyObject(obj8));
-
-
-
 	}
 
 	virtual ~Hierarchy()
@@ -203,10 +185,19 @@ public:
 			std::string name2 = tp->GetName();
 			tileList.push_back(name2);
 
-		}
-		if (gamelist.at(selected)->GetGameObject()->GetComponentSize() != 0)
-		{
-			GameObject* obj = gamelist.at(selected)->GetGameObject();
+			ImGui::BeginGroup();
+
+			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
+			if (gamelist.size() != 0)
+			{
+				ImGui::Text(const_cast<char*>(gamelist.at(selected)->GetGameObject()->ObjectName.c_str()));
+				ImGui::Separator();
+				ImGui::Text("TRANSFORM");
+				const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO", "PPPP", "QQQQQQQQQQ", "RRR", "SSSS" };
+				static const char* current_item = NULL;
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.position.x, 0, 1600);
+				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, 0, 1600);
+				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 0, 1600);
 
 
 			obj->ComponentForeach([&](Component* c) {
@@ -340,18 +331,11 @@ public:
 
 					break;
 				}
-
-				}
-
-
-
-
-				});
-
+			}
+		}	
+	);
 
 			gamelist.at(selected)->DeleteComponent();
-
-
 
 		}
 		ImGui::Separator();
@@ -371,7 +355,6 @@ public:
 
 	virtual void Render()
 	{
-
 		if (active)
 		{
 			ImGui::SetNextWindowSize(ImVec2(700, 600));
@@ -456,44 +439,32 @@ public:
 			{
 				ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
 				active = true;
-
-
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("delete"))
 			{
-				if (gamelist.size() != 0)
+				//selected=0~12 size 13
+				if (selected > 0) 
 				{
-					//selected=0~12 size 13
-					if (selected > 0)
+					if (selected == gamelist.size() - 1)
 					{
-						if (selected == gamelist.size() - 1)
-						{
-							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-							gamelist.pop_back();
-							selected--;
-							show_delete = true;
-						}
-						else
-						{
-							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-							gamelist.erase(gamelist.begin() + selected);
-							show_delete = true;
-						}
+						gamelist.at(selected)->GetGameObject()->Destroy();
+						gamelist.pop_back();
+						selected--;
 					}
 					else
 					{
-						_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
+						gamelist.at(selected)->GetGameObject()->Destroy();
 						gamelist.erase(gamelist.begin() + selected);
-						show_delete = true;
+						
 					}
 				}
-
-
+				else 
+				{
+					gamelist.at(selected)->GetGameObject()->Destroy();
+					gamelist.pop_back();
+				}
 			}
-
-
-
 
 			if (gamelist.size() != 0)
 			{
@@ -595,7 +566,9 @@ public:
 							ImGui::SameLine();
 							ImGui::SliderFloat(u8"##scale ", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
 
-
+				ImGui::SliderFloat3(u8"pos     X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
+				ImGui::SliderFloat3(u8"roation X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58, 1.58);
+				ImGui::SliderFloat3(u8"scale :  X : Y : Z", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
 
 							ImGui::Separator();
 							break;
@@ -616,12 +589,9 @@ public:
 
 				component();
 
-
-
 				ImGui::SameLine();
 				ImGui::EndGroup();
 				ImGui::SameLine();
-
 			}
 			ImGui::End();
 		}
@@ -661,10 +631,5 @@ public:
 			}
 			ImGui::End();
 		}
-
-
-
-
-
 	}
 };

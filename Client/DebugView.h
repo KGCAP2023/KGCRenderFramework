@@ -9,7 +9,6 @@
 #include <Framework/ResourceManager.h>
 #include <Framework/ILayer.h>
 #include <Framework/IFramework.h>
-
 class DebugView : public ILayer
 {
 public:

@@ -49,7 +49,7 @@ IAudioManager* Framework::GetAudioManager()
 
 GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
-	if (this->gameObjManager != nullptr) gameObjManager = new GameObjectManager(this);
+	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
 	return gameObjManager;
 }

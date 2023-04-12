@@ -663,6 +663,7 @@ public:
 				
 			
 			}
+			ImGui::Separator();
 			bool check_detail = gamelist.at(selected)->Detail();
 			ImGui::Checkbox("Detail", &check_detail);
 			gamelist.at(selected)->SetDetail(check_detail);
@@ -745,6 +746,7 @@ public:
 
 
 					}
+					ImGui::Separator();
 					bool check_detail = gamelist.at(selected)->Detail();
 					ImGui::Checkbox("Detail", &check_detail);
 					gamelist.at(selected)->SetDetail(check_detail);
@@ -859,6 +861,7 @@ public:
 
 
 					}
+					ImGui::Separator();
 					bool check_detail = gamelist.at(selected)->Detail();
 					ImGui::Checkbox("Detail", &check_detail);
 					gamelist.at(selected)->SetDetail(check_detail);
@@ -931,6 +934,7 @@ public:
 
 
 					}
+					ImGui::Separator();
 					bool check_detail = gamelist.at(selected)->Detail();
 					ImGui::Checkbox("Detail", &check_detail);
 					gamelist.at(selected)->SetDetail(check_detail);
@@ -960,13 +964,57 @@ public:
 			ImGui::SetNextWindowSize(ImVec2(700, 600));
 			ImGui::Begin("Add Object", &active, ImGuiWindowFlags_MenuBar);
 
+			ImGui::PushItemWidth(90);
 
 			ImGui::InputText("name", a, IM_ARRAYSIZE(a));
-			CheckTransform();
-			ImGui::SliderFloat3(u8"pos     X : Y : Z", &pos.x, -100, 100);
-			ImGui::SliderFloat3(u8"rot     X : Y : Z", &rot.x, -1.58, 1.58);
-			ImGui::SliderFloat3(u8"scale     X : Y : Z", &scale.x, 1, 3);
 
+			ImGui::Separator();
+			ImGui::Text("POS");
+			ImGui::Text("X:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##pos", &pos.x, -100, 100);
+			ImGui::SameLine();
+			ImGui::Text("Y:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##pos1", &pos.y, -100, 100);
+			ImGui::SameLine();
+			ImGui::Text("Z:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##pos2", &pos.z, -100, 100);
+
+
+			ImGui::Separator();
+			ImGui::Text("ROTATION");
+			ImGui::Text("X:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##rot", &rot.x, -1.58, 1.58);
+			ImGui::SameLine();
+			ImGui::Text("Y:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##rot1", &rot.y, -1.58, 1.58);
+			ImGui::SameLine();
+			ImGui::Text("Z:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##rot2", &rot.z, -1.58, 1.58);
+			scale.x = 1;
+			scale.y = 1;
+			scale.z = 1;
+			ImGui::Separator();
+			ImGui::Text("SCALE");
+			ImGui::Text("X:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##scale", &scale.x, 1, 3);
+			ImGui::SameLine();
+			ImGui::Text("Y:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##scale1", &scale.y, 1, 3);
+			ImGui::SameLine();
+			ImGui::Text("Z:");
+			ImGui::SameLine();
+			ImGui::SliderFloat(u8"##scale2", &scale.z, 1, 3);
+			ImGui::PopItemWidth();
+
+			ImGui::Separator();
 			if (ImGui::Button("create"))
 			{
 
@@ -984,9 +1032,7 @@ public:
 				}
 
 
-				scale.x = 1;
-				scale.y = 1;
-				scale.z = 1;
+
 				std::memset(a, 0, IM_ARRAYSIZE(a));
 				active = false;
 

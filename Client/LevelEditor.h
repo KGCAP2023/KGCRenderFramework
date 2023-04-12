@@ -50,7 +50,7 @@ public:
 		float height = image->GetHeight();
 
 		static int tilemap_size[2];
-		static int tilemap_x, tilemap_y;
+		static int tilemap_height, tilemap_width;
 
 		//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
 		float x_unit = 1 / 9.0f;
@@ -64,20 +64,20 @@ public:
 			ImGui::SameLine();
 			ImGui::PushItemWidth(100);
 			ImGui::InputInt2(" ", tilemap_size);
-			tilemap_x = tilemap_size[0];
-			tilemap_y = tilemap_size[1];
+			tilemap_height = tilemap_size[0];
+			tilemap_width = tilemap_size[1];
 			static int mouse_cnt = 0;
 
 			if (ImGui::Button("Open Tilemap")) {
-				if (tilemap_x != 0 && tilemap_y != 0)
+				if (tilemap_height != 0 && tilemap_width != 0)
 					isActiveWindow2 = true;
 			}
 			ImGui::PopItemWidth();
 
 			//동적 배열 생성
 			//4월12일) free() 사용시 에러로 튕기는 경우가 있어 수정이 필요함.
-			static float* mouse_x = (float*)malloc(sizeof(int) * (tilemap_x * tilemap_y));
-			static float* mouse_y = (float*)malloc(sizeof(int) * (tilemap_x * tilemap_y));
+			static float* mouse_x = (float*)malloc(sizeof(int) * (tilemap_height * tilemap_width));
+			static float* mouse_y = (float*)malloc(sizeof(int) * (tilemap_height * tilemap_width));
 			
 			ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      
 			ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   
@@ -134,10 +134,16 @@ public:
 			if (isActiveWindow2) {	//Added 창에 선택한 이미지 범위 출력, 창의 크기는 타일맵의 크기에 맞추어 자동으로 조절됨
 				ImGui::Begin(u8"Chosen Grid Block", &isActiveWindow2, ImGuiWindowFlags_AlwaysAutoResize);
 				
+				//현재 선택한 타일을 Image 형식으로 출력
+				ImGui::Text("Current Tile");
+				ImGui::Image((void*)image->Get(), ImVec2(125,125), 
+					ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit),
+					ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit + x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit + y_unit));
+
 				ImGui::Text("Tilemap");
 				ImGui::Text("");
-				for (int i = 0, k = 0; i < tilemap_x; i++) {
-					for (int j = 0; j < tilemap_y; j++, k++) {
+				for (int i = 0, k = 0; i < tilemap_height; i++) {
+					for (int j = 0; j < tilemap_width; j++, k++) {
 						ImGui::SameLine();
 						ImGui::ImageButton((void*)image->Get(), ImVec2(50, 50),
 							ImVec2((int)mouse_x[k] * x_unit, (int)mouse_y[k] * y_unit),

@@ -28,7 +28,7 @@ public:
 	/// 해당창이 켜져있는지 확인합니다.
 	/// </summary>
 	/// <returns></returns>
-	bool Activate() { _isActive = true; }
+	void Activate() { _isActive = true; }
 	/// <summary>
 	/// 해당창을 활성화 시킵니다.
 	/// </summary>

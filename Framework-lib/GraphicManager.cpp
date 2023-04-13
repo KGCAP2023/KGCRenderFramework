@@ -211,7 +211,11 @@ void GraphicManager::ResizeWindow(int width, int height)
 {
 	this->width = width;
 	this->height = height;
-
+	this->framework->width = width;
+	this->framework->height = height;
+	this->framework->ray->screenHeight = height;
+	this->framework->ray->screenWidth = width;
+	
 	this->deviceContext->OMSetRenderTargets(0, 0, 0);
 
 	//백버퍼와 기존 렌더타켓뷰를 자원을 해제합니다.

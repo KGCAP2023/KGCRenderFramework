@@ -40,7 +40,7 @@ public:
 	const std::string& GetName() { return _name; }
 protected:
 	void SetName(const std::string& name) { _name = name; }
-private:
 	bool _isActive;
+private:
 	std::string _name;
 };

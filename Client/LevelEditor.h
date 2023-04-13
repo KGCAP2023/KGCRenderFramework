@@ -83,7 +83,8 @@ public:
 			ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   
 			if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 			if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-			ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+			//ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+			ImVec2 canvas_p1 = ImVec2(canvas_p0.x + width, canvas_p0.y + height);	//캔버스 크기를 창 크기와 동기화하지 않고 이미지 사이즈로 고정
 
 			ImGuiIO& io = ImGui::GetIO();
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -108,11 +109,14 @@ public:
 				points.push_back(mouse_pos_in_canvas);
 				points.push_back(mouse_pos_in_canvas);
 
-				//현재 마우스 좌표를 Grid 한 칸 크기인 32픽셀로 나누어 표현
-				mouse_x[mouse_cnt] = mouse_pos_in_canvas.x / 32;
-				mouse_y[mouse_cnt] = mouse_pos_in_canvas.y / 32;
+				//동적 배열의 크기를 초과하지 않는 범위에서 마우스 좌표를 저장
+				if(mouse_cnt <= tilemap_width * tilemap_height)	{
+					//현재 마우스 좌표를 Grid 한 칸 크기인 32픽셀로 나누어 표현
+					mouse_x[mouse_cnt] = mouse_pos_in_canvas.x / 32;
+					mouse_y[mouse_cnt] = mouse_pos_in_canvas.y / 32;
 
-				mouse_cnt++;
+					mouse_cnt++;
+				}
 			}
 
 			//캔버스 내부에 Grid를 표시하는 부분, 체크박스 Grid가 해제된 경우 캔버스 내부에 grid를 그리지 않음
@@ -128,9 +132,7 @@ public:
 				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
 			draw_list->PopClipRect();
 
-
-			//4월11일)아직 클릭한 이미지를 내부의 imagebutton에 삽입하지는 못함
-			//4월12일)imagebutton 내부에 이미지 삽입이 가능하지만 실행도중 종종 튕기는 경우 발생, 코드 개선 필요
+			//4월13일)imagebutton 내부에 이미지 삽입이 가능, 튕기는 경우를 if문으로 제외시킴
 			if (isActiveWindow2) {	//Added 창에 선택한 이미지 범위 출력, 창의 크기는 타일맵의 크기에 맞추어 자동으로 조절됨
 				ImGui::Begin(u8"Chosen Grid Block", &isActiveWindow2, ImGuiWindowFlags_AlwaysAutoResize);
 				
@@ -140,6 +142,7 @@ public:
 					ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit),
 					ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit + x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit + y_unit));
 
+				//전체 타일맵을 ImageButton 형식으로 출력
 				ImGui::Text("Tilemap");
 				ImGui::Text("");
 				for (int i = 0, k = 0; i < tilemap_height; i++) {

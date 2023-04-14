@@ -5,6 +5,8 @@ class ILayer
 {
 public:
 	ILayer(const std::string& name) : _name(name), _isActive(true) {}
+	
+
 	virtual ~ILayer();
 	/// <summary>
 	/// 초기화 하는 함수입니다.
@@ -28,7 +30,7 @@ public:
 	/// 해당창이 켜져있는지 확인합니다.
 	/// </summary>
 	/// <returns></returns>
-	bool Activate() { _isActive = true; }
+	void Activate() { _isActive = true; }
 	/// <summary>
 	/// 해당창을 활성화 시킵니다.
 	/// </summary>
@@ -40,7 +42,7 @@ public:
 	const std::string& GetName() { return _name; }
 protected:
 	void SetName(const std::string& name) { _name = name; }
-private:
 	bool _isActive;
+private:
 	std::string _name;
 };

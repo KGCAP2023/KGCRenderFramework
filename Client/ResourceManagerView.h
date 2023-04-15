@@ -12,7 +12,6 @@
 #include <Framework/TileMap.h>
 class ResourceManagerView : public ILayer
 {
-    IFramework* framework;
     IGameObjectManager* ObjM;
     IResourceManager* ResM;
     Sprite* image;

@@ -93,9 +93,9 @@ public:
             }
             
 
-            /* 오디오 구현시 구현 예정
+            /* 오디오 구현시 구현 예정(생성자에 AudioManager 추가 필요)
             if (ImGui::CollapsingHeader("Audio")) {
-                auto map = this->AudM
+                auto map = ResM->GetAudioMap();
                 for (auto& pair : map) {
                     const char* name = pair.first;
 

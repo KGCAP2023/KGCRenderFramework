@@ -12,12 +12,14 @@
 #include <Framework/TileMap.h>
 class ResourceManagerView : public ILayer
 {
+    IFramework* framework;
     IGameObjectManager* ObjM;
     IResourceManager* ResM;
     Sprite* image;
 
 
 public:
+    bool show_popup = false;
     ResourceManagerView(IGameObjectManager* manager, IResourceManager* res, const std::string name) : ILayer(name)
     {
         this->ObjM = manager;
@@ -44,7 +46,6 @@ public:
     {
         auto keyboard = InputManager::GetKeyboardState();
         auto mouse = InputManager::GetMouseState();
-        auto map = ResM->GetSpriteMap();
         
         if (_isActive) {
             ImGui::Begin(u8"Resource Manager View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
@@ -59,12 +60,65 @@ public:
             }
             ImGui::Separator();
 
-            for (auto& pair : map) {
-                Sprite* sp = pair.second;
-                sp->GetName();
-                ImGui::Image((void*)sp->Get(), ImVec2(128, 128));
-                ImGui::Text(u8"%s", sp->GetName().c_str());
+            if (ImGui::CollapsingHeader("Sprite")) {
+                auto map = ResM->GetSpriteMap();
+                for (auto& pair : map) {
+                    Sprite* sp = pair.second;
+                    sp->GetName();
+
+                    if (ImGui::Selectable(sp->GetName().c_str(), &show_popup))
+                        ImGui::OpenPopup(sp->GetName().c_str());
+
+                    if (ImGui::BeginPopup(sp->GetName().c_str()))
+                    {
+                        ImGui::Image((void*)sp->Get(), ImVec2(128, 128));
+                        ImGui::EndPopup();
+                    }
+                }
             }
+            if (ImGui::CollapsingHeader("Object")) {
+                auto map = ResM->GetModelMap();
+                for (auto& pair : map) {
+                    Model* mo = pair.second;
+                    mo->GetName();
+
+                    if (ImGui::Selectable(mo->GetName().c_str(), &show_popup))
+                        ImGui::OpenPopup(mo->GetName().c_str());
+
+                    if (ImGui::BeginPopup(mo->GetName().c_str()))
+                    {
+                        ImGui::Text(u8"¸ðµ¨ ºä or ¸ðµ¨ ½æ³×ÀÏ »ðÀÔ¿¹Á¤");
+                        ImGui::EndPopup();
+                    }
+                }
+            }
+            
+
+            /* ¿Àµð¿À ±¸Çö½Ã ±¸Çö ¿¹Á¤
+            if (ImGui::CollapsingHeader("Audio")) {
+                auto map = this->AudM
+                for (auto& pair : map) {
+                    const char* name = pair.first;
+
+                    if (ImGui::Selectable(name, &show_popup))
+                        ImGui::OpenPopup(name);
+
+                    if (ImGui::BeginPopup(name))
+                    {
+                        if (ImGui::Button("Play")) 
+                        {
+                            this->AudM->PlayAudio(name);
+                        }
+                        if (ImGui::Button("Stop")) 
+                        {
+                            this->AudM->StopAudio(name);
+                        }
+
+                        ImGui::EndPopup();
+                        this->AudM->StopAudio(name);
+                    }
+                }
+            }*/
             ImGui::End();
         }
     }

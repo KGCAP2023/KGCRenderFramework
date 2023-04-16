@@ -289,6 +289,11 @@ void Framework::AddMenubar(std::function<void()> callback)
 	this->layerManager.AddMenubar(callback);
 }
 
+void Framework::SetImGuiDemo(bool value)
+{
+	this->layerManager.SetImGuiDemo(value);
+}
+
 ILayer* Framework::FindLayer(const std::string& key)
 {
 	return this->layerManager.FindLayer(key);
@@ -359,7 +364,6 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 
 	//레이어 매니저 초기화
 	this->layerManager.Init(this);
-	this->layerManager.SetImGuiDemo(true);
 
 	//그래픽스 매니저 초기화
 	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height))

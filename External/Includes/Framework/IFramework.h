@@ -20,6 +20,8 @@ public:
 	virtual void DeleteLayer(const std::string& key);
 	virtual ILayer* FindLayer(const std::string& key);
 	virtual void AddMenubar(std::function<void()> callback);
+	virtual void SetImGuiDemo(bool value);
+
 	//RUN
 
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);

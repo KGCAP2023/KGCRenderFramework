@@ -22,11 +22,11 @@ bool AudioManager::Initialize(Framework* framework)
 
 void AudioManager::LoadAudio(const char* audioName, const char* audioFilePath) 
 {
-	if (this->m_sound.find(audioName) == this->m_sound.end())
+	if (res->m_sound.find(audioName) == res->m_sound.end())
 	{
 		FMOD::Sound* sound;
 		this->m_system->createSound(audioFilePath, FMOD_DEFAULT, nullptr, &sound);
-		this->m_sound.insert(std::make_pair<>(audioName, sound));
+		res->m_sound.insert(std::make_pair<>(audioName, sound));
 		this->m_channel[audioName]->setVolume(1.0f);
 	}
 	else
@@ -36,7 +36,7 @@ void AudioManager::LoadAudio(const char* audioName, const char* audioFilePath)
 
 void AudioManager::DeleteAudio(const char* audioName)
 {
-	this->m_sound.erase(audioName);
+	res->m_sound.erase(audioName);
 }
 
 
@@ -44,7 +44,7 @@ void AudioManager::DeleteAudio(const char* audioName)
 
 void AudioManager::PlayAudio(const char* audioName)
 {
-		this->m_system->playSound(m_sound[audioName], nullptr, false, &m_channel[audioName]);
+		this->m_system->playSound(res->m_sound[audioName], nullptr, false, &m_channel[audioName]);
 }
 
 
@@ -70,5 +70,5 @@ void AudioManager::ResumeAudio(const char* audioName)
 
 void AudioManager::SetVolume(const char* audioName, float volume)
 {
-	this->m_channel[audioName]->setVolume(volume);
+		this->m_channel[audioName]->setVolume(volume);
 }

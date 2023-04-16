@@ -28,8 +28,8 @@ public:
 	virtual void RegisterLayer(const std::string& key, ILayer* layer) override;
 	virtual void DeleteLayer(const std::string& key) override;
 	virtual ILayer* FindLayer(const std::string& key) override;
-
 	virtual void AddMenubar(std::function<void()> callback) override;
+	virtual void SetImGuiDemo(bool value) override;
 
 	virtual bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height) override;
 	virtual void run() override;

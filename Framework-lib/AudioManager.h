@@ -87,6 +87,6 @@ public:
 
 private:
     FMOD::System* m_system;
-    std::map<std::string, FMOD::Sound*> m_sound;
-    std::map<std::string, FMOD::Channel*> m_channel;
+    
+    std::unordered_map<std::string, FMOD::Channel*> m_channel;
 };

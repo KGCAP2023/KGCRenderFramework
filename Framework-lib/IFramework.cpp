@@ -20,6 +20,10 @@ void IFramework::AddMenubar(std::function<void()> callback)
 {
 }
 
+void IFramework::SetImGuiDemo(bool value)
+{
+}
+
 bool IFramework::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
 {
     return false;

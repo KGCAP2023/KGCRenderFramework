@@ -602,15 +602,15 @@ bool GraphicManager::InitializeScene()
 
 	#pragma region 테스트용
 
-	GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
-	obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
+	//GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
+	//obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
 
-	GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
-	obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
-	obj2->transform.SetScale(0.5f, 0.5f, 0.0f);
-	SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
-	rrr->SetSprite(res->FindSprite("ani"));
-	obj2->AddComponent(rrr);
+	//GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
+	//obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
+	//obj2->transform.SetScale(0.5f, 0.5f, 0.0f);
+	//SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
+	//rrr->SetSprite(res->FindSprite("ani"));
+	//obj2->AddComponent(rrr);
 
 
 	#pragma endregion

@@ -130,12 +130,16 @@ public:
 	/// <param name="audioName">map에 저장될 이름입니다.</param>
 	/// <param name="audioFilePath">오디오 파일의 경로입니다.</param>
 	virtual void LoadAudio(const char* audioName, const char* audioFilePath) {};
-
 	/// <summary>
 	/// 불러온 오디오를 삭제합니다.
 	/// </summary>
 	/// <param name="audioName">삭제할 오디오 이름입니다.</param>
 	virtual void DeleteAudio(const char* audioName) {};
+	/// <summary>
+	/// 오디오 맵을 가져옵니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual std::unordered_map<std::string, FMOD::Sound*> GetAudioMap() { return std::unordered_map<std::string, FMOD::Sound*>(); }
 	/// <summary>
 	/// 모델을 순회합니다.
 	/// </summary>
@@ -195,6 +199,7 @@ public:
 	//Audio
 	void LoadAudio(const char* audioName, const char* audioFilePath) override;
 	void DeleteAudio(const char* audioName) override;
+	std::unordered_map<std::string, FMOD::Sound*> GetAudioMap() override;
 
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;
@@ -210,6 +215,10 @@ public:
 	//버텍스 쉐이더
 	std::unordered_map<std::string, VertexShader*> _vsMap;
 	std::unordered_map<std::string, PixelShader*> _psMap;
+
+	//오디오
+	std::unordered_map<std::string, FMOD::Sound*> m_sound;
+
 
 	//상수버퍼
 	ConstantBuffer<CB_VS_1> cb1;

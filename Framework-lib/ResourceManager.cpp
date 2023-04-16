@@ -227,5 +227,10 @@ void ResourceManager::DeleteAudio(const char* audioName)
 	framework->audioManager.DeleteAudio(audioName);
 }
 
+std::unordered_map<std::string, FMOD::Sound*> ResourceManager::GetAudioMap()
+{
+	return this->m_sound;
+}
+
 
 

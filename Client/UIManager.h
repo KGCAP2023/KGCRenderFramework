@@ -40,7 +40,7 @@ public:
 	void InitResource()
 	{
 		sp = this->resMgr->LoadSprite("test", "..\\Resource\\Textures\\sand.PNG");
-		this->TileMapping();
+		//this->TileMapping();
 	}
 
 	void RegisterAllUI()

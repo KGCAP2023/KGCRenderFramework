@@ -22,6 +22,7 @@ public:
 		this->framework = framework;
 		this->objMgr = framework->GetGameObjectManager();	//3/31 리소스 매니저 추가 후 매니저 명 혼동을 방지하기 위해 manager에서 objM로 이름 변경
 		this->resMgr = framework->GetResourceManager();
+		this->audMgr = framework->GetAudioManager();
 	}
 
 	void Init() //UI 클래스 초기화
@@ -32,7 +33,7 @@ public:
 		uiList.push_back(hierarachy);
 		DebugView* debug = new DebugView(this->objMgr, "DebugView");
 		uiList.push_back(debug);
-		ResourceManagerView* RMV = new ResourceManagerView(this->objMgr, resMgr, "RMV");
+		ResourceManagerView* RMV = new ResourceManagerView(this->objMgr, resMgr, audMgr, "RMV");
 		uiList.push_back(RMV);
 	}
 
@@ -83,6 +84,7 @@ public:
 	std::vector<ILayer*> uiList;
 	IResourceManager* resMgr = nullptr;
 	IGameObjectManager* objMgr = nullptr;
+	IAudioManager* audMgr = nullptr;
 	IFramework* framework = nullptr;
 	Sprite* sp = nullptr;
 };

@@ -14,16 +14,24 @@ class ResourceManagerView : public ILayer
 {
     IGameObjectManager* ObjM;
     IResourceManager* ResM;
+    IAudioManager* AudM;
     Sprite* image;
 
 
 public:
+
     bool show_popup = false;
-    ResourceManagerView(IGameObjectManager* manager, IResourceManager* res, const std::string name) : ILayer(name)
+    bool isplaying = false;
+
+    ResourceManagerView(IGameObjectManager* manager, IResourceManager* res, IAudioManager* audio ,const std::string name) : ILayer(name)
     {
         this->ObjM = manager;
         this->ResM = res;
+        this->AudM = audio;
         image = ResM->FindSprite("test");
+        this->ResM->LoadAudio("bgm", "../Resource/Audios/bgm.mp3");
+        
+        
     }
 
     virtual ~ResourceManagerView()
@@ -65,7 +73,7 @@ public:
                     Sprite* sp = pair.second;
                     sp->GetName();
 
-                    if (ImGui::Selectable(sp->GetName().c_str(), &show_popup))
+                    if (ImGui::Selectable(sp->GetName().c_str()))
                         ImGui::OpenPopup(sp->GetName().c_str());
 
                     if (ImGui::BeginPopup(sp->GetName().c_str()))
@@ -81,7 +89,7 @@ public:
                     Model* mo = pair.second;
                     mo->GetName();
 
-                    if (ImGui::Selectable(mo->GetName().c_str(), &show_popup))
+                    if (ImGui::Selectable(mo->GetName().c_str()))
                         ImGui::OpenPopup(mo->GetName().c_str());
 
                     if (ImGui::BeginPopup(mo->GetName().c_str()))
@@ -93,31 +101,49 @@ public:
             }
             
 
-            /* 오디오 구현시 구현 예정(생성자에 AudioManager 추가 필요)
+           
             if (ImGui::CollapsingHeader("Audio")) {
+                
                 auto map = ResM->GetAudioMap();
                 for (auto& pair : map) {
-                    const char* name = pair.first;
+                    const char* name = pair.first.c_str();
 
-                    if (ImGui::Selectable(name, &show_popup))
+                    if (ImGui::Selectable(name))
+                    {
                         ImGui::OpenPopup(name);
+                    }
 
                     if (ImGui::BeginPopup(name))
                     {
                         if (ImGui::Button("Play")) 
                         {
+                            if(isplaying)
+                                this->AudM->StopAudio(name);
+                            
                             this->AudM->PlayAudio(name);
+                            isplaying = true;
                         }
                         if (ImGui::Button("Stop")) 
                         {
                             this->AudM->StopAudio(name);
+                            isplaying = false;
                         }
-
+                        
+                        
                         ImGui::EndPopup();
-                        this->AudM->StopAudio(name);
+                        
                     }
+                    if (!ImGui::IsPopupOpen(name))
+                    {
+                        if (isplaying)
+                        {
+                            this->AudM->StopAudio(name);
+                            isplaying = false;
+                        }
+                    }
+                    
                 }
-            }*/
+            }
             ImGui::End();
         }
     }

@@ -5,8 +5,6 @@ class ILayer
 {
 public:
 	ILayer(const std::string& name) : _name(name), _isActive(true) {}
-	
-
 	virtual ~ILayer();
 	/// <summary>
 	/// 초기화 하는 함수입니다.

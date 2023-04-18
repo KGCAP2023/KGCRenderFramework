@@ -441,6 +441,68 @@ public:
 	/// <summary>
 	/// inputfloat 할떄 최대값 최소값 넘어가면 최대값 최소값으로 설정하게 만들려고 만든 함수 입니다.
 	/// </summary>
+	void CheckSpriteTransform()
+	{
+		float posX = gamelist.at(selected)->GetGameObject()->transform.position.x;
+		float posY = gamelist.at(selected)->GetGameObject()->transform.position.y;
+		float rotZ = gamelist.at(selected)->GetGameObject()->transform.rotation.z;
+
+
+		float minPosX = 0.0f;
+		float maxPosX = 1400.0f;
+
+		float minPosY = 000.0f;
+		float maxPosY = 1600.0f;
+
+
+		float minRotValue = -1.58f;
+		float maxRotValue = 1.58f;
+
+
+		float minScaleValue = 1.0f;
+		float maxScaleValue = 3.0f;
+
+		if (posX < minPosX) {
+			posX = minPosX;
+			gamelist.at(selected)->GetGameObject()->transform.position.x = posX;
+		}
+		else if (posX > maxPosX) {
+			posX = maxPosX;
+			gamelist.at(selected)->GetGameObject()->transform.position.x = posX;
+		}
+
+		if (posY < minPosY) {
+			posY = minPosY;
+			gamelist.at(selected)->GetGameObject()->transform.position.y = posY;
+		}
+		else if (posY > maxPosY) {
+			posY = maxPosY;
+			gamelist.at(selected)->GetGameObject()->transform.position.y = posY;
+		}
+
+		if (rotZ < minRotValue) {
+			rotZ = minRotValue;
+			gamelist.at(selected)->GetGameObject()->transform.rotation.z = rotZ;
+		}
+		else if (rotZ > maxRotValue) {
+			rotZ = maxRotValue;
+			gamelist.at(selected)->GetGameObject()->transform.rotation.z = rotZ;
+		}
+
+		float scaleX = gamelist.at(selected)->GetGameObject()->transform.scale.x;
+
+		if (scaleX < minScaleValue) {
+			scaleX = minScaleValue;
+			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
+		}
+		else if (scaleX > maxScaleValue) {
+			scaleX = maxScaleValue;
+			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
+		}
+
+
+	}
+	 
 	void CheckTransform()
 	{
 		float posX = gamelist.at(selected)->GetGameObject()->transform.position.x;
@@ -527,7 +589,7 @@ public:
 		/// Scale x , y ,z 에 대한 값이 1 보다 작거나 3보다 크면 1 ,3 값으로 치환 시켜주는 곳
 		/// </summary>
 		if (scaleX < minScaleValue) {
-			scaleX = minPosValue;
+			scaleX = minScaleValue;
 			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
 		}
 		else if (scaleX > maxScaleValue) {
@@ -692,11 +754,11 @@ public:
 						ImGui::Text("POS");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
+						ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, 0, 1400);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, -100, 100);
+						ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, 0, 1600);
 
 						ImGui::Separator();
 						ImGui::Text("ROTATION");
@@ -716,7 +778,7 @@ public:
 					}
 					else
 					{
-						CheckTransform();
+						CheckSpriteTransform();
 
 						ImGui::PushItemWidth(90);
 

@@ -12,6 +12,7 @@
 #include "hierarchy.h"
 #include "DebugView.h"
 #include "ResourceManagerView.h"
+#include "ScriptEditor.h"
 
 class UIManager 
 {
@@ -35,11 +36,13 @@ public:
 		uiList.push_back(debug);
 		ResourceManagerView* RMV = new ResourceManagerView(this->objMgr, resMgr, audMgr, "RMV");
 		uiList.push_back(RMV);
+		ScriptEditor* SE = new ScriptEditor(this->objMgr, "ScriptEditor");
+		uiList.push_back(SE);
 	}
 
 	void InitResource()
 	{
-		sp = this->resMgr->LoadSprite("test", "..\\Resource\\Textures\\sand.PNG");
+		sp = this->resMgr->LoadSprite("test", "..//Resource//Textures//sand.PNG");
 		//this->TileMapping();
 	}
 

@@ -17,6 +17,13 @@ class ScriptEditor : public ILayer
 {
 public:
     IGameObjectManager* ObjM;
+    bool _Savewin = false;
+    bool _Loadwin = false;
+
+
+    char savename[20]="";
+    char loadname[20]="";
+    char buffer[1024 * 16] = "type script";
 
     ScriptEditor(IGameObjectManager* manager, const std::string name) : ILayer(name)
     {
@@ -55,35 +62,21 @@ public:
             {
                 if (ImGui::MenuItem("Save"))
                 {
-                    if (ImGui::BeginPopup("filename"))
+                    if (_Loadwin||!_Savewin)
                     {
-                        char name[100] = "";
-                        ImGui::InputTextWithHint("filename", "example", name, IM_ARRAYSIZE(buffer));
-                        ImGui::EndPopup();
-
+                        _Loadwin = false;
+                        _Savewin = true;
                     }
-                    std::ofstream writeFile("example.txt");
-                    if (writeFile.is_open()) {
-                        writeFile << buffer;
-                        writeFile.close();
-                    }
+                    
                 }
                 if (ImGui::MenuItem("Load"))
                 {
-                    if (ImGui::BeginPopup("filename"))
+                    if (_Savewin||!_Loadwin)
                     {
-                        char name[100] = "";
-                        ImGui::InputTextWithHint("filename", "example", name, IM_ARRAYSIZE(buffer));
-                        ImGui::EndPopup();
+                        _Savewin = false;
+                        _Loadwin = true;
+                    }
 
-                    }
-                    std::ifstream readFile("example.txt");
-                    if (readFile.is_open()) {
-                        while (!readFile.eof()) {
-                            readFile.getline(buffer, 1024 * 16);
-                        }
-                        readFile.close();
-                    }
                 }
 
                 if (ImGui::MenuItem("Clear"))
@@ -92,6 +85,61 @@ public:
                 }
             }
             ImGui::EndMenuBar();
+
+            if (_Savewin)
+            {
+                ImGui::Begin(u8"Script Editor", &_Savewin);
+                
+                
+                ImGui::InputTextWithHint("Save filename", "example", savename, IM_ARRAYSIZE(loadname));
+                
+                if (ImGui::Button("Save") && savename!="")
+                {
+                    strcat(savename, ".txt");
+                    std::ofstream writeFile(savename);
+                    if (writeFile.is_open()) {
+                        writeFile << buffer;
+                        writeFile.close();
+                    }
+                    _Savewin = false;
+                    savename[0] = '\0';
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Close"))
+                {
+                    _Savewin = false;
+                    savename[0] = '\0';
+                }
+                ImGui::End();
+            }
+
+            if (_Loadwin)
+            {
+                ImGui::Begin(u8"Script Editor", &_Loadwin);
+                
+                ImGui::InputTextWithHint("Load filename", "example", loadname, IM_ARRAYSIZE(loadname));
+                
+                if (ImGui::Button("Load") && loadname != "")
+                {
+                    strcat(loadname, ".txt");
+                    std::ifstream readFile(loadname);
+                    if (readFile.is_open()) {
+                        while (!readFile.eof()) {
+                            readFile.getline(buffer, 1024 * 16);
+                        }
+                        readFile.close();
+                    }
+                    _Loadwin = false;
+                    loadname[0] = '\0';
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Close"))
+                {
+                    _Loadwin = false;
+                    loadname[0] = '\0';
+                }
+                ImGui::End();
+            }
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
@@ -117,5 +165,5 @@ public:
 
     }
 
-    char buffer[1024 * 16] = "type script";
+    
 };

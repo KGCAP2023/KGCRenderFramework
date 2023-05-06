@@ -1,6 +1,5 @@
 #pragma once
 #include "pch.h"
-#include "IScript.h"
 #include "ILayer.h"
 #include "GameObjectManager.h"
 #include "ResourceManager.h"

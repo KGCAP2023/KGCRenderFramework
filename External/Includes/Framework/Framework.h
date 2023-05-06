@@ -64,7 +64,8 @@ public:
 public:
 
 	static const float getDeltaTime() { return dt;}
-	
+
+	LuaManager* GetLuaManager() { return &luaManager; }
 	void RegisterWindow(HINSTANCE hInstance); // WindowClassEX를 초기화 한다.
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool ProcessMsg();

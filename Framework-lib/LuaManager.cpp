@@ -46,7 +46,6 @@ int LuaManager::lua_GameObjectManager_getGameObject(lua_State* lua)
 	GameObject* person = (*pmPtr)->CreateGameObject("hello");
 	if (person == nullptr) person = (*pmPtr)->FindGameObject("hello");
 
-
 	if (person)
 		registerGameObject(lua, person);    //Function that registers person. After 
 				//the function is called, the newly created instance of Person 

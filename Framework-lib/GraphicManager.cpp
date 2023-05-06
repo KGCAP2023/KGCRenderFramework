@@ -188,7 +188,7 @@ void GraphicManager::RenderFrame()
 	#pragma region LuaTest
 
 	//this->framework->luaManager.ExecuteGUITest();
-
+	
 	#pragma endregion
 
 	ImGui::Render();
@@ -612,6 +612,11 @@ bool GraphicManager::InitializeScene()
 	//rrr->SetSprite(res->FindSprite("ani"));
 	//obj2->AddComponent(rrr);
 
+
+	//GameObject* obj = this->gameObjectManager->CreateGameObject("gooood");
+	//Script* s = new Script(obj, framework);
+	//s->SetLuaFilePath("..\\Lua\\gui.lua");
+	//obj->AddComponent(s);
 
 	#pragma endregion
 

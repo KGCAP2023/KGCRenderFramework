@@ -40,6 +40,18 @@ public:
 	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() override;
 	/// <summary>
+	/// 백엔드 개발용 인스턴스 반환
+	/// </summary>
+	/// <returns></returns>
+	GameObjectManager* GetGameObjectManagerInstance();
+	/// <summary>
+	/// gameObjectManger 교체.
+	/// </summary>
+	/// <returns></returns>
+	virtual void SwitchObjectManager() override;
+
+	virtual IGameObjectManager* GetCurrentGameObjectManager() override;
+	/// <summary>
 	/// 리소스 매니저를 반환합니다. 
 	/// </summary>
 	/// <returns></returns>
@@ -50,11 +62,6 @@ public:
 	/// <returns></returns>
 	virtual IAudioManager* GetAudioManager() override;
 	/// <summary>
-	/// 백엔드 개발용 인스턴스 반환
-	/// </summary>
-	/// <returns></returns>
-	GameObjectManager* GetGameObjectManagerInstance();
-	/// <summary>
 	/// 카메라 모드 전환
 	/// </summary>
 	/// <param name="">viewType::_2D 또는 viewType::_3D 전달</param>
@@ -64,7 +71,8 @@ public:
 public:
 
 	static const float getDeltaTime() { return dt;}
-	
+
+	LuaManager* GetLuaManager() { return &luaManager; }
 	void RegisterWindow(HINSTANCE hInstance); // WindowClassEX를 초기화 한다.
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool ProcessMsg();
@@ -78,7 +86,11 @@ public:
 	ResourceManager resourceManager;
 	AudioManager audioManager;
 	LuaManager luaManager;
+
 	GameObjectManager* gameObjManager = nullptr;
+	GameObjectManager* testgameObjManager = nullptr;
+	GameObjectManager* currentgameObjManager = nullptr;
+
 	Ray* ray;
 
 	~Framework();

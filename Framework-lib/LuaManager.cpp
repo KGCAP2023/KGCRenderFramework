@@ -43,9 +43,8 @@ int LuaManager::lua_GameObjectManager_getGameObject(lua_State* lua)
 	
 	std::string personName = luaL_checkstring(lua, 2);
 
-	GameObject* person = (*pmPtr)->CreateGameObject("hello");
-	if (person == nullptr) person = (*pmPtr)->FindGameObject("hello");
-
+	GameObject* person = (*pmPtr)->FindGameObject(personName);
+	if (person == nullptr) person = (*pmPtr)->CreateGameObject(personName);
 
 	if (person)
 		registerGameObject(lua, person);    //Function that registers person. After 

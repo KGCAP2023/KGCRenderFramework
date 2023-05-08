@@ -19,6 +19,7 @@
 #include <Mouse.h>
 #include "GameObjectManager.h"
 #include "Color.h"
+#include "Script.h"
 
 class Framework;
 class ResourceManager;

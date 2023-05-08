@@ -131,12 +131,12 @@ void GraphicManager::RenderFrame()
 	//Perspective Projection 행렬을 셋팅합니다.
 	this->cameraComponent->cameraLerp();
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
+	GameObjectManager* obj = this->framework->currentgameObjManager;
+
 
 	{
-
-
 		//Sprite를 그립니다.
-		for (const auto& kv : gameObjectManager->gameObjects)
+		for (const auto& kv : obj->gameObjects)
 		{
 			(kv.second)->DrawSprite(vp);
 		}
@@ -146,7 +146,7 @@ void GraphicManager::RenderFrame()
 		deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
 		//3D오브젝트를 그립니다.
-		for (const auto& kv : gameObjectManager->gameObjects) 
+		for (const auto& kv : obj->gameObjects)
 		{
 			(kv.second)->Draw(vp);
 		}
@@ -188,7 +188,7 @@ void GraphicManager::RenderFrame()
 	#pragma region LuaTest
 
 	//this->framework->luaManager.ExecuteGUITest();
-
+	
 	#pragma endregion
 
 	ImGui::Render();
@@ -612,6 +612,11 @@ bool GraphicManager::InitializeScene()
 	//rrr->SetSprite(res->FindSprite("ani"));
 	//obj2->AddComponent(rrr);
 
+
+	//GameObject* obj = this->gameObjectManager->CreateGameObject("gooood");
+	//Script* s = new Script(obj, framework);
+	//s->SetLuaFilePath("..\\Lua\\gui.lua");
+	//obj->AddComponent(s);
 
 	#pragma endregion
 

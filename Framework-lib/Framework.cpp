@@ -32,9 +32,38 @@ void Framework::run()
 
 IGameObjectManager* Framework::GetGameObjectManager()
 {
-	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
+	if (this->gameObjManager == nullptr)
+	{
+		gameObjManager = new GameObjectManager(this);
+		testgameObjManager = new GameObjectManager(this);
+		currentgameObjManager = gameObjManager;
+	}
+	return currentgameObjManager;
+}
 
-	return gameObjManager;
+GameObjectManager* Framework::GetGameObjectManagerInstance()
+{
+	if (this->gameObjManager == nullptr)
+	{
+		gameObjManager = new GameObjectManager(this);
+		testgameObjManager = new GameObjectManager(this);
+		currentgameObjManager = gameObjManager;
+	}
+	return currentgameObjManager;
+}
+
+void Framework::SwitchObjectManager()
+{
+	if (currentgameObjManager == gameObjManager)
+		currentgameObjManager = testgameObjManager;
+	else
+
+		currentgameObjManager = gameObjManager;
+}
+
+IGameObjectManager* Framework::GetCurrentGameObjectManager()
+{
+	return this->currentgameObjManager;
 }
 
 IResourceManager* Framework::GetResourceManager()
@@ -47,12 +76,7 @@ IAudioManager* Framework::GetAudioManager()
 	return &this->audioManager;
 }
 
-GameObjectManager* Framework::GetGameObjectManagerInstance()
-{
-	if (this->gameObjManager == nullptr) gameObjManager = new GameObjectManager(this);
 
-	return gameObjManager;
-}
 
 void Framework::ChangeCameraViewType(Camera3D::ViewType _viewType)
 {

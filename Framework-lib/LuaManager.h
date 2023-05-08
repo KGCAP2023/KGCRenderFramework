@@ -17,11 +17,6 @@ public:
 	bool ExecuteExample1();
 	bool ExecuteGUITest();
 
-private:
-	Framework* framework = nullptr;
-	ResourceManager* res = nullptr;
-	GameObjectManager* objManager = nullptr;
-
 	lua_State* Lua_Begin();
 	void Lua_End(lua_State* L);
 
@@ -74,7 +69,6 @@ private:
 			lua, sizeof(GameObjectManager*));
 		*pmPtr = this->objManager;  //Assuming that's the function that 
 												//returns our singleton instance
-
 		//Now we create metatable for that object
 		luaL_newmetatable(lua, "GameObjectManagerMetaTable");
 		//You should normally check, if the table is newly created or not, but 
@@ -107,7 +101,6 @@ private:
 	}
 	
 	static int lua_GameObjectManager_getGameObject(lua_State* lua);
-
 
 	static int lua_GameObject_getName(lua_State* lua)
 	{
@@ -145,7 +138,10 @@ private:
 		lua_setmetatable(lua, -2);
 		
 	}
-	
 
+private:
+	Framework* framework = nullptr;
+	ResourceManager* res = nullptr;
+	GameObjectManager* objManager = nullptr;
 
 };

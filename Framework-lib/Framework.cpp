@@ -76,7 +76,10 @@ IAudioManager* Framework::GetAudioManager()
 	return &this->audioManager;
 }
 
-
+LuaManager* Framework::GetLuaManager()
+{
+	return &this->luaManager;
+}
 
 void Framework::ChangeCameraViewType(Camera3D::ViewType _viewType)
 {

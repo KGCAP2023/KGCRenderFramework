@@ -4,6 +4,7 @@
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
 #include "AudioManager.h"
+#include "LuaManager.h"
 #include "Camera.h"
 
 class IFramework
@@ -52,6 +53,12 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual IAudioManager* GetAudioManager() { return nullptr; };
+
+	/// <summary>
+	/// 루아 매니저를 반환합니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual LuaManager* GetLuaManager() { return nullptr; }
 
 	/// <summary>
 	/// 카메라 2d, 3d 모드 변환

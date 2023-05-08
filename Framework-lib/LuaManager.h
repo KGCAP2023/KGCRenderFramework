@@ -11,12 +11,15 @@ class GameObjectManager;
 class LuaManager
 {
 public:
-	LuaManager() {};
+	LuaManager() 
+	{
+		this->logBuffer.reserve(500);
+	};
 
 	bool Initialize(Framework* framework);
 	bool ExecuteExample1();
 	bool ExecuteGUITest();
-
+	
 	lua_State* Lua_Begin();
 	void Lua_End(lua_State* L);
 
@@ -27,6 +30,7 @@ public:
 		{
 			std::string errormsg = lua_tostring(L, -1);
 			std::cout << errormsg << std::endl;
+			this->logBuffer.push_back(errormsg);
 			return false;
 		}
 		return true;
@@ -139,9 +143,11 @@ public:
 		
 	}
 
+	std::vector<std::string>& GetLogBuffer() { return this->logBuffer; };
+
 private:
 	Framework* framework = nullptr;
 	ResourceManager* res = nullptr;
 	GameObjectManager* objManager = nullptr;
-
+	std::vector<std::string> logBuffer;
 };

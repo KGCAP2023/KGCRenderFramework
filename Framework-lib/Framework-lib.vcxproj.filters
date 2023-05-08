@@ -180,6 +180,9 @@
     <ClInclude Include="Script.h">
       <Filter>헤더 파일\Component</Filter>
     </ClInclude>
+    <ClInclude Include="InputMapper.h">
+      <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp">
@@ -294,6 +297,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Script.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="InputMapper.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

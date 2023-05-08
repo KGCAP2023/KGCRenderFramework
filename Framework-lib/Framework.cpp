@@ -55,10 +55,19 @@ GameObjectManager* Framework::GetGameObjectManagerInstance()
 void Framework::SwitchObjectManager()
 {
 	if (currentgameObjManager == gameObjManager)
+	{
+		std::unordered_map<std::string, GameObject*> newGameObjects;
+		for (const auto& gameObject : gameObjManager->gameObjects) {
+			newGameObjects[gameObject.first] = new GameObject(*gameObject.second);
+		}
+		testgameObjManager->gameObjects = std::move(newGameObjects);
 		currentgameObjManager = testgameObjManager;
+	}
 	else
-
+	{
+		testgameObjManager->gameObjects.clear();
 		currentgameObjManager = gameObjManager;
+	}
 }
 
 IGameObjectManager* Framework::GetCurrentGameObjectManager()

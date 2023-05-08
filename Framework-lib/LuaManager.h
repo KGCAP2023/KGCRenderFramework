@@ -102,7 +102,6 @@ public:
 	
 	static int lua_GameObjectManager_getGameObject(lua_State* lua);
 
-
 	static int lua_GameObject_getName(lua_State* lua)
 	{
 		GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");

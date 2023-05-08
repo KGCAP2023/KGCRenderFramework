@@ -24,18 +24,34 @@ public:
 	void SetLuaFilePath(std::string filepath)
 	{
 		this->filepath = filepath;
+		
+	}
+
+	bool LoadScript()
+	{
+		this->lua->CheckLua(L, luaL_dofile(L, filepath.c_str()));
+		return true;
 	}
 
 	//업데이트문
 	virtual void Update()
 	{
 		//루아 파일 실행 
-		if (this->lua->CheckLua(L, luaL_dofile(L, filepath.c_str())))
+		if (L != nullptr)
 		{
 			//내부 로직 구현.... (pcall)
+			lua_getglobal(L, "Update");
 
+			if (lua_isfunction(L, -1))
+			{
+				lua_pushnumber(L, 5.0f);
+				lua_pushnumber(L, 6.0f);
 
-
+				if (this->lua->CheckLua(L, lua_pcall(L, 2, 1, 0)))
+				{
+					//std::cout << "5+6 =" << (float)lua_tonumber(L, -1) << std::endl << std::endl;
+				}
+			}
 
 		}
 	}
@@ -64,6 +80,7 @@ private:
 	void clear()
 	{
 		this->lua->Lua_End(L);
+		L = nullptr;
 	}
 
 	lua_State* L = nullptr;

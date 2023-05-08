@@ -17,19 +17,15 @@ class ResourceManagerView : public ILayer
     IAudioManager* AudM;
     Sprite* image;
 
-
 public:
-
     bool show_popup = false;
     bool isplaying = false;
     bool openFile()     // file 버튼 구현 부분
     {
-        //  CREATE FILE OBJECT INSTANCE
         HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         if (FAILED(f_SysHr))
             return FALSE;
 
-        // CREATE FileOpenDialog OBJECT
         IFileOpenDialog* f_FileSystem;
         f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
         if (FAILED(f_SysHr)) {
@@ -37,7 +33,6 @@ public:
             return FALSE;
         }
 
-        //  SHOW OPEN FILE DIALOG WINDOW
         f_SysHr = f_FileSystem->Show(NULL);
         if (FAILED(f_SysHr)) {
             f_FileSystem->Release();
@@ -45,7 +40,6 @@ public:
             return FALSE;
         }
 
-        //  RETRIEVE FILE NAME FROM THE SELECTED ITEM
         IShellItem* f_Files;
         f_SysHr = f_FileSystem->GetResult(&f_Files);
         if (FAILED(f_SysHr)) {
@@ -54,7 +48,6 @@ public:
             return FALSE;
         }
 
-        //  STORE AND CONVERT THE FILE NAME
         PWSTR f_Path;
         f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
         if (FAILED(f_SysHr)) {
@@ -64,40 +57,56 @@ public:
             return FALSE;
         }
 
-        //  FORMAT AND STORE THE FILE PATH
         std::wstring path(f_Path);
         std::string c(path.begin(), path.end());
-        std::string FilePath = c;                               //파일 경로 가져옴!
+        std::string FilePath = c;                                               //파일 경로 가져옴!
 
-        //  FORMAT STRING FOR EXECUTABLE NAME
-        const size_t slash = sFilePath.find_last_of("/\\");
-        std::string SelectedFile = sFilePath.substr(slash + 1); //선택된 파일 이름 가져옴
-
-        //  SUCCESS, CLEAN UP
+        const size_t slash = FilePath.find_last_of("/\\");
+        std::string SelectedFile = FilePath.substr(slash + 1);                  //선택된 파일 이름 가져옴
+        std::string ext = getFileExtension(FilePath);
+        std::string FileName = SelectedFile.substr(0,SelectedFile.length()-4);
+        std::string jFileName = SelectedFile.substr(0, SelectedFile.length() - 5);
         CoTaskMemFree(f_Path);
         f_Files->Release();
         f_FileSystem->Release();
         CoUninitialize();
 
+        std::cout << "선택파일)" << SelectedFile << std::endl;
+        
+        if (ext._Equal("mp3"))                                                  //오디오 파일
+        {
+            ResM->LoadAudio(FileName.c_str(), FilePath.c_str());
+        }
+
+        else if (ext._Equal("obj"))                                             //모델 파일
+        { 
+            ResM->LoadModel(FileName, FilePath);
+        }
+
+        else if (ext._Equal("jpg") || ext._Equal("jpeg") || ext._Equal("png"))  //사진 파일 #1
+        {
+            ResM->LoadSprite(FileName, FilePath);
+        }
+
+        else if (ext._Equal("jpeg"))                                            //사진 파일 #2
+        {
+            ResM->LoadSprite(jFileName, FilePath);
+        }
+
+        else
+        {
+            printf("지원하지 않는 형식입니다.\n");
+        }
         return TRUE;
     }
 
-    std::string sFilePath;                                      //추가하는 파일의 이름을 string 형태로 저장
-    const char* cstr = sFilePath.c_str();
-
-    char* getExt(const char* filename)
+    std::string getFileExtension(std::string& path)                             //확장자 처리
     {
-        static char buf[MAX_PATH] = "";
-        bool ret = false;
-        const char* ptr = NULL;
-
-        ptr = strrchr(filename, '.');
-        if (ptr == NULL)
-            return NULL;
-
-        strcpy(buf, ptr + 1);
-
-        return buf;
+        size_t index = path.rfind(".");
+        if (index != std::wstring::npos) {
+            return path.substr(index + 1, path.length() - index);
+        }
+        return std::string();
     }
 
     ResourceManagerView(IGameObjectManager* manager, IResourceManager* res, IAudioManager* audio ,const std::string name) : ILayer(name)
@@ -137,15 +146,14 @@ public:
 
             }
             ImGui::SameLine();
-            ImGui::Button("delete");                                //delete 버튼
+            ImGui::Button("delete");                                    //delete 버튼
             {
 
             }
             ImGui::SameLine();
-            if (ImGui::Button("file"))
+            if (ImGui::Button("file"))                                  //file 버튼
             {
                 openFile();
-               
             }
             ImGui::Separator();
 
@@ -165,6 +173,7 @@ public:
                     }
                 }
             }
+
             if (ImGui::CollapsingHeader("Object")) {
                 auto map = ResM->GetModelMap();
                 for (auto& pair : map) {
@@ -181,11 +190,8 @@ public:
                     }
                 }
             }
-            
-
            
             if (ImGui::CollapsingHeader("Audio")) {
-                
                 auto map = ResM->GetAudioMap();
                 for (auto& pair : map) {
                     const char* name = pair.first.c_str();
@@ -210,11 +216,9 @@ public:
                             this->AudM->StopAudio(name);
                             isplaying = false;
                         }
-                        
-                        
                         ImGui::EndPopup();
-                        
                     }
+
                     if (!ImGui::IsPopupOpen(name))
                     {
                         if (isplaying)
@@ -223,7 +227,6 @@ public:
                             isplaying = false;
                         }
                     }
-                    
                 }
             }
             ImGui::End();

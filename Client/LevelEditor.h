@@ -18,7 +18,8 @@ public:
 	Sprite* image;
 	bool opt_enable_grid = true;
 	bool isActiveWindow2 = false;
-	//bool isTypedOnce = true;
+	bool Resizable = true;
+	bool Savemap = false;
 
 	int tilemap_size[2] = {};
 	int tilemap_height, tilemap_width, mouse_cnt, size;
@@ -62,7 +63,30 @@ public:
 
 	};
 
-	//선택한 이미지가 입력된 배열을 화면에 출력
+	//선택한 타일맵을 저장하고 맵 이름을 입력받는 창
+	void Save() {
+		if(Savemap) {
+			ImGui::Begin(u8"Save Tilemap", &Savemap);
+			ImGui::PushItemWidth(100);
+
+			TileMap* map = new TileMap();
+
+			ImGui::InputText("Tilemap Name", tilemap_name, 20);
+			map->Init(tilemap_name, image, tilemap_width, tilemap_height, width * height);
+
+			for (int i = 0, k = 0; i < tilemap_height; i++) {
+				for (int j = 0; j < tilemap_width; j++, k++) {
+					map->SelectTile(0, 0, i, j);
+				}
+			}
+
+			this->ResM->RegisterTileMap("name", map);
+			ImGui::End();
+
+		}
+	}
+
+	//선택한 이미지가 입력된 배열을 화면에 출력하는 창
 	void Popup() {
 		if (isActiveWindow2) {	//창의 크기는 타일맵의 크기에 맞추어 자동으로 조절됨
 			ImGui::Begin(u8"Chosen Grid Block", &isActiveWindow2, ImGuiWindowFlags_AlwaysAutoResize);
@@ -73,37 +97,37 @@ public:
 				ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit),
 				ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit + x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit + y_unit));
 		
-			//전체 타일맵을 ImageButton 형식으로 출력
+			//전체 타일맵을 Image 형식으로 출력
 			ImGui::Text("Tilemap");
 			ImGui::Text("");
 			for (int i = 0, k = 0; i < tilemap_height; i++) {
 				for (int j = 0; j < tilemap_width; j++, k++) {
 					ImGui::SameLine();
-					ImGui::ImageButton((void*)image->Get(), ImVec2(50, 50),
+					ImGui::Image((void*)image->Get(), ImVec2(50, 50),
 						ImVec2((int)mouse_x[k] * x_unit, (int)mouse_y[k] * y_unit),
 						ImVec2((int)mouse_x[k] * x_unit + x_unit, (int)mouse_y[k] * y_unit + y_unit));
 				}
 				ImGui::Text("");	//줄바꿈을 위해 빈 텍스트 출력
 			}
 			if (ImGui::Button("Save"))
-			{
-				TileMap* map = new TileMap();
+				Savemap = true;
+			ImGui::SameLine();
 
-				ImGui::InputText("Tilemap Name", tilemap_name, 20);
-				map->Init(tilemap_name, image, tilemap_width, tilemap_height, width * height);
-
-				for (int i = 0, k = 0; i < tilemap_height; i++) {
-					for (int j = 0; j < tilemap_width; j++, k++) {
-						map->SelectTile(0, 0, i, j);
-					}
+			//동적 배열에 저장된 값과 배열 크기를 모두 초기화, 다시 킬 때 새롭게 값을 받기 위해 카운터도 함께 초기화
+			if (ImGui::Button("Reset Tile")) {
+				ImGui::End();
+				
+				for (int i = 0; i < tilemap_width * tilemap_height; i++) {
+					mouse_x[i] = { 0 };
+					mouse_y[i] = { 0 };
 				}
-
-				this->ResM->RegisterTileMap("name", map);
+				mouse_cnt = 0;
+				tilemap_height = 0;
+				tilemap_width = 0;
+				Resizable = true;
 			}
-			ImGui::End();
-
-			/*if (!isActiveWindow2)
-				isTypedOnce = true;*/
+			else
+				ImGui::End();
 		}
 	}
 
@@ -115,6 +139,7 @@ public:
 		auto mouse = InputManager::GetMouseState();
 
 		Popup();
+		Save();
 		if (_isActive) {
 			ImGui::Begin(u8"Level Editor", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
 			ImGui::Checkbox("Grid", &opt_enable_grid);	//캔버스 내부의 grid 표시여부
@@ -122,24 +147,24 @@ public:
 			ImGui::Text("Tile Map Size");
 			ImGui::SameLine();
 			ImGui::PushItemWidth(100);
-			
-			//최초 입력 이후 숫자를 바꿀 때 동적 배열 할당에 문제가 발생
-			//한번 입력한 뒤엔 "창을 끌때까지" 더이상 입력할 수 없게 막아야함.
-			ImGui::InputInt2(" ", tilemap_size);
 
-			//if (ImGui::InputInt2(" ", tilemap_size) && isTypedOnce) {
-			tilemap_height = tilemap_size[0];
-			tilemap_width = tilemap_size[1];
-			//}
+			//Resizable이 비활성화되면 인풋에 입력된 숫자를 무시함
+			//동일한 크기의 배열로 내용만 초기화하고 싶을 땐 리셋 후 
+			//다른 크기로 배열을 새로이 만든 뒤, 한번 더 리셋한 다음
+			//다시 원래 원하던 크기의 배열로 생성해야 하는 문제가 있음
+			if (ImGui::InputInt2(" ", tilemap_size) && Resizable) {
+				tilemap_height = tilemap_size[0];
+				tilemap_width = tilemap_size[1];
+			}
 
 			if (ImGui::Button("Open Tilemap")) {
 				//new[]로 동적 배열 할당 및 초기화
 				mouse_x = new float[tilemap_height * tilemap_width] {};
 				mouse_y = new float[tilemap_height * tilemap_width] {};
 				
+				//한번 타일맵 선택 창을 띄운 이후 더이상 크기가 변경되지 못하게 막아둠
 				if (tilemap_height != 0 && tilemap_width != 0){
-					//isTypedOnce 사용시 타일맵은 가장 처음 입력받은 height, width 이후로 변경이 불가능함
-					//isTypedOnce = false;
+					Resizable = false;
 					isActiveWindow2 = true;
 				}
 			}

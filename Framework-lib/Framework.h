@@ -62,6 +62,11 @@ public:
 	/// <returns></returns>
 	virtual IAudioManager* GetAudioManager() override;
 	/// <summary>
+	/// 루아 매니저를 반환합니다.
+	/// </summary>
+	/// <returns></returns>
+	virtual LuaManager* GetLuaManager() override;
+	/// <summary>
 	/// 카메라 모드 전환
 	/// </summary>
 	/// <param name="">viewType::_2D 또는 viewType::_3D 전달</param>
@@ -71,8 +76,6 @@ public:
 public:
 
 	static const float getDeltaTime() { return dt;}
-
-	LuaManager* GetLuaManager() { return &luaManager; }
 	void RegisterWindow(HINSTANCE hInstance); // WindowClassEX를 초기화 한다.
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool ProcessMsg();

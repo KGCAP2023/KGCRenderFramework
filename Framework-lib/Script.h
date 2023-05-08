@@ -1,6 +1,7 @@
 #pragma once
 #include "Gameobject.h"
 #include "LuaManager.h"
+#include "InputMapper.h"
 
 class framework;
 
@@ -29,8 +30,17 @@ public:
 
 	bool LoadScript()
 	{
-		this->lua->CheckLua(L, luaL_dofile(L, filepath.c_str()));
-		return true;
+		if (this->lua->CheckLua(L, luaL_dofile(L, filepath.c_str())))
+		{
+			lua_getglobal(L, "Start");
+			if (lua_isfunction(L, -1))
+			{
+				this->lua->CheckLua(L, lua_pcall(L, 0, 0, 0));
+			}
+			return true;
+		}
+		else
+			return false;
 	}
 
 	//업데이트문
@@ -39,20 +49,11 @@ public:
 		//루아 파일 실행 
 		if (L != nullptr)
 		{
-			//내부 로직 구현.... (pcall)
 			lua_getglobal(L, "Update");
-
 			if (lua_isfunction(L, -1))
 			{
-				lua_pushnumber(L, 5.0f);
-				lua_pushnumber(L, 6.0f);
-
-				if (this->lua->CheckLua(L, lua_pcall(L, 2, 1, 0)))
-				{
-					//std::cout << "5+6 =" << (float)lua_tonumber(L, -1) << std::endl << std::endl;
-				}
+				this->lua->CheckLua(L, lua_pcall(L, 0, 0, 0));
 			}
-
 		}
 	}
 
@@ -64,9 +65,10 @@ private:
 	void registerMappingFuncs(lua_State* L)
 	{
 		//Lua에 전역으로 C++ 함수를 등록합니다. 
-		//lua_register(L, "Begin", LuaManager::lua_ImGuiBegin);
-		//lua_register(L, "Text", LuaManager::lua_ImGuiText);
-		//lua_register(L, "End", LuaManager::lua_ImGuiEnd);
+		lua_register(L, "KeyInput_W", InputMapper::KeyInput_W);
+		lua_register(L, "KeyInput_A", InputMapper::KeyInput_A);
+		lua_register(L, "KeyInput_S", InputMapper::KeyInput_S);
+		lua_register(L, "KeyInput_D", InputMapper::KeyInput_D);
 		//etc....
 	}
 

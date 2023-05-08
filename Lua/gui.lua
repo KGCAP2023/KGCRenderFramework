@@ -5,19 +5,8 @@
 --print(obj1:GetName());
 --print(GameObjectManager:GetObject("dfgd"));
 
+function render()
 
-function Update()
-
-
-end
-
-function Start()
-
-
-end
-
-function render(a,b)
-	
 	--Begin("test34534535334")
 	--Text("hello world!zzzzzzzzzdfgdgdgdgdgdgdffffffffffffffffffdgdgdgdfdgdgdgd")
 	--End()

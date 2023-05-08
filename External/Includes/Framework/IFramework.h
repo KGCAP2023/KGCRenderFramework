@@ -27,10 +27,20 @@ public:
 	virtual void run();
 
 	/// <summary>
-	/// gameObjectManger 인터페이스 반환
+	/// gameObjectManger 반환.
 	/// </summary>
 	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() { return nullptr; };
+
+	/// <summary>
+	/// gameObjectManger 교체.
+	/// </summary>
+	/// <returns></returns>
+	virtual void SwitchObjectManager() {};
+
+	virtual IGameObjectManager* GetCurrentGameObjectManager() { return nullptr; };
+
+
 	/// <summary>
 	/// 리소스 매니저를 반환합니다.
 	/// </summary>

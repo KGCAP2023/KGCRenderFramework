@@ -40,6 +40,18 @@ public:
 	/// <returns></returns>
 	virtual IGameObjectManager* GetGameObjectManager() override;
 	/// <summary>
+	/// 백엔드 개발용 인스턴스 반환
+	/// </summary>
+	/// <returns></returns>
+	GameObjectManager* GetGameObjectManagerInstance();
+	/// <summary>
+	/// gameObjectManger 교체.
+	/// </summary>
+	/// <returns></returns>
+	virtual void SwitchObjectManager() override;
+
+	virtual IGameObjectManager* GetCurrentGameObjectManager() override;
+	/// <summary>
 	/// 리소스 매니저를 반환합니다. 
 	/// </summary>
 	/// <returns></returns>
@@ -49,11 +61,6 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual IAudioManager* GetAudioManager() override;
-	/// <summary>
-	/// 백엔드 개발용 인스턴스 반환
-	/// </summary>
-	/// <returns></returns>
-	GameObjectManager* GetGameObjectManagerInstance();
 	/// <summary>
 	/// 카메라 모드 전환
 	/// </summary>
@@ -79,7 +86,11 @@ public:
 	ResourceManager resourceManager;
 	AudioManager audioManager;
 	LuaManager luaManager;
+
 	GameObjectManager* gameObjManager = nullptr;
+	GameObjectManager* testgameObjManager = nullptr;
+	GameObjectManager* currentgameObjManager = nullptr;
+
 	Ray* ray;
 
 	~Framework();

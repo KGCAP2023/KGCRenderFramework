@@ -131,12 +131,12 @@ void GraphicManager::RenderFrame()
 	//Perspective Projection 행렬을 셋팅합니다.
 	this->cameraComponent->cameraLerp();
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
+	GameObjectManager* obj = this->framework->currentgameObjManager;
+
 
 	{
-
-
 		//Sprite를 그립니다.
-		for (const auto& kv : gameObjectManager->gameObjects)
+		for (const auto& kv : obj->gameObjects)
 		{
 			(kv.second)->DrawSprite(vp);
 		}
@@ -146,7 +146,7 @@ void GraphicManager::RenderFrame()
 		deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf()); //텍스쳐 렌더링
 
 		//3D오브젝트를 그립니다.
-		for (const auto& kv : gameObjectManager->gameObjects) 
+		for (const auto& kv : obj->gameObjects)
 		{
 			(kv.second)->Draw(vp);
 		}

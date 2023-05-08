@@ -78,6 +78,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				{
 					rw->FindLayer("RMV")->Activate();
 				}
+				if (ImGui::MenuItem("test"))
+				{
+					rw->SwitchObjectManager();
+				}
 				ImGui::EndMenu();
 			}
 			});

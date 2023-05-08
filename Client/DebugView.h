@@ -43,7 +43,6 @@ public:
 
         ImGui::SetNextWindowSize(ImVec2(500, 600));
 
-
         if (_isActive) 
         {
             ImGui::Begin(u8"Debug View", &_isActive);
@@ -52,8 +51,9 @@ public:
             ImGui::Text(u8"마우스 좌표: X: %d, Y: %d", mouse.x, mouse.y);															//마우스 좌표 값 x,y 반환
             ImGui::Text(u8"입력 키 W: %d A: %d S: %d D: %d", keyboard.W, keyboard.A, keyboard.S, keyboard.D);						//키보드 W,A,S,D (누른 상태 = 1),(뗀 상태 = 0) 반환 (다른 자판 추가?)
 
+            ImGui::ShowDebugLogWindow();
+
             ImGui::End();
         }
-    
 	}
 };

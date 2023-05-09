@@ -3,11 +3,17 @@
 #include "Framework.h"
 
 
-GameObjectManager::GameObjectManager(Framework* framework)
+GameObjectManager::GameObjectManager(Framework* framework, SceneMode type)
 {
 		this->framework = framework;
 		this->graphicManager = &framework->graphics;
 		this->res = &framework->resourceManager;
+		this->type = type;
+}
+
+SceneMode GameObjectManager::GetMode()
+{
+	return this->type;
 }
 
 
@@ -114,4 +120,9 @@ void GameObjectManager::notifyFousedObject(GameObject* object)
 	{
 		func(object);
 	}
+}
+
+std::unordered_map<std::string, GameObject*> GameObjectManager::GetObejctMap()
+{
+	return this->gameObjects;
 }

@@ -60,7 +60,7 @@ public:
 
 		_delete.clear();
 	}
-	bool Detail() 
+	bool Detail()
 	{
 		return detail;
 	}
@@ -77,7 +77,7 @@ private:
 	std::vector<Component::Type> _delete;
 
 };
-
+static bool testMode = false;
 
 
 
@@ -90,10 +90,12 @@ public:
 	IResourceManager* ResM;
 	Sprite* sp;
 	std::vector<HierarchyObject*> gamelist;
+	std::vector<HierarchyObject*> gameTestList;
 	std::vector<Component*> componentlist;
 	bool check1 = true;
 	bool check2 = true;
 	bool check3 = true;
+
 	int component_selected = 0;
 	int selected = 0;
 	bool my_tool_active = true;
@@ -110,7 +112,7 @@ public:
 	std::vector<std::string> spriteList;
 	std::vector<std::string> tileList;
 	std::vector<std::string> modelList;
-
+	std::vector<std::string> testList;
 
 
 	Hierarchy(IGameObjectManager* manager, IResourceManager* res, const std::string& name, IFramework* framework) : ILayer(name)
@@ -118,68 +120,25 @@ public:
 		this->framework = framework;
 		this->_manager = manager;
 		this->ResM = res;
-		
+
 		this->_manager->AddFocusedObjectListener([&](GameObject* selectedObject) {
 
-			for (int k = 0; k < gamelist.size(); k++) 
+			for (int k = 0; k < gamelist.size(); k++)
 			{
 				if (selectedObject->GetName() == gamelist.at(k)->GetGameObject()->GetName())
 				{
 					selected = k;
 				}
-			
+
 			}
 
-		});
-
-		GameObject* obj = _manager->CreateGameObject("Object1");
-		GameObject* obj1 = _manager->CreateGameObject("Object2");
-		GameObject* obj2 = _manager->CreateGameObject("Object3");
-		GameObject* obj3 = _manager->CreateGameObject("Object4");
-		GameObject* obj4 = _manager->CreateGameObject("Object5");
-		GameObject* obj5 = _manager->CreateGameObject("Object6");
-		GameObject* obj6 = _manager->CreateGameObject("Object7");
-		GameObject* obj7 = _manager->CreateGameObject("Object8");
-		GameObject* obj8 = _manager->CreateGameObject("Object9");
-
-
-
-		obj->transform.SetPosition(30, 20, 30);
-		obj1->transform.SetPosition(10, 30, 15);
-		obj2->transform.SetPosition(123, 20, 30);
-		obj3->transform.SetPosition(13, 20, 30);
-		obj4->transform.SetPosition(65, 20, 30);
-		obj5->transform.SetPosition(23, 20, 30);
-		obj6->transform.SetPosition(63, 20, 30);
-		obj7->transform.SetPosition(71, 20, 30);
-		obj8->transform.SetPosition(32, 20, 30);
-
-
-
-		obj->transform.SetRotation(30, 20, 30);
-		obj1->transform.SetRotation(10, 30, 15);
-		obj2->transform.SetRotation(123, 20, 30);
-		obj3->transform.SetRotation(13, 20, 30);
-		obj4->transform.SetRotation(65, 20, 30);
-		obj5->transform.SetRotation(23, 20, 30);
-		obj6->transform.SetRotation(63, 20, 30);
-		obj7->transform.SetRotation(71, 20, 30);
-		obj8->transform.SetRotation(32, 20, 30);
+			});
 
 
 
 
 
 
-		gamelist.push_back(new HierarchyObject(obj));
-		gamelist.push_back(new HierarchyObject(obj1));
-		gamelist.push_back(new HierarchyObject(obj2));
-		gamelist.push_back(new HierarchyObject(obj3));
-		gamelist.push_back(new HierarchyObject(obj4));
-		gamelist.push_back(new HierarchyObject(obj5));
-		gamelist.push_back(new HierarchyObject(obj6));
-		gamelist.push_back(new HierarchyObject(obj7));
-		gamelist.push_back(new HierarchyObject(obj8));
 
 
 
@@ -198,15 +157,32 @@ public:
 	{
 
 	}
+	void testMode()
+	{
+		for (int a = 0; a < gamelist.size(); a++)
+		{
+			gameTestList.push_back(new HierarchyObject(gamelist.at(a)->GetGameObject()));
+		}
+
+	}
 	void component()
 	{
 		spriteList.clear();
 		tileList.clear();
 
+		testList.clear();
+
 		auto map = ResM->GetSpriteMap();
 		auto map1 = ResM->GetModelMap();
 		auto map2 = ResM->GetTileMap();
+		auto map3 = _manager->GetObejctMap();
 
+		for (auto& pair : map3)
+		{
+			GameObject* obj = pair.second;
+			std::string name3 = obj->GetName();
+			testList.push_back(name3);
+		}
 		for (auto& pair : map)
 		{
 			Sprite* sp = pair.second;
@@ -246,7 +222,6 @@ public:
 					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
-
 
 					std::string f = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE);
 					ImGui::PushItemWidth(100);
@@ -331,8 +306,8 @@ public:
 					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
-					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP); 
-						ImGui::PushItemWidth(100);
+					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP);
+					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##tile", tileName.size() == 0 ? "" : tileName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
 						for (int n = 0; n < tileList.size(); n++)
@@ -414,7 +389,7 @@ public:
 		}
 
 		if (ImGui::BeginPopupModal("Error", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"렌더러는 1개만 가능합니다" );
+			ImGui::Text(u8"렌더러는 1개만 가능합니다");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
 				show_render = false;
@@ -502,7 +477,7 @@ public:
 
 
 	}
-	 
+
 	void CheckTransform()
 	{
 		float posX = gamelist.at(selected)->GetGameObject()->transform.position.x;
@@ -621,7 +596,7 @@ public:
 	/// </summary>
 	void Transform()
 	{
-		
+
 		if (gamelist.at(selected)->GetGameObject()->GetComponentSize() == 0)
 		{
 			ImGui::PushItemWidth(90);
@@ -675,7 +650,7 @@ public:
 
 
 			}
-			else 
+			else
 			{
 				CheckTransform();
 
@@ -722,8 +697,8 @@ public:
 				ImGui::InputFloat(u8"##scale5", &gamelist.at(selected)->GetGameObject()->transform.scale.z);
 				ImGui::PopItemWidth();
 
-				
-			
+
+
 			}
 			ImGui::Separator();
 			bool check_detail = gamelist.at(selected)->Detail();
@@ -745,7 +720,7 @@ public:
 				{
 				case Component::Type::RENDERER_SPRITE:
 				{
-					
+
 					if (gamelist.at(selected)->Detail() == false)
 					{
 						ImGui::PushItemWidth(90);
@@ -774,7 +749,7 @@ public:
 						ImGui::PopItemWidth();
 
 
-						
+
 					}
 					else
 					{
@@ -1014,12 +989,15 @@ public:
 
 
 		}
-		
+
 
 	}
 
 	virtual void Render()
 	{
+
+		if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
+			testMode();
 		Warning();
 		if (active)
 		{
@@ -1102,7 +1080,7 @@ public:
 
 			ImGui::End();
 		}
-		
+
 
 
 		if (_isActive)
@@ -1156,14 +1134,33 @@ public:
 			if (gamelist.size() != 0)
 			{
 				ImGui::BeginChild("Scrolling", ImVec2(150, 0), true);
-				for (int i = 0; i < gamelist.size(); i++)
+				if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
 				{
-					if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
+					for (int i = 0; i < gamelist.size(); i++)
 					{
-						selected = i;
-						gamelist.at(i)->GetGameObject()->SetFocus();
+						if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
+						{
+							selected = i;
+							gamelist.at(i)->GetGameObject()->SetFocus();
+
+						}
+
+
 					}
-						
+				}
+				if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
+				{
+					for (int i = 0; i < gameTestList.size(); i++)
+					{
+						if (ImGui::Selectable((gameTestList.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
+						{
+							selected = i;
+							gameTestList.at(i)->GetGameObject()->SetFocus();
+
+						}
+
+
+					}
 				}
 				ImGui::EndChild();
 				ImGui::SetScrollX(100.0f);

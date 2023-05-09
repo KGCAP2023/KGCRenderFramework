@@ -4,11 +4,12 @@
 class InputMapper
 {
 public:
+
 	static int KeyInput_W(lua_State* L)
 	{
 		auto kb = InputManager::GetKeyboardState();
 		if (kb.W)
-			lua_pushboolean(L,true);
+			lua_pushboolean(L, true);
 		else
 			lua_pushboolean(L, false);
 		return 1;

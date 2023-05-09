@@ -10,6 +10,7 @@ bool LuaManager::Initialize(Framework* framework)
 	{
 		this->framework = framework;
 		this->res = &framework->resourceManager;
+		this->gameMapper = new GameObjectMapper(framework);
 		this->objManager = framework->gameObjManager;
 	}
 	return true;
@@ -31,35 +32,8 @@ void LuaManager::Lua_End(lua_State* L)
 	lua_close(L);
 }
 
-void LuaManager::registerGameObjectManager(lua_State* lua)
+void LuaManager::registerAudioManager(lua_State* lua)
 {
-	//전역 lua 데이터테이블에 GameObjectManager 추가
-	GameObjectManager** pmPtr = (GameObjectManager**)lua_newuserdata(
-		lua, sizeof(GameObjectManager*));
-	*pmPtr = this->objManager;
-
-	//gameobjectManager 메타테이블 추가 -> 스택의 가장 위에 존재
-	luaL_newmetatable(lua, "GameObjectManagerMetaTable");
-
-	//가장 위의 스택을 복사하고 그중 하나를 index로 정의
-	lua_pushvalue(lua, -1);
-	lua_setfield(lua, -2, "__index");
-
-	//해당 메타테이블에 정의될 함수들 매핑
-	luaL_Reg gameObjectManagerFunctions[] = {
-		"GetObject", lua_GameObjectManager_getGameObject,
-		nullptr, nullptr
-	};
-
-	//매핑된 구조체 연결
-	luaL_setfuncs(lua, gameObjectManagerFunctions, 0);
-
-	//인덱스화 시킨걸 메타테이블화
-	lua_setmetatable(lua, -2);
-
-	//함수호출 시 작성될 이름 스택에 저장 ex) GameObjectManager:GetObject("name")
-	lua_setglobal(lua, "GameObjectManager");
-
 
 	AudioManager* audioManager = &framework->audioManager;
 	AudioManager** amPtr = (AudioManager**)lua_newuserdata(lua, sizeof(AudioManager*));
@@ -88,33 +62,6 @@ void LuaManager::registerGameObjectManager(lua_State* lua)
 
 	// 사용법 => AudioManager:PlayAudio("audioName")
 }
-
-
-int LuaManager::lua_GameObjectManager_getGameObject(lua_State* lua)
-{
-	//Remember that first arbument should be userdata with your PersonManager 
-	//instance, as in Lua you would call PersonManager:getPerson("Stack Overflower");
-	//Normally I would first check, if first parameter is userdata with metatable 
-	//called PersonManagerMetaTable, for safety reasons
-
-	GameObjectManager** pmPtr = (GameObjectManager**)luaL_checkudata(
-		lua, 1, "GameObjectManagerMetaTable");
-	
-	std::string personName = luaL_checkstring(lua, 2);
-
-	GameObject* person = (*pmPtr)->FindGameObject(personName);
-	if (person == nullptr) person = (*pmPtr)->CreateGameObject(personName);
-
-	if (person)
-		registerGameObject(lua, person);    //Function that registers person. After 
-				//the function is called, the newly created instance of Person 
-				//object is on top of the stack
-	else
-		lua_pushnil(lua);
-
-	return 1;
-}
-
 
 #pragma region 오디오메니저_관련_래핑_함수들
 
@@ -222,7 +169,6 @@ bool LuaManager::ExecuteExample1()
 
 
 	lua_State* L = this->Lua_Begin();
-	LuaManager::registerGameObjectManager(L);
 
 
 	//Lua파일이 유효한지 확인한후 로드합니다.
@@ -245,8 +191,6 @@ bool LuaManager::ExecuteGUITest()
 	lua_register(L, "Text", LuaManager::lua_ImGuiText);
 	lua_register(L, "End", LuaManager::lua_ImGuiEnd);
 
-	LuaManager::registerGameObjectManager(L);
-
 	if (CheckLua(L, luaL_dofile(L, "..\\Lua\\gui.lua")))
 	{
 		lua_getglobal(L,"render");
@@ -264,4 +208,9 @@ bool LuaManager::ExecuteGUITest()
 	}
 
 	return true;
+}
+
+GameObjectMapper* LuaManager::GetGameObjectMapper()
+{
+	return this->gameMapper;
 }

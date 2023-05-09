@@ -409,6 +409,13 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 	//레이어 매니저 초기화
 	this->layerManager.Init(this);
 
+	//루아 스크립트 매니저 초기화
+	if (!this->luaManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED LUA Manager Initialize!" << std::endl;
+		return false;
+	}
+
 	//그래픽스 매니저 초기화
 	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height))
 	{
@@ -423,12 +430,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		return false;
 	}
 
-	//루아 스크립트 매니저 초기화
-	if (!this->luaManager.Initialize(framework))
-	{
-		std::cout << "[X] FAILED LUA Manager Initialize!" << std::endl;
-		return false;
-	}
+
 
 
 	ray = new Ray(this);

@@ -600,7 +600,7 @@ bool GraphicManager::InitializeScene()
 	res->LoadSprite("ani", "..\\Resource\\a.jpg");
 	res->LoadModel("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 
-	#pragma region 테스트용
+#pragma region 테스트용
 
 	//GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
 	//obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
@@ -611,16 +611,21 @@ bool GraphicManager::InitializeScene()
 	//SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
 	//rrr->SetSprite(res->FindSprite("ani"));
 	//obj2->AddComponent(rrr);
+#pragma endregion
 
 
+#pragma region 루아스크립트1 테스트
 	//GameObject* obj = this->gameObjectManager->CreateGameObject("gooood");
+	//SpriteRenderer* rrr = new SpriteRenderer(obj,res);
+	//rrr->SetSprite(res->FindSprite("ani"));
+	//obj->AddComponent(rrr);
+
 	//Script* s = new Script(obj, framework);
-	//s->SetLuaFilePath("..\\Lua\\gui.lua");
+	//s->SetLuaFilePath("..\\Lua\\script1.lua");
+	//s->LoadScript();
 	//obj->AddComponent(s);
-
-	#pragma endregion
-
-
+#pragma endregion
+	
 	//카메라 
 	this->camera = new GameObject("camera");
 	this->cameraComponent = new Camera3D(camera);

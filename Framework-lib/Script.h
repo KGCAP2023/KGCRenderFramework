@@ -46,6 +46,7 @@ public:
 	//업데이트문
 	virtual void Update()
 	{
+
 		//루아 파일 실행 
 		if (L != nullptr)
 		{
@@ -54,7 +55,9 @@ public:
 			{
 				this->lua->CheckLua(L, lua_pcall(L, 0, 0, 0));
 			}
+
 		}
+
 	}
 
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix) {}
@@ -69,6 +72,8 @@ private:
 		lua_register(L, "KeyInput_A", InputMapper::KeyInput_A);
 		lua_register(L, "KeyInput_S", InputMapper::KeyInput_S);
 		lua_register(L, "KeyInput_D", InputMapper::KeyInput_D);
+
+		this->lua->GetGameObjectMapper()->RegisterMappingGameObjectManager(L);
 		//etc....
 	}
 
@@ -88,5 +93,6 @@ private:
 	lua_State* L = nullptr;
 	std::string filepath; // = "..\\Lua\\gui.lua";
 	LuaManager* lua;
+
 };
 

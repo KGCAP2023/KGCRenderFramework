@@ -43,6 +43,7 @@ public:
 	const XMVECTOR& GetLeft();
 
 	void UpdateDirection();
+	void UpdateMatrix();
 
 	DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
 

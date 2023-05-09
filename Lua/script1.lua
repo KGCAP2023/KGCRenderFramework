@@ -1,23 +1,28 @@
+local obj = GameObjectManager:GetObject("gooood");
+local trans = obj:GetTransform();
+
 function Start()
 
+    print(obj:GetName());
 
 end
 
 function Update()
+
     if (KeyInput_W() == true) then  
-        print("w");
+        trans:MoveUp();
     end
 
     if (KeyInput_A() == true) then  
-        print("a");
+        trans:MoveLeft();
     end
 
     if (KeyInput_S() == true) then  
-        print("s");
+        trans:MoveDown();
     end
 
     if (KeyInput_D() == true) then  
-        print("d");
+        trans:MoveRight();
     end
 
 end

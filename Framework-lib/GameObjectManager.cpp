@@ -3,11 +3,17 @@
 #include "Framework.h"
 
 
-GameObjectManager::GameObjectManager(Framework* framework)
+GameObjectManager::GameObjectManager(Framework* framework, const std::string name)
 {
 		this->framework = framework;
 		this->graphicManager = &framework->graphics;
 		this->res = &framework->resourceManager;
+		this->name = name;
+}
+
+std::string GameObjectManager::GetName()
+{
+	return name;
 }
 
 

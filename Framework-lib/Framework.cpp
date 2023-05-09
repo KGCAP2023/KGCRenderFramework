@@ -34,8 +34,8 @@ IGameObjectManager* Framework::GetGameObjectManager()
 {
 	if (this->gameObjManager == nullptr)
 	{
-		gameObjManager = new GameObjectManager(this);
-		testgameObjManager = new GameObjectManager(this);
+		gameObjManager = new GameObjectManager(this, "development");
+		testgameObjManager = new GameObjectManager(this, "play");
 		currentgameObjManager = gameObjManager;
 	}
 	return currentgameObjManager;
@@ -45,8 +45,8 @@ GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
 	if (this->gameObjManager == nullptr)
 	{
-		gameObjManager = new GameObjectManager(this);
-		testgameObjManager = new GameObjectManager(this);
+		gameObjManager = new GameObjectManager(this,"development");
+		testgameObjManager = new GameObjectManager(this,"play");
 		currentgameObjManager = gameObjManager;
 	}
 	return currentgameObjManager;
@@ -62,11 +62,15 @@ void Framework::SwitchObjectManager()
 		}
 		testgameObjManager->gameObjects = std::move(newGameObjects);
 		currentgameObjManager = testgameObjManager;
+		std::cout << currentgameObjManager->GetName() << std::endl;
+
 	}
 	else
 	{
 		testgameObjManager->gameObjects.clear();
 		currentgameObjManager = gameObjManager;
+		std::cout << currentgameObjManager->GetName() << std::endl;
+
 	}
 }
 

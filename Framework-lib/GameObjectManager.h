@@ -10,11 +10,17 @@ class IGameObjectManager {
 
 public:
 	/// <summary>
+	/// 오브젝트 매니저의 이름을 불러옵니다
+	/// </summary>
+	/// <returns></returns>
+	virtual std::string GetName() { return nullptr; };
+
+	/// <summary>
 	/// 오브젝트 리스트에 새 오브젝트를 생성하여 추가
 	/// </summary>
 	/// <param name="_name">추가할 오브젝트 이름</param>
 	/// <returns>생성된 오브젝트, 중복시 nullptr 반환</returns>
-	virtual GameObject* CreateGameObject(const std::string& _name) { return nullptr; };
+	virtual GameObject* CreateGameObject(const std::string& _name) { return 0; };
 
 	/// <summary>
 	/// 오브젝트 리스트에 새 오브젝트를 생성하여 추가
@@ -66,7 +72,9 @@ public:
 	/// <param name="framework">Framework* 형식으로 현재 Framework를 전달반습니다.</param>
 	/// <param name="graphicManager">GraphicManager* 형식으로 현재 GraphicManager를 전달반습니다.</param>
 	/// <param name="res">ResourceManager* 형식으로 현재 ResourceManager를 전달반습니다.</param>
-	GameObjectManager(Framework* framework);
+	GameObjectManager(Framework* framework, std::string name);
+
+	virtual std::string GetName() override;
 	
 	virtual GameObject* CreateGameObject(const std::string& _name) override;
 
@@ -92,6 +100,9 @@ public:
 	//맵
 	std::unordered_map<std::string, GameObject*> gameObjects;
 	std::vector<std::function<void(GameObject*)>> _focusedObjectCallback;
+
+	//이름
+	std::string name;
 	
 };
 

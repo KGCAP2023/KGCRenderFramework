@@ -34,8 +34,10 @@ IGameObjectManager* Framework::GetGameObjectManager()
 {
 	if (this->gameObjManager == nullptr)
 	{
-		gameObjManager = new GameObjectManager(this, "dev");
-		testgameObjManager = new GameObjectManager(this, "play");
+		gameObjManager = new GameObjectManager(this, SceneMode::DEV);
+		
+		testgameObjManager = new GameObjectManager(this, SceneMode::PLAY);
+
 		currentgameObjManager = gameObjManager;
 	}
 	return currentgameObjManager;
@@ -45,8 +47,10 @@ GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
 	if (this->gameObjManager == nullptr)
 	{
-		gameObjManager = new GameObjectManager(this,"dev");
-		testgameObjManager = new GameObjectManager(this,"play");
+		gameObjManager = new GameObjectManager(this, SceneMode::DEV);
+
+		testgameObjManager = new GameObjectManager(this, SceneMode::PLAY);
+
 		currentgameObjManager = gameObjManager;
 	}
 	return currentgameObjManager;
@@ -62,14 +66,14 @@ void Framework::SwitchObjectManager()
 		}
 		testgameObjManager->gameObjects = std::move(newGameObjects);
 		currentgameObjManager = testgameObjManager;
-		std::cout << currentgameObjManager->GetName() << std::endl;
-
+		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
+		 
 	}
 	else
 	{
 		testgameObjManager->gameObjects.clear();
 		currentgameObjManager = gameObjManager;
-		std::cout << currentgameObjManager->GetName() << std::endl;
+		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
 
 	}
 }

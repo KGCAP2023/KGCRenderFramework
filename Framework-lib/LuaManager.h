@@ -11,7 +11,7 @@ class GameObjectManager;
 class LuaManager
 {
 public:
-	LuaManager() 
+	LuaManager()
 	{
 		this->logBuffer.reserve(500);
 	};
@@ -19,7 +19,7 @@ public:
 	bool Initialize(Framework* framework);
 	bool ExecuteExample1();
 	bool ExecuteGUITest();
-	
+
 	lua_State* Lua_Begin();
 	void Lua_End(lua_State* L);
 
@@ -48,7 +48,7 @@ public:
 
 	static int lua_ImGuiBegin(lua_State* L)
 	{
-		std::string name = lua_tostring(L,1);
+		std::string name = lua_tostring(L, 1);
 		ImGui::Begin(name.c_str());
 		return 0;
 	}
@@ -66,43 +66,19 @@ public:
 		return 0;
 	}
 
-	void registerGameObjectManager(lua_State* lua)
-	{
-		//First, we create a userdata instance, that will hold pointer to our singleton
-		GameObjectManager** pmPtr = (GameObjectManager**)lua_newuserdata(
-			lua, sizeof(GameObjectManager*));
-		*pmPtr = this->objManager;  //Assuming that's the function that 
-												//returns our singleton instance
-		//Now we create metatable for that object
-		luaL_newmetatable(lua, "GameObjectManagerMetaTable");
-		//You should normally check, if the table is newly created or not, but 
-		//since it's a singleton, I won't bother.
 
-		//The table is now on the top of the stack.
-		//Since we want Lua to look for methods of PersonManager within the metatable, 
-		//we must pass reference to it as "__index" metamethod
+	static int lua_LoadAudio(lua_State* lua);
+	static int lua_PlayAudio(lua_State* lua);
+	static int lua_DeleteAudio(lua_State* lua);
+	static int lua_SetAudioVolume(lua_State* lua);
+	static int lua_PauseAudio(lua_State* lua);
+	static int lua_ResumeAudio(lua_State* lua);
+	static int lua_StopAudio(lua_State* lua);
 
-		lua_pushvalue(lua, -1);
-		lua_setfield(lua, -2, "__index");
-		//lua_setfield pops the value off the top of the stack and assigns it to our 
-		//field. Hence lua_pushvalue, which simply copies our table again on top of the stack.
-		//When we invoke lua_setfield, Lua pops our first reference to the table and 
-		//stores it as "__index" field in our table, which is also on the second 
-		//topmost position of the stack.
-		//This part is crucial, as without the "__index" field, Lua won't know where 
-		//to look for methods of PersonManager
 
-		luaL_Reg personManagerFunctions[] = {
-			 "GetObject", lua_GameObjectManager_getGameObject,
-			  nullptr, nullptr
-		};
 
-		luaL_setfuncs(lua, personManagerFunctions, 0);
-		//luaL_newlib(lua, personManagerFunctions);
+	void registerGameObjectManager(lua_State* lua);
 
-		lua_setmetatable(lua, -2);
-		lua_setglobal(lua, "GameObjectManager");
-	}
 	
 	static int lua_GameObjectManager_getGameObject(lua_State* lua);
 

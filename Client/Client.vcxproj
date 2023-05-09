@@ -166,6 +166,7 @@
     <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ResourceManagerView.h" />
+    <ClInclude Include="ScriptEditor.h" />
     <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

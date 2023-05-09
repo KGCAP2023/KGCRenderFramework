@@ -95,7 +95,7 @@ public:
                 
                 if (ImGui::Button("Save") && savename!="")
                 {
-                    strcat(savename, ".txt");
+                    strcat(savename, ".lua");
                     std::ofstream writeFile(savename);
                     if (writeFile.is_open()) {
                         writeFile << buffer;
@@ -121,7 +121,7 @@ public:
                 
                 if (ImGui::Button("Load") && loadname != "")
                 {
-                    strcat(loadname, ".txt");
+                    strcat(loadname, ".lua");
                     std::ifstream readFile(loadname);
                     if (readFile.is_open()) {
                         while (!readFile.eof()) {

@@ -75,5 +75,8 @@
     <ClInclude Include="ResourceManagerView.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptEditor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

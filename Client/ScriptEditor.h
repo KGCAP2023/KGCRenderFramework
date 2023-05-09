@@ -96,6 +96,9 @@ public:
                 if (ImGui::Button("Save") && savename!="")
                 {
                     strcat(savename, ".lua");
+                    char path[20] = "../Lua/";
+                    strcat(path, savename);
+                    strcpy(savename, path);
                     std::ofstream writeFile(savename);
                     if (writeFile.is_open()) {
                         writeFile << buffer;
@@ -122,6 +125,9 @@ public:
                 if (ImGui::Button("Load") && loadname != "")
                 {
                     strcat(loadname, ".lua");
+                    char path[20] = "../Lua/";
+                    strcat(path, loadname);
+                    strcpy(loadname, path);
                     std::ifstream readFile(loadname);
                     if (readFile.is_open()) {
                         while (!readFile.eof()) {

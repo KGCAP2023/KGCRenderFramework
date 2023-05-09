@@ -34,7 +34,7 @@ IGameObjectManager* Framework::GetGameObjectManager()
 {
 	if (this->gameObjManager == nullptr)
 	{
-		gameObjManager = new GameObjectManager(this, "development");
+		gameObjManager = new GameObjectManager(this, "dev");
 		testgameObjManager = new GameObjectManager(this, "play");
 		currentgameObjManager = gameObjManager;
 	}
@@ -45,7 +45,7 @@ GameObjectManager* Framework::GetGameObjectManagerInstance()
 {
 	if (this->gameObjManager == nullptr)
 	{
-		gameObjManager = new GameObjectManager(this,"development");
+		gameObjManager = new GameObjectManager(this,"dev");
 		testgameObjManager = new GameObjectManager(this,"play");
 		currentgameObjManager = gameObjManager;
 	}

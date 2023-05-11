@@ -67,7 +67,7 @@ void Framework::SwitchObjectManager()
 		testgameObjManager->gameObjects = std::move(newGameObjects);
 		currentgameObjManager = testgameObjManager;
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
-		 
+		this->layerManager.SetDockingSpace(false);
 	}
 	else
 	{
@@ -125,6 +125,25 @@ void Framework::Update()
 	}
 
 	this->graphics.camera->Update();
+
+	static bool F5_BUTTON_PRESSED = false;
+
+	if (kb.F5)
+	{
+		if (!F5_BUTTON_PRESSED)
+		{
+			if (this->currentgameObjManager->GetMode() == SceneMode::PLAY)
+			{
+				this->SwitchObjectManager();
+				this->layerManager.SetDockingSpace(true);
+			}
+		}
+		F5_BUTTON_PRESSED = true;
+	}
+	else
+	{
+		F5_BUTTON_PRESSED = false;
+	}
 
 	static bool F2_BUTTON_PRESSED = false;
 	static Camera3D::ViewType cameraType = Camera3D::ViewType::_3D;

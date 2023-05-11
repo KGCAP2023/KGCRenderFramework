@@ -179,8 +179,6 @@ void GraphicManager::RenderFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	//도킹스페이스를 그립니다.
-	framework->layerManager.DockingSpace();
 	//창을 그립니다.
 	framework->layerManager.Render();
 	

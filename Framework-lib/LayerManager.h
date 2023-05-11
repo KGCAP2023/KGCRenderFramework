@@ -23,7 +23,7 @@ public:
 private:
 
     bool _isActiveDemo = false;
-    bool _isActiveDockingSpace = false;
+    bool _isActiveDockingSpace = true;
     bool _isGameViewFocus = false;
 
     Framework* framework;

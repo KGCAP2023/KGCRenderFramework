@@ -46,15 +46,18 @@ void LayerManager::Update()
 void LayerManager::Render()
 {
 	if (_isActiveDockingSpace)
+	{
 		this->DockingSpace();
 
+		for (auto& layer : this->_layerMap)
+		{
+			layer.second->Render();
+		}
+
+	}
+		
 	if(_isActiveDemo)
 		ImGui::ShowDemoWindow();
-
-	for (auto& layer : this->_layerMap)
-	{
-		layer.second->Render();
-	}
 }
 
 void LayerManager::SetImGuiDemo(bool value)

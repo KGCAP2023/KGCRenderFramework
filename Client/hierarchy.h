@@ -1787,13 +1787,11 @@ public:
 				ImGui::Text("TRANSFORM");
 				if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY) {
 					Transform();
-					std::cout << "b";
 					ImGui::Text("Other Component");
 					component();
 				}
 				if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY) {
 					TestTransform();
-					std::cout << "a";
 					ImGui::Text("Other Component");
 					testComponent();
 				}

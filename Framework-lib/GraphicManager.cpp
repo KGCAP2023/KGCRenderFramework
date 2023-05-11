@@ -600,10 +600,25 @@ bool GraphicManager::InitializeScene()
 	res->LoadSprite("ani", "..\\Resource\\a.jpg");
 	res->LoadModel("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 
+	//카메라 
+	this->camera = new GameObject("camera");
+	this->cameraComponent = new Camera3D(camera);
+	camera->AddComponent(cameraComponent);
+	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
+	this->cameraComponent->initViewMatrix(
+		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f,
+		100, 100, -10000, INFINITE);
+
 #pragma region 테스트용
 
 	//GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
-	//obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
+	//obj->transform.SetPosition(0.0f, 0.0f, 10.0f);
+
+	//Script* s = new Script(obj, framework);
+	//s->SetLuaFilePath("..\\Lua\\script1.lua");
+	//s->LoadScript();
+	//obj->AddComponent(s);
+
 
 	//GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
 	//obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
@@ -626,15 +641,6 @@ bool GraphicManager::InitializeScene()
 	//obj->AddComponent(s);
 #pragma endregion
 	
-	//카메라 
-	this->camera = new GameObject("camera");
-	this->cameraComponent = new Camera3D(camera);
-	camera->AddComponent(cameraComponent);
-	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
-	this->cameraComponent->initViewMatrix(
-		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
-		100, 100, -10000, INFINITE);
-	/**********************************************/
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;
 }

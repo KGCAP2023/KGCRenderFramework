@@ -1,9 +1,12 @@
 local obj = GameObjectManager:GetObject("gooood");
-local trans = obj:GetTransform();
+local obj2 = Script:GetThisObject();
+
+local trans = obj2:GetTransform();
 
 function Start()
 
     print(obj:GetName());
+    print(obj2:GetName());
 
 end
 
@@ -24,6 +27,8 @@ function Update()
     if (KeyInput_D() == true) then  
         trans:MoveRight();
     end
+
+    -- Camera:TraceObject(obj2); --3D오브젝트만 가능
 
 end
 

@@ -124,6 +124,8 @@ void Framework::Update()
 		kv.second->Update();
 	}
 
+	this->graphics.camera->Update();
+
 	static bool F2_BUTTON_PRESSED = false;
 	static Camera3D::ViewType cameraType = Camera3D::ViewType::_3D;
 
@@ -152,6 +154,7 @@ void Framework::Update()
 		F2_BUTTON_PRESSED = false;
 	}
 
+	GameObjectManager* objMgr = this->GetGameObjectManagerInstance();
 	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
 
 	if (mouse.leftButton && this->layerManager.isGameViewFocus())
@@ -166,7 +169,7 @@ void Framework::Update()
 				float min_dist = 10000;
 
 				this->ray->CalculatePicking(mouse.x, mouse.y);
-				for (auto& kv : this->gameObjManager->gameObjects) {
+				for (auto& kv : objMgr->gameObjects) {
 					kv.second->ComponentForeach([&](Component* c) {
 						switch (c->GetType())
 						{
@@ -192,7 +195,7 @@ void Framework::Update()
 
 				if (selectedObject == nullptr)
 				{
-					for (auto& kv : this->gameObjManager->gameObjects) {
+					for (auto& kv : objMgr->gameObjects) {
 						kv.second->ComponentForeach([&](Component* c) {
 							switch (c->GetType())
 							{
@@ -219,7 +222,7 @@ void Framework::Update()
 				if (selectedObject != nullptr)
 				{
 					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
-					this->gameObjManager->notifyFousedObject(selectedObject);
+					objMgr->notifyFousedObject(selectedObject);
 					selectedObject->SetFocus();
 				}
 				else

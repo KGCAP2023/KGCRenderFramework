@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "LuaManager.h"
 #include "Framework.h"
-
+#include "GameObject.h"
 
 bool LuaManager::Initialize(Framework* framework)
 {
@@ -61,6 +61,52 @@ void LuaManager::registerAudioManager(lua_State* lua)
 	lua_setglobal(lua, "AudioManager");
 
 	// 사용법 => AudioManager:PlayAudio("audioName")
+}
+
+void LuaManager::registerCamera(lua_State* lua)
+{
+	GameObject* camera = this->framework->graphics.camera;
+	GameObject** pmPtr = (GameObject**)lua_newuserdata(lua, sizeof(GameObject*));
+	*pmPtr = camera;
+	luaL_newmetatable(lua, "CameraMetaTable");
+
+	lua_pushvalue(lua, -1);
+	lua_setfield(lua, -2, "__index");
+
+	luaL_Reg personManagerFunctions[] = {
+	   "TraceObject", lua_Camera_TraceObject,
+		nullptr, nullptr
+	};
+
+	luaL_setfuncs(lua, personManagerFunctions, 0);
+
+	lua_setmetatable(lua, -2);
+	lua_setglobal(lua, "Camera");
+
+}
+
+int LuaManager::lua_Camera_TraceObject(lua_State* lua)
+{
+	float dt = Framework::getDeltaTime();
+	float cameraSpeed = 0.01f;
+
+	GameObject** obj = (GameObject**)luaL_checkudata(lua, 2, "GameObjectMetaTable");
+	GameObject** camera = (GameObject**)luaL_checkudata(lua, 1, "CameraMetaTable");
+
+	XMFLOAT3& obj_pos = (*obj)->transform.position;
+	XMFLOAT3& camera_pos = (*camera)->transform.position;
+
+	XMFLOAT3 dir;
+
+	dir.x = obj_pos.x - camera_pos.x;
+	dir.y = obj_pos.y - camera_pos.y;
+	dir.z = obj_pos.z - camera_pos.z;
+
+	XMFLOAT3 moveVector(dir.x * cameraSpeed * dt, dir.y * cameraSpeed * dt, 0);
+	//std::cout << moveVector.x << moveVector.y << moveVector.z << std::endl;
+	(*camera)->transform.Translate(moveVector);
+
+	return 0;
 }
 
 #pragma region 오디오메니저_관련_래핑_함수들

@@ -67,9 +67,7 @@ void GameObject::Update()
 		}
 	}
 
-	//행렬 업데이트
-	this->transform.worldMatrix = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z) * XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z) * XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
-	this->transform.UpdateDirection();
+	this->transform.UpdateMatrix();
 }
 
 void GameObject::AddComponent(Component* pComponent)

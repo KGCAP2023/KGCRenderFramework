@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "LuaManager.h"
 #include "Framework.h"
-
+#include "GameObject.h"
 
 bool LuaManager::Initialize(Framework* framework)
 {
@@ -10,6 +10,7 @@ bool LuaManager::Initialize(Framework* framework)
 	{
 		this->framework = framework;
 		this->res = &framework->resourceManager;
+		this->gameMapper = new GameObjectMapper(framework);
 		this->objManager = framework->gameObjManager;
 	}
 	return true;
@@ -31,126 +32,195 @@ void LuaManager::Lua_End(lua_State* L)
 	lua_close(L);
 }
 
-int LuaManager::lua_GameObjectManager_getGameObject(lua_State* lua)
+void LuaManager::registerAudioManager(lua_State* lua)
 {
-	//Remember that first arbument should be userdata with your PersonManager 
-	//instance, as in Lua you would call PersonManager:getPerson("Stack Overflower");
-	//Normally I would first check, if first parameter is userdata with metatable 
-	//called PersonManagerMetaTable, for safety reasons
 
-	GameObjectManager** pmPtr = (GameObjectManager**)luaL_checkudata(
-		lua, 1, "GameObjectManagerMetaTable");
+	AudioManager* audioManager = &framework->audioManager;
+	AudioManager** amPtr = (AudioManager**)lua_newuserdata(lua, sizeof(AudioManager*));
+	*amPtr = audioManager;
+
+	luaL_newmetatable(lua, "AudioManagerMetaTable");
+
+	lua_pushvalue(lua, -1);
+	lua_setfield(lua, -2, "__index");
+
+	luaL_Reg audioManagerFunctions[] = {
+		"LoadAudio",lua_LoadAudio,//저장할 이름 (str), 경로(str)
+		"PlayAudio",lua_PlayAudio,//오디오 이름(str)
+		"StopAudio",lua_StopAudio,//오디오 이름(str)
+		"DeleteAudio",lua_DeleteAudio,//오디오 이름(str)
+		"SetAudioVolume",lua_SetAudioVolume,//오디오 이름(str), 설정 볼륨(int [0~10])
+		"PauseAudio",lua_PauseAudio,//오디오 이름(str)
+		"ResumeAudio",lua_ResumeAudio,//오디오 이름(str)
+		nullptr, nullptr
+	};
+	luaL_setfuncs(lua, audioManagerFunctions, 0);
+
+	lua_setmetatable(lua, -2);
+
+	lua_setglobal(lua, "AudioManager");
+
+	// 사용법 => AudioManager:PlayAudio("audioName")
+}
+
+void LuaManager::registerCamera(lua_State* lua)
+{
+	GameObject* camera = this->framework->graphics.camera;
+	GameObject** pmPtr = (GameObject**)lua_newuserdata(lua, sizeof(GameObject*));
+	*pmPtr = camera;
+	luaL_newmetatable(lua, "CameraMetaTable");
+
+	lua_pushvalue(lua, -1);
+	lua_setfield(lua, -2, "__index");
+
+	luaL_Reg personManagerFunctions[] = {
+	   "TraceObject", lua_Camera_TraceObject,
+		nullptr, nullptr
+	};
+
+	luaL_setfuncs(lua, personManagerFunctions, 0);
+
+	lua_setmetatable(lua, -2);
+	lua_setglobal(lua, "Camera");
+
+}
+
+int LuaManager::lua_Camera_TraceObject(lua_State* lua)
+{
+	float dt = Framework::getDeltaTime();
+	float cameraSpeed = 0.01f;
+
+	GameObject** obj = (GameObject**)luaL_checkudata(lua, 2, "GameObjectMetaTable");
+	GameObject** camera = (GameObject**)luaL_checkudata(lua, 1, "CameraMetaTable");
+
+	XMFLOAT3& obj_pos = (*obj)->transform.position;
+	XMFLOAT3& camera_pos = (*camera)->transform.position;
+
+	XMFLOAT3 dir;
+
+	dir.x = obj_pos.x - camera_pos.x;
+	dir.y = obj_pos.y - camera_pos.y;
+	dir.z = obj_pos.z - camera_pos.z;
+
+	XMFLOAT3 moveVector(dir.x * cameraSpeed * dt, dir.y * cameraSpeed * dt, 0);
+	//std::cout << moveVector.x << moveVector.y << moveVector.z << std::endl;
+	(*camera)->transform.Translate(moveVector);
+
+	return 0;
+}
+
+#pragma region 오디오메니저_관련_래핑_함수들
+
+int LuaManager::lua_LoadAudio(lua_State* lua) {
 	
-	std::string personName = luaL_checkstring(lua, 2);
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
 
-	GameObject* person = (*pmPtr)->FindGameObject(personName);
-	if (person == nullptr) person = (*pmPtr)->CreateGameObject(personName);
+	std::string audioName = luaL_checkstring(lua, 2);
+	std::string path = luaL_checkstring(lua, 3);
 
-	if (person)
-		registerGameObject(lua, person);    //Function that registers person. After 
-				//the function is called, the newly created instance of Person 
-				//object is on top of the stack
-	else
-		lua_pushnil(lua);
+	(*pmPtr)->LoadAudio(audioName.c_str(), path.c_str());
 
 	return 1;
 }
+
+int LuaManager::lua_PlayAudio(lua_State* lua) {
+
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
+
+	std::string audioName = luaL_checkstring(lua, 2);
+
+	(*pmPtr)->PlayAudio(audioName.c_str());
+
+	return 1;
+}
+
+int LuaManager::lua_StopAudio(lua_State* lua) {
+	
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
+
+	std::string audioName = luaL_checkstring(lua, 2);
+
+	(*pmPtr)->StopAudio(audioName.c_str());
+
+	return 1;
+
+}
+
+int LuaManager::lua_DeleteAudio(lua_State* lua) {
+	
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
+
+	std::string audioName = luaL_checkstring(lua, 2);
+
+	(*pmPtr)->DeleteAudio(audioName.c_str());
+
+	return 1;
+
+}
+
+int LuaManager::lua_PauseAudio(lua_State* lua) {
+
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
+
+	std::string audioName = luaL_checkstring(lua, 2);
+
+	(*pmPtr)->PauseAudio(audioName.c_str());
+
+	return 1;
+}
+
+int LuaManager::lua_ResumeAudio(lua_State* lua) {
+	
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
+
+	std::string audioName = luaL_checkstring(lua, 2);
+
+	(*pmPtr)->ResumeAudio(audioName.c_str());
+
+	return 1;
+
+}
+
+int LuaManager::lua_SetAudioVolume(lua_State* lua) {
+
+	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(
+		lua, 1, "AudioManagerMetaTable");
+
+	std::string audioName = luaL_checkstring(lua, 2);
+	int volume = luaL_checkinteger(lua, 3);
+
+	if (volume < 0 || volume > 10) {
+		std::cout << "volume is between 0 and 10" << std::endl;
+		return 0;
+	}
+
+	(*pmPtr)->SetVolume(audioName.c_str(), ((float)volume) / 10);
+
+	return 1;
+
+}
+
+#pragma endregion
 
 
 bool LuaManager::ExecuteExample1()
 {
 	std::cout << "[=] Load LuaScripts... - Example1 " << std::endl;
 
-	struct Player
-	{
-		std::string title;
-		std::string name;
-		std::string family;
-		int level;
-	} player;
 
 	lua_State* L = this->Lua_Begin();
 
-	//Lua에 전역으로 C++ 함수를 등록합니다. 
-	lua_register(L, "HostFunction", LuaManager::lua_HostFunction);
-
 
 	//Lua파일이 유효한지 확인한후 로드합니다.
-	if (CheckLua(L, luaL_dofile(L, "..\\Lua\\EmbeddingLua1.lua")))
+	if (CheckLua(L, luaL_dofile(L, "..\\Lua\\lt.lua")))
 	{
-		// Stage 1: Just read simple variables
-		// -1 <- 제일 위에있는게 -1
-		// -2
-		// -3
 
-		// lua_pop(L, 1); <- 이거는 1번 스택 pop한다.
-		// lua_pcall(L, 3, 1, 0) <- 인자 3개 반환 1개  0은 디폴트
-	
-		std::cout << "[CPP] Stage 1 - Read Simple Variables" << std::endl;
-		lua_getglobal(L, "a");
-		if (lua_isnumber(L, -1)) std::cout << "[CPP S1] a = " << (int)lua_tointeger(L, -1) << std::endl;
-		lua_getglobal(L, "b");
-		if (lua_isnumber(L, -1)) std::cout << "[CPP S1] b = " << (int)lua_tointeger(L, -1) << std::endl;
-		lua_getglobal(L, "c");
-		if (lua_isnumber(L, -1)) std::cout << "[CPP S1] c = " << (int)lua_tointeger(L, -1) << std::endl;
-		lua_getglobal(L, "d");
-		if (lua_isstring(L, -1)) std::cout << "[CPP S1] d = " << lua_tostring(L, -1) << std::endl << std::endl;
-
-		// Stage 2: Read Table Object
-		std::cout << "[CPP] Stage 2 - Read Table (Key/Value pairs)" << std::endl;
-		lua_getglobal(L, "player");
-		if (lua_istable(L, -1))
-		{
-			lua_pushstring(L, "Name");
-			lua_gettable(L, -2);
-			player.name = lua_tostring(L, -1);
-			lua_pop(L, 1);
-
-			lua_pushstring(L, "Family");
-			lua_gettable(L, -2);
-			player.family = lua_tostring(L, -1);
-			lua_pop(L, 1);
-
-			lua_pushstring(L, "Title");
-			lua_gettable(L, -2);
-			player.title = lua_tostring(L, -1);
-			lua_pop(L, 1);
-
-			lua_pushstring(L, "Level");
-			lua_gettable(L, -2);
-			player.level = (int)lua_tointeger(L, -1);
-			lua_pop(L, 1);
-		}
-		std::cout << "[CPP S2] " << player.title << " " << player.name << " of " << player.family << " [Lvl: " << player.level << "]" << std::endl << std::endl;
-
-		// Stage 3: Call Lua Function
-		std::cout << "[CPP] Stage 3 - Call Lua Function" << std::endl;
-		lua_getglobal(L, "CalledFromCPP1");
-		if (lua_isfunction(L, -1))
-		{
-			lua_pushnumber(L, 5.0f);
-			lua_pushnumber(L, 6.0f);
-			lua_pushstring(L, "Bwa ha ha!");
-			std::cout << "[CPP S3] Calling 'CalledFromCPP1' in lua script" << std::endl;
-			if (CheckLua(L, lua_pcall(L, 3, 1, 0)))
-			{
-				std::cout << "[CPP S3] 'CalledFromCPP1' returned " << (float)lua_tonumber(L, -1) << std::endl << std::endl;
-			}
-		}
-
-		// Stage 4: Call Lua Function, which calls C++ Function
-		std::cout << "[CPP] Stage 4 - Call Lua Function, whcih in turn calls C++ Function" << std::endl;
-		lua_getglobal(L, "CalledFromCPP2");
-		if (lua_isfunction(L, -1))
-		{
-			lua_pushnumber(L, 5.0f);
-			lua_pushnumber(L, 6.0f);
-			std::cout << "[CPP S4] Calling 'CalledFromCPP2' in lua script" << std::endl;
-			if (CheckLua(L, lua_pcall(L, 2, 1, 0)))
-			{
-				std::cout << "[CPP S4] 'CalledFromCPP2' returned " << (float)lua_tonumber(L, -1) << std::endl << std::endl;
-			}
-		}
 	}
 
 	this->Lua_End(L);
@@ -166,8 +236,6 @@ bool LuaManager::ExecuteGUITest()
 	lua_register(L, "Begin", LuaManager::lua_ImGuiBegin);
 	lua_register(L, "Text", LuaManager::lua_ImGuiText);
 	lua_register(L, "End", LuaManager::lua_ImGuiEnd);
-
-	LuaManager::registerGameObjectManager(L);
 
 	if (CheckLua(L, luaL_dofile(L, "..\\Lua\\gui.lua")))
 	{
@@ -186,4 +254,9 @@ bool LuaManager::ExecuteGUITest()
 	}
 
 	return true;
+}
+
+GameObjectMapper* LuaManager::GetGameObjectMapper()
+{
+	return this->gameMapper;
 }

@@ -31,6 +31,7 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="GameObjectMapper.h" />
     <ClInclude Include="GraphicManager.h" />
     <ClInclude Include="IFramework.h" />
     <ClInclude Include="IFrameworkFactory.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="GameObjectMapper.cpp" />
     <ClCompile Include="GraphicManager.cpp" />
     <ClCompile Include="IFramework.cpp" />
     <ClCompile Include="ILayer.cpp" />

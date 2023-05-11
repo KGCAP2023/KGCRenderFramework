@@ -8,7 +8,7 @@ public:
 
 	Component(GameObject* owner) : owner(owner) {}
 	virtual ~Component() {};
-
+	virtual Component* Copy(GameObject* owner);
 	virtual void Update();
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 
@@ -22,6 +22,7 @@ public:
 		RENDERER_SPRITE,
 		RENDERER_TILEMAP,
 		BOUNDING_BOX,
+		SCRIPT,
 		CAMERA,
 		COLLIDER_RECT,
 		COLLIDER_SPHERE

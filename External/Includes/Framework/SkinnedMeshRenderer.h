@@ -18,6 +18,33 @@ public:
 		this->res = res;
 	}
 
+	SkinnedMeshRenderer(const SkinnedMeshRenderer& rhs, GameObject* owner) : Component(owner)
+	{
+		std::cout << "[=] SkinnedMeshRenderer CLONE Process - Copy constructor called" << std::endl;
+		model = rhs.model;
+		selectedAnimation = rhs.selectedAnimation;
+		matrix = rhs.matrix;
+		StartTimeMillis = rhs.StartTimeMillis;
+		bbox = rhs.bbox;
+		res = rhs.res;
+	}
+
+	~SkinnedMeshRenderer()
+	{
+		std::cout << "[=] SkinnedMeshRenderer destructor called" << std::endl;
+		model = nullptr;
+		selectedAnimation = nullptr;
+		matrix.clear();
+		bbox = nullptr;
+		res = nullptr;
+	}
+
+	virtual Component* Copy(GameObject* owner)
+	{
+		Component* compo = new SkinnedMeshRenderer(*this, owner);
+		return compo;
+	};
+
 	bool SetSkinnedMesh(SkinnedMesh* model);
 
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;

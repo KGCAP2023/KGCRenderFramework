@@ -179,8 +179,6 @@ void GraphicManager::RenderFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	//도킹스페이스를 그립니다.
-	framework->layerManager.DockingSpace();
 	//창을 그립니다.
 	framework->layerManager.Render();
 	
@@ -600,10 +598,25 @@ bool GraphicManager::InitializeScene()
 	res->LoadSprite("ani", "..\\Resource\\a.jpg");
 	res->LoadModel("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 
-	#pragma region 테스트용
+	//카메라 
+	this->camera = new GameObject("camera");
+	this->cameraComponent = new Camera3D(camera);
+	camera->AddComponent(cameraComponent);
+	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
+	this->cameraComponent->initViewMatrix(
+		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f,
+		100, 100, -10000, INFINITE);
+
+#pragma region 테스트용
 
 	//GameObject* obj = gameObjectManager->CreateGameObject("Nanosuit_test_object", "Nanosuit");
-	//obj->transform.SetPosition(0.0f, 0.0f, 0.0f);
+	//obj->transform.SetPosition(0.0f, 0.0f, 10.0f);
+
+	//Script* s = new Script(obj, framework);
+	//s->SetLuaFilePath("..\\Lua\\script1.lua");
+	//s->LoadScript();
+	//obj->AddComponent(s);
+
 
 	//GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
 	//obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
@@ -611,25 +624,21 @@ bool GraphicManager::InitializeScene()
 	//SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
 	//rrr->SetSprite(res->FindSprite("ani"));
 	//obj2->AddComponent(rrr);
+#pragma endregion
 
 
+#pragma region 루아스크립트1 테스트
 	//GameObject* obj = this->gameObjectManager->CreateGameObject("gooood");
+	//SpriteRenderer* rrr = new SpriteRenderer(obj,res);
+	//rrr->SetSprite(res->FindSprite("ani"));
+	//obj->AddComponent(rrr);
+
 	//Script* s = new Script(obj, framework);
-	//s->SetLuaFilePath("..\\Lua\\gui.lua");
+	//s->SetLuaFilePath("..\\Lua\\script1.lua");
+	//s->LoadScript();
 	//obj->AddComponent(s);
-
-	#pragma endregion
-
-
-	//카메라 
-	this->camera = new GameObject("camera");
-	this->cameraComponent = new Camera3D(camera);
-	camera->AddComponent(cameraComponent);
-	camera->transform.SetPosition(0.0f, 0.0f, -10.0f);
-	this->cameraComponent->initViewMatrix(
-		90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 3000.0f, 
-		100, 100, -10000, INFINITE);
-	/**********************************************/
+#pragma endregion
+	
 	std::cout << "[O] Successfully Completed Scene Initialize!" << std::endl;
 	return true;
 }

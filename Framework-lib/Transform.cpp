@@ -76,35 +76,35 @@ const DirectX::XMFLOAT3& Transform::GetRotationXMFloat3() const
 void Transform::SetScale(float xScale, float yScale, float zScale)
 {
 	this->scale = XMFLOAT3(xScale, yScale, zScale);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::SetPosition(const DirectX::XMVECTOR& pos)
 {
 	DirectX::XMStoreFloat3(&this->position, pos);
 	this->positionVector = pos;
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::SetPosition(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
 	this->positionVector = DirectX::XMLoadFloat3(&this->position);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::SetPosition(float x, float y, float z)
 {
 	this->position = DirectX::XMFLOAT3(x, y, z);
 	this->positionVector = DirectX::XMLoadFloat3(&this->position);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::Translate(const DirectX::XMVECTOR& pos)
 {
 	this->positionVector += pos;
 	DirectX::XMStoreFloat3(&this->position, this->positionVector);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::Translate(const DirectX::XMFLOAT3& pos)
@@ -113,7 +113,7 @@ void Transform::Translate(const DirectX::XMFLOAT3& pos)
 	this->position.y += pos.y;
 	this->position.z += pos.z;
 	this->positionVector = DirectX::XMLoadFloat3(&this->position);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::Translate(float x, float y, float z)
@@ -122,35 +122,35 @@ void Transform::Translate(float x, float y, float z)
 	this->position.y += y;
 	this->position.z += z;
 	this->positionVector = DirectX::XMLoadFloat3(&this->position);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::SetRotation(const DirectX::XMVECTOR& rot)
 {
 	this->rotationVector = rot;
 	DirectX::XMStoreFloat3(&this->rotation, this->rotationVector);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::SetRotation(const DirectX::XMFLOAT3& rot)
 {
 	this->rotation = rot;
 	this->rotationVector = DirectX::XMLoadFloat3(&this->rotation);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::SetRotation(float x, float y, float z)
 {
 	this->rotation = XMFLOAT3(x, y, z);
 	this->rotationVector = DirectX::XMLoadFloat3(&this->rotation);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::Rotate(const DirectX::XMVECTOR& rot)
 {
 	this->rotationVector += rot;
 	DirectX::XMStoreFloat3(&this->rotation, this->rotationVector);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::Rotate(const DirectX::XMFLOAT3& rot)
@@ -159,7 +159,7 @@ void Transform::Rotate(const DirectX::XMFLOAT3& rot)
 	this->rotation.y += rot.y;
 	this->rotation.z += rot.z;
 	this->rotationVector = DirectX::XMLoadFloat3(&this->rotation);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::Rotate(float x, float y, float z)
@@ -168,7 +168,7 @@ void Transform::Rotate(float x, float y, float z)
 	this->rotation.y += y;
 	this->rotation.z += z;
 	this->rotationVector = DirectX::XMLoadFloat3(&this->rotation);
-	this->owner->Update();
+	UpdateMatrix();
 }
 
 void Transform::UpdateDirection()
@@ -178,4 +178,11 @@ void Transform::UpdateDirection()
 	backward = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
 	left = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
 	right = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
+}
+
+void Transform::UpdateMatrix()
+{
+	//행렬 업데이트
+	this->worldMatrix = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z) * XMMatrixTranslation(position.x, position.y, position.z);
+	this->UpdateDirection();
 }

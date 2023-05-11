@@ -10,6 +10,28 @@ public:
 
 	TileMapRenderer(GameObject* owner, ResourceManager* res);
 
+	TileMapRenderer(const TileMapRenderer& rhs, GameObject* owner) : Component(owner)
+	{
+		std::cout << "[=] TileMapRenderer CLONE Process - Copy constructor called" << std::endl;
+		tileMap = rhs.tileMap;
+		bbox = rhs.bbox;
+		res = rhs.res;
+	}
+
+	~TileMapRenderer()
+	{
+		std::cout << "[=] TileMapRenderer destructor called" << std::endl;
+		tileMap = nullptr;
+		bbox = nullptr;
+		res = nullptr;
+	}
+
+	virtual Component* Copy(GameObject* owner)
+	{
+		Component* compo = new TileMapRenderer(*this, owner);
+		return compo;
+	};
+
 	void SetTileMap(TileMap* tileMap)
 	{
 		this->tileMap = tileMap;

@@ -18,6 +18,34 @@ public:
 		this->res = res;
 	}
 
+	~SpriteRenderer()
+	{
+		std::cout << "[=] SpriteRenderer destructor called" << std::endl;
+		sprite = nullptr;
+		spriteBatch = nullptr;
+		selectedAnimation = nullptr;
+		_AnimationMap.clear();
+		bbox = nullptr;
+		res = nullptr;
+	}
+
+	SpriteRenderer(const SpriteRenderer& rhs, GameObject* owner) : Component(owner)
+	{
+		std::cout << "[=] SpriteRenderer CLONE Process - Copy constructor called" << std::endl;
+		sprite = rhs.sprite;
+		spriteBatch = rhs.spriteBatch;
+		selectedAnimation = rhs.selectedAnimation;
+		_AnimationMap = rhs._AnimationMap;
+		bbox = rhs.bbox;
+		res = rhs.res;
+	}
+
+	virtual Component* Copy(GameObject* owner)
+	{
+		Component* compo = new SpriteRenderer(*this, owner);
+		return compo;
+	};
+
 	virtual void Update() override;
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 

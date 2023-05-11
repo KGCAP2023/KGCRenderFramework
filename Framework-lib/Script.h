@@ -15,9 +15,24 @@ public:
 	//생성자
 	Script(GameObject* owner, Framework* framework);
 
+	Script(const Script& rhs, GameObject* owner) : Component(owner)
+	{
+		std::cout << "[=] Script CLONE Process - Copy constructor called" << std::endl;
+		L = nullptr;
+		filepath = rhs.filepath;
+		lua = rhs.lua;
+	}
+
+	virtual Component* Copy(GameObject* owner)
+	{
+		Component* compo = new Script(*this, owner);
+		return compo;
+	};
+
 	//소멸자 
 	~Script()
 	{
+		std::cout << "[=] Script destructor called" << std::endl;
 		this->clear();
 	}
 
@@ -30,6 +45,8 @@ public:
 
 	bool LoadScript()
 	{
+		this->init();
+
 		if (this->lua->CheckLua(L, luaL_dofile(L, filepath.c_str())))
 		{
 			lua_getglobal(L, "Start");
@@ -46,6 +63,7 @@ public:
 	//업데이트문
 	virtual void Update()
 	{
+
 		//루아 파일 실행 
 		if (L != nullptr)
 		{
@@ -54,7 +72,9 @@ public:
 			{
 				this->lua->CheckLua(L, lua_pcall(L, 0, 0, 0));
 			}
+
 		}
+
 	}
 
 	virtual void Draw(const DirectX::XMMATRIX& viewProjectionMatrix) {}
@@ -69,7 +89,46 @@ private:
 		lua_register(L, "KeyInput_A", InputMapper::KeyInput_A);
 		lua_register(L, "KeyInput_S", InputMapper::KeyInput_S);
 		lua_register(L, "KeyInput_D", InputMapper::KeyInput_D);
+
+		this->RegisterMappingScript(L);
+		this->lua->GetGameObjectMapper()->RegisterMappingGameObjectManager(L);
+		this->lua->registerAudioManager(L);
+		this->lua->registerCamera(L);
+
 		//etc....
+	}
+
+	void RegisterMappingScript(lua_State* lua)
+	{
+		Script* objManager = this;
+		Script** pmPtr = (Script**)lua_newuserdata(lua, sizeof(Script*));
+		*pmPtr = objManager;
+
+		luaL_newmetatable(lua, "ScriptMetaTable");
+
+		lua_pushvalue(lua, -1);
+		lua_setfield(lua, -2, "__index");
+
+		luaL_Reg personManagerFunctions[] = {
+		   "GetThisObject", lua_Script_GetThisObject,
+			nullptr, nullptr
+		};
+
+		luaL_setfuncs(lua, personManagerFunctions, 0);
+
+		lua_setmetatable(lua, -2);
+		lua_setglobal(lua, "Script");
+	}
+	static int lua_Script_GetThisObject(lua_State* lua)
+	{
+		Script** pptr = (Script**)luaL_checkudata(lua, 1, "ScriptMetaTable");
+		GameObject* obj = (*pptr)->GetOwner();
+
+		if (obj)
+			GameObjectMapper::RegisterMappingGameObject(lua, obj);
+		else
+			lua_pushnil(lua);
+		return 1;
 	}
 
 	//초기화
@@ -88,5 +147,6 @@ private:
 	lua_State* L = nullptr;
 	std::string filepath; // = "..\\Lua\\gui.lua";
 	LuaManager* lua;
+
 };
 

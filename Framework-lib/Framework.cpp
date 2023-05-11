@@ -61,20 +61,49 @@ void Framework::SwitchObjectManager()
 	if (currentgameObjManager == gameObjManager)
 	{
 		std::unordered_map<std::string, GameObject*> newGameObjects;
+
 		for (const auto& gameObject : gameObjManager->gameObjects) {
-			newGameObjects[gameObject.first] = new GameObject(*gameObject.second);
+			
+			GameObject* copyObj = new GameObject(*gameObject.second);
+			newGameObjects[gameObject.first] = copyObj;
+
+			Script* s = (Script*)copyObj->GetComponent(Component::Type::SCRIPT);
+			if(s != nullptr) s->LoadScript();
+
+			//경계박스 비활성화
+			if ((gameObject.second)->bbox != nullptr)
+			{
+				(gameObject.second)->bbox->SetBoundingBoxActive(false);
+			}
+
 		}
+
 		testgameObjManager->gameObjects = std::move(newGameObjects);
 		currentgameObjManager = testgameObjManager;
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
-		 
+		this->layerManager.SetDockingSpace(false);
 	}
 	else
 	{
+		//경계박스 활성화
+		for (const auto& gameObject : gameObjManager->gameObjects) 
+		{
+			if ((gameObject.second)->bbox != nullptr)
+			{
+				(gameObject.second)->bbox->SetBoundingBoxActive(true);
+			}
+		}
+
+		for (const auto& gameObject : testgameObjManager->gameObjects)
+		{
+			gameObject.second->ComponentForeach([](Component* c) {
+				delete c;
+			});
+		}
+
 		testgameObjManager->gameObjects.clear();
 		currentgameObjManager = gameObjManager;
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
-
 	}
 }
 
@@ -124,6 +153,27 @@ void Framework::Update()
 		kv.second->Update();
 	}
 
+	this->graphics.camera->Update();
+
+	static bool F5_BUTTON_PRESSED = false;
+
+	if (kb.F5)
+	{
+		if (!F5_BUTTON_PRESSED)
+		{
+			if (this->currentgameObjManager->GetMode() == SceneMode::PLAY)
+			{
+				this->SwitchObjectManager();
+				this->layerManager.SetDockingSpace(true);
+			}
+		}
+		F5_BUTTON_PRESSED = true;
+	}
+	else
+	{
+		F5_BUTTON_PRESSED = false;
+	}
+
 	static bool F2_BUTTON_PRESSED = false;
 	static Camera3D::ViewType cameraType = Camera3D::ViewType::_3D;
 
@@ -152,6 +202,7 @@ void Framework::Update()
 		F2_BUTTON_PRESSED = false;
 	}
 
+	GameObjectManager* objMgr = this->GetGameObjectManagerInstance();
 	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
 
 	if (mouse.leftButton && this->layerManager.isGameViewFocus())
@@ -166,7 +217,7 @@ void Framework::Update()
 				float min_dist = 10000;
 
 				this->ray->CalculatePicking(mouse.x, mouse.y);
-				for (auto& kv : this->gameObjManager->gameObjects) {
+				for (auto& kv : objMgr->gameObjects) {
 					kv.second->ComponentForeach([&](Component* c) {
 						switch (c->GetType())
 						{
@@ -192,7 +243,7 @@ void Framework::Update()
 
 				if (selectedObject == nullptr)
 				{
-					for (auto& kv : this->gameObjManager->gameObjects) {
+					for (auto& kv : objMgr->gameObjects) {
 						kv.second->ComponentForeach([&](Component* c) {
 							switch (c->GetType())
 							{
@@ -219,7 +270,7 @@ void Framework::Update()
 				if (selectedObject != nullptr)
 				{
 					std::cout <<"오브젝트: " << selectedObject->GetName() << "가 선택되었습니다." << std::endl;
-					this->gameObjManager->notifyFousedObject(selectedObject);
+					objMgr->notifyFousedObject(selectedObject);
 					selectedObject->SetFocus();
 				}
 				else
@@ -409,6 +460,13 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 	//레이어 매니저 초기화
 	this->layerManager.Init(this);
 
+	//루아 스크립트 매니저 초기화
+	if (!this->luaManager.Initialize(framework))
+	{
+		std::cout << "[X] FAILED LUA Manager Initialize!" << std::endl;
+		return false;
+	}
+
 	//그래픽스 매니저 초기화
 	if (!this->graphics.Initialize(framework,this->handle, this->width, this->height))
 	{
@@ -423,12 +481,7 @@ bool Framework::Initialize(HINSTANCE hInstance, std::string window_title, std::s
 		return false;
 	}
 
-	//루아 스크립트 매니저 초기화
-	if (!this->luaManager.Initialize(framework))
-	{
-		std::cout << "[X] FAILED LUA Manager Initialize!" << std::endl;
-		return false;
-	}
+
 
 
 	ray = new Ray(this);

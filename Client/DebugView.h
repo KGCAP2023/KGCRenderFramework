@@ -166,7 +166,7 @@ public:
 
             for (std::string str : a)                                                                                               //반복문을 통한 메시지 출력
             {
-                my_log.AddLog("%s\n", a);
+                my_log.AddLog("%s\n", str.c_str());
             }
             a.clear();
 

@@ -15,9 +15,24 @@ public:
 	//持失切
 	Script(GameObject* owner, Framework* framework);
 
+	Script(const Script& rhs, GameObject* owner) : Component(owner)
+	{
+		std::cout << "[=] Script CLONE Process - Copy constructor called" << std::endl;
+		L = nullptr;
+		filepath = rhs.filepath;
+		lua = rhs.lua;
+	}
+
+	virtual Component* Copy(GameObject* owner)
+	{
+		Component* compo = new Script(*this, owner);
+		return compo;
+	};
+
 	//社瑚切 
 	~Script()
 	{
+		std::cout << "[=] Script destructor called" << std::endl;
 		this->clear();
 	}
 
@@ -30,6 +45,8 @@ public:
 
 	bool LoadScript()
 	{
+		this->init();
+
 		if (this->lua->CheckLua(L, luaL_dofile(L, filepath.c_str())))
 		{
 			lua_getglobal(L, "Start");

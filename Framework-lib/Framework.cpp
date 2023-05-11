@@ -61,9 +61,23 @@ void Framework::SwitchObjectManager()
 	if (currentgameObjManager == gameObjManager)
 	{
 		std::unordered_map<std::string, GameObject*> newGameObjects;
+
 		for (const auto& gameObject : gameObjManager->gameObjects) {
-			newGameObjects[gameObject.first] = new GameObject(*gameObject.second);
+			
+			GameObject* copyObj = new GameObject(*gameObject.second);
+			newGameObjects[gameObject.first] = copyObj;
+
+			Script* s = (Script*)copyObj->GetComponent(Component::Type::SCRIPT);
+			if(s != nullptr) s->LoadScript();
+
+			//경계박스 비활성화
+			if ((gameObject.second)->bbox != nullptr)
+			{
+				(gameObject.second)->bbox->SetBoundingBoxActive(false);
+			}
+
 		}
+
 		testgameObjManager->gameObjects = std::move(newGameObjects);
 		currentgameObjManager = testgameObjManager;
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
@@ -71,10 +85,25 @@ void Framework::SwitchObjectManager()
 	}
 	else
 	{
+		//경계박스 활성화
+		for (const auto& gameObject : gameObjManager->gameObjects) 
+		{
+			if ((gameObject.second)->bbox != nullptr)
+			{
+				(gameObject.second)->bbox->SetBoundingBoxActive(true);
+			}
+		}
+
+		for (const auto& gameObject : testgameObjManager->gameObjects)
+		{
+			gameObject.second->ComponentForeach([](Component* c) {
+				delete c;
+			});
+		}
+
 		testgameObjManager->gameObjects.clear();
 		currentgameObjManager = gameObjManager;
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
-
 	}
 }
 

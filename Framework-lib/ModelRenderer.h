@@ -17,13 +17,37 @@ public:
 		this->res = res;
 	}
 
-	bool SetModel(Model* model);
+	~ModelRenderer()
+	{
+		std::cout << "[=] ModelRenderer destructor called" << std::endl;
+		this->model = nullptr;
+		this->bbox = nullptr;
+		this->res = nullptr;
+	}
+
+	ModelRenderer(const ModelRenderer& rhs, GameObject* owner) : Component(owner)
+	{
+		std::cout << "[=] ModelRenderer CLONE Process - Copy constructor called" << std::endl;
+		this->type = rhs.type;
+		this->name = rhs.name;
+		this->res = rhs.res;
+		this->model = rhs.model;
+		this->bbox = rhs.bbox;
+	}
+
+	virtual Component* Copy(GameObject* owner)
+	{
+		Component* compo = new ModelRenderer(*this,owner);
+		return compo;
+	};
+
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual void Update() override;
 
 	virtual void InitBoundingBox() override;
 	virtual BoundingBoxRenderer* GetBoundingBox() override;
 
+	bool SetModel(Model* model);
 	std::vector<Mesh>& GetMeshes();
 	std::string GetPath();
 private:

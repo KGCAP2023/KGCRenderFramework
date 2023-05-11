@@ -10,6 +10,22 @@ public:
 
 	Transform(GameObject* owner) : owner(owner) {}
 	
+	void Copy(const Transform& rhs)
+	{
+		worldMatrix = rhs.worldMatrix;
+
+		position = rhs.position;
+		rotation = rhs.rotation;
+		scale = rhs.scale;
+
+		positionVector = rhs.positionVector;
+		rotationVector = rhs.rotationVector;
+		forward = rhs.forward;
+		left = rhs.left;
+		right = rhs.right;
+		backward = rhs.backward;
+	}
+
 	const DirectX::XMVECTOR& GetPositionXMVector() const;
 	const DirectX::XMFLOAT3& GetPositionXMFloat3() const;
 	const DirectX::XMVECTOR& GetRotationXMVector() const;

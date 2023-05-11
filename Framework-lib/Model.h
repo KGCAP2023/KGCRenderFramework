@@ -35,6 +35,17 @@ public:
         this->pixelShader = rhs.pixelShader;
     }
 
+    ~Model() 
+    {
+        meshes.clear();
+        textures_loaded_;
+        device = nullptr;
+        deviceContext = nullptr;
+        constantBuffer = nullptr;
+        vertexShader = nullptr;
+        pixelShader = nullptr;
+    }
+
 	bool Init(const std::string& modelName,const std::string& filePath, ResourceManager* res);
 	void Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix);
 

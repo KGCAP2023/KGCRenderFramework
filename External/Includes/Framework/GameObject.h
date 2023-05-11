@@ -27,7 +27,31 @@ public:
 		transform.SetScale(1.0f, 1.0f, 1.0f);
 	}
 
-	~GameObject();
+	GameObject(const GameObject& rhs) : transform(Transform(this))
+	{
+		std::cout << "[=] GameObject CLONE Process - Copy constructor called" << std::endl;
+
+		ObjectName = rhs.ObjectName;
+		isActive = rhs.isActive;
+		isDestroy = rhs.isDestroy;
+		bbox = rhs.bbox;
+		transform.Copy(rhs.transform);
+		
+		for (auto& pair : rhs.components)
+		{
+			Component* compo = pair.second->Copy(this);
+			this->AddComponent(compo);
+		}
+	}
+
+	~GameObject()
+	{
+		for (auto& pair : components)
+		{
+			delete pair.second;
+		}
+		components.clear();
+	}
 
 	bool isDestroy;
 	bool isActive;

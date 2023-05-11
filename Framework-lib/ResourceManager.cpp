@@ -147,6 +147,7 @@ bool ResourceManager::LoadModel(const std::string& modelName, const std::string&
 SkinnedMesh* ResourceManager::FindSkinnedModel(const std::string& modelName)
 {
 	if (this->_skinnedMap.find(modelName) != this->_skinnedMap.end()) {
+		//깊은 복사
 		SkinnedMesh* skinned = new SkinnedMesh(*(this->_skinnedMap[modelName]));
 		return skinned;
 	}
@@ -156,8 +157,9 @@ SkinnedMesh* ResourceManager::FindSkinnedModel(const std::string& modelName)
 Model* ResourceManager::FindModel(const std::string& modelName)
 {
 	if (this->_modelMap.find(modelName) != this->_modelMap.end()) {
-		Model* model = new Model(*(this->_modelMap[modelName]));
-		return model;
+		//Model* model = new Model(*(this->_modelMap[modelName]));
+		//return model;
+		return this->_modelMap[modelName]; //얕은 복사
 	}
 	else return nullptr;
 }

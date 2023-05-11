@@ -4,6 +4,7 @@
 
 Script::Script(GameObject* owner, Framework* framework) : Component(owner)
 {
+	this->type = Component::Type::SCRIPT;
+	this->name = "Script";
 	this->lua = framework->GetLuaManager();
-	this->init();
 }

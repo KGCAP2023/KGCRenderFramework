@@ -42,7 +42,7 @@ struct ExampleAppLog                                                            
                 LineOffsets.push_back(old_size + 1);
     }
 
-    void    Draw(const char* title, bool* p_open = NULL)
+    void Draw(const char* title, bool* p_open = NULL)
     {
         if (!ImGui::Begin(title, p_open))
         {
@@ -118,11 +118,14 @@ class DebugView : public ILayer
 {
 public:
     IGameObjectManager* ObjM;
+    IFramework* rw;
 
-    DebugView(IGameObjectManager* manager, const std::string name) : ILayer(name)
+    DebugView(IFramework* rw, IGameObjectManager* manager, const std::string name) : ILayer(name)
     {
         this->ObjM = manager;
+        this->rw = rw;
     }
+
     virtual ~DebugView()
     {
 
@@ -145,7 +148,6 @@ public:
     {
         auto keyboard = InputManager::GetKeyboardState();																		//키보드 상태 값
         auto mouse = InputManager::GetMouseState();																				//마우스 상태 값
-        IFramework* rw = IFrameworkFactory::createFramework();
 
         ImGui::SetNextWindowSize(ImVec2(500, 600));
 

@@ -17,9 +17,9 @@ public:
 	ImVector<ImVec2> points;
 	Sprite* image;
 	bool opt_enable_grid = true;
-	bool isActiveWindow2 = false;
 	bool Resizable = true;
-	bool Savemap = false;
+	bool TilemapWindow = false;
+	bool SavemapWindow = false;
 
 	int tilemap_size[2] = {};
 	int tilemap_height, tilemap_width, mouse_cnt, size;
@@ -65,31 +65,34 @@ public:
 
 	//선택한 타일맵을 저장하고 맵 이름을 입력받는 창
 	void Save() {
-		if(Savemap) {
-			ImGui::Begin(u8"Save Tilemap", &Savemap);
+		if(SavemapWindow) {
+			ImGui::Begin(u8"Save Tilemap", &SavemapWindow);
 			ImGui::PushItemWidth(100);
 
 			TileMap* map = new TileMap();
 
 			ImGui::InputText("Tilemap Name", tilemap_name, 20);
-			map->Init(tilemap_name, image, tilemap_width, tilemap_height, width * height);
+			if(ImGui::Button("Type Name")) {
 
-			for (int i = 0, k = 0; i < tilemap_height; i++) {
-				for (int j = 0; j < tilemap_width; j++, k++) {
-					map->SelectTile(0, 0, i, j);
+				map->Init(tilemap_name, image, tilemap_width, tilemap_height, width * height);
+
+				for (int i = 0, k = 0; i < tilemap_height; i++) {
+					for (int j = 0; j < tilemap_width; j++, k++) {
+						map->SelectTile(mouse_x[k], mouse_y[k], i, j);
+					}
 				}
-			}
 
-			this->ResM->RegisterTileMap("name", map);
-			ImGui::End();
+				this->ResM->RegisterTileMap("name", map);
+				ImGui::End();
+			}
 
 		}
 	}
 
 	//선택한 이미지가 입력된 배열을 화면에 출력하는 창
 	void Popup() {
-		if (isActiveWindow2) {	//창의 크기는 타일맵의 크기에 맞추어 자동으로 조절됨
-			ImGui::Begin(u8"Chosen Grid Block", &isActiveWindow2, ImGuiWindowFlags_AlwaysAutoResize);
+		if (TilemapWindow) {	//창의 크기는 타일맵의 크기에 맞추어 자동으로 조절됨
+			ImGui::Begin(u8"Chosen Grid Block", &TilemapWindow, ImGuiWindowFlags_AlwaysAutoResize);
 
 			//현재 선택한 타일을 Image 형식으로 출력
 			ImGui::Text("Current Tile");	
@@ -110,10 +113,11 @@ public:
 				ImGui::Text("");	//줄바꿈을 위해 빈 텍스트 출력
 			}
 			if (ImGui::Button("Save"))
-				Savemap = true;
+				SavemapWindow = true;
 			ImGui::SameLine();
 
 			//동적 배열에 저장된 값과 배열 크기를 모두 초기화, 다시 킬 때 새롭게 값을 받기 위해 카운터도 함께 초기화
+			//5월 8일 초기화 시 창이 아예 닫히도록 변경
 			if (ImGui::Button("Reset Tile")) {
 				ImGui::End();
 				
@@ -125,6 +129,7 @@ public:
 				tilemap_height = 0;
 				tilemap_width = 0;
 				Resizable = true;
+				TilemapWindow = false;
 			}
 			else
 				ImGui::End();
@@ -165,7 +170,7 @@ public:
 				//한번 타일맵 선택 창을 띄운 이후 더이상 크기가 변경되지 못하게 막아둠
 				if (tilemap_height != 0 && tilemap_width != 0){
 					Resizable = false;
-					isActiveWindow2 = true;
+					TilemapWindow = true;
 				}
 			}
 			ImGui::PopItemWidth();
@@ -196,7 +201,7 @@ public:
 				ImVec2(0, 0), ImVec2(1, 1));
 
 			//마우스가 캔버스 내부에서 좌클릭된 경우 + 타일맵 창이 켜졌을 경우
-			if (is_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&isActiveWindow2) {
+			if (is_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&TilemapWindow) {
 				points.push_back(mouse_pos_in_canvas);
 				points.push_back(mouse_pos_in_canvas);
 

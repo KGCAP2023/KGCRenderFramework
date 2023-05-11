@@ -52,6 +52,7 @@ public:
 
 	virtual void InitBoundingBox() override;
 	virtual BoundingBoxRenderer* GetBoundingBox() override;
+	virtual std::string GetName() override;
 
 	std::string GetPath();
 	const aiScene* GetAiScene();

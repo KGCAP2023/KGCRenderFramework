@@ -41,6 +41,11 @@ BoundingBoxRenderer* ModelRenderer::GetBoundingBox()
 	return this->bbox;
 }
 
+std::string ModelRenderer::GetName()
+{
+	return this->model->GetName();
+}
+
 std::vector<Mesh>& ModelRenderer::GetMeshes()
 {
 	return this->model->GetMeshes();

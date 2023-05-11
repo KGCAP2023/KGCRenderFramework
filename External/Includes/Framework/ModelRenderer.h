@@ -46,6 +46,7 @@ public:
 
 	virtual void InitBoundingBox() override;
 	virtual BoundingBoxRenderer* GetBoundingBox() override;
+	virtual std::string GetName() override;
 
 	bool SetModel(Model* model);
 	std::vector<Mesh>& GetMeshes();

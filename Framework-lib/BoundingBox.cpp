@@ -78,29 +78,37 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, Component* component, ResourceMa
 
 	if (render != nullptr)
 	{
-		Assimp::Importer importer;
-		const aiScene* pScene = importer.ReadFile(render->GetPath(),
-			aiProcess_Triangulate |
-			aiProcess_ConvertToLeftHanded);
+		std::string name = render->GetName();
+		
+		std::vector<SimpleVertex>* v = res->GetCachedBBOXVertices(name);
 
-		processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
+		if (v != nullptr)
+		{
+			this->vertices = v;
+		}
+		else
+		{
+			Assimp::Importer importer;
+			const aiScene* pScene = importer.ReadFile(render->GetPath(),
+				aiProcess_Triangulate |
+				aiProcess_ConvertToLeftHanded);
+
+			processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
+		}
 	}
 
-
-	//버텍스를 정의합니다.
-	//<주의> 
-	// 버텍스 쉐이더에 들어가는 구조체(Vertex.h)와 동일해야합니다
-
-	//조금더 유동적인 방법 찾아보기
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-	vertices.push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
-
+	if (this->vertices == nullptr)
+	{
+		this->vertices = new std::vector<SimpleVertex>();
+		vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+		vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	}
 
 	//초기설정은 cube
 	indices = cube;
@@ -110,10 +118,30 @@ BoundingBox3D::BoundingBox3D(GameObject* owner, Component* component, ResourceMa
 	
 }
 
+BoundingBox3D::BoundingBox3D(Model* model) : BoundingBoxRenderer(nullptr)
+{
+	Assimp::Importer importer;
+	const aiScene* pScene = importer.ReadFile(model->GetPath(),
+		aiProcess_Triangulate |
+		aiProcess_ConvertToLeftHanded);
+
+	processNode(pScene->mRootNode, pScene, DirectX::XMMatrixIdentity());
+
+	this->vertices = new std::vector<SimpleVertex>();
+	vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, max.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, min.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(max.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+	vertices->push_back(SimpleVertex{ XMFLOAT3(min.x, min.y, max.z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+}
+
 void BoundingBox3D::DrawSetting()
 {
 	//버텍스 버퍼와 인덱스 버퍼에 등록합니다.
-	HRESULT hr = this->vertexbuffer.Init(vertices.data(), vertices.size(), this->device.Get());
+	HRESULT hr = this->vertexbuffer.Init(vertices->data(), vertices->size(), this->device.Get());
 	hr = this->indexbuffer.Init(indices.data(), indices.size(), this->device.Get());
 }
 
@@ -189,10 +217,15 @@ std::vector<DWORD>* BoundingBox3D::GetIndices()
 	return &this->indices;
 }
 
+std::vector<SimpleVertex>* BoundingBox3D::getVertices()
+{
+	return this->vertices;
+}
+
 void BoundingBox3D::ChangeColor(float r, float g, float b, float alpha)
 {
 	//색깔을 교체합니다.
-	for (SimpleVertex& v : this->vertices)
+	for (SimpleVertex& v : *this->vertices)
 	{
 		v.Color = XMFLOAT4(r, g, b, alpha);
 	}
@@ -203,7 +236,7 @@ void BoundingBox3D::ChangeColor(float r, float g, float b, float alpha)
 	//해당 인덱스 버퍼에 락을 겁니다.
 	this->deviceContext->Map(this->vertexbuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	//새로운 값 메모리 카피
-	memcpy(resource.pData, vertices.data(), sizeof(SimpleVertex) * vertices.size());
+	memcpy(resource.pData, vertices->data(), sizeof(SimpleVertex) * vertices->size());
 	//락 해제
 	this->deviceContext->Unmap(this->vertexbuffer.Get(), 0);
 }

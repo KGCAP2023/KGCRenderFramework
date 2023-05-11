@@ -62,6 +62,11 @@ BoundingBoxRenderer* SkinnedMeshRenderer::GetBoundingBox()
 	return this->bbox;
 }
 
+std::string SkinnedMeshRenderer::GetName()
+{
+	return this->model->GetName();
+}
+
 std::string SkinnedMeshRenderer::GetPath()
 {
 	return this->model->GetPath();

@@ -16,6 +16,7 @@ public:
 		tileMap = rhs.tileMap;
 		bbox = rhs.bbox;
 		res = rhs.res;
+		isSpriteRender = rhs.isSpriteRender;
 	}
 
 	~TileMapRenderer()
@@ -39,6 +40,8 @@ public:
 	}
 
 	TileMap* GetTileMap() { return this->tileMap; };
+	void SetLayerDepth(float layer) { this->layer = layer; }
+	float GetLayerDepth() { return this->layer; }
 
 	virtual void InitBoundingBox() override;
 	virtual BoundingBoxRenderer* GetBoundingBox() override;
@@ -52,14 +55,15 @@ public:
 	{
 		if (tileMap != nullptr)
 		{
-			this->tileMap->Draw(viewProjectionMatrix, this->GetOwner()->transform);
+			this->tileMap->Draw(viewProjectionMatrix, this->GetOwner()->transform, layer);
+			this->bbox->SetLayerDepth(layer);
 			this->bbox->Draw(viewProjectionMatrix);
 		}
 	}
 
 private:
 	TileMap* tileMap = nullptr;
-
-	BoundingBoxRenderer* bbox = nullptr;
+	BoundingBox2D* bbox = nullptr;
 	ResourceManager* res = nullptr;
+	float layer = 0.0f;
 };

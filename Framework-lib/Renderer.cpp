@@ -13,6 +13,11 @@ std::string Renderer::GetPath()
 	return "";
 }
 
+std::string Renderer::GetName()
+{
+	return std::string();
+}
+
 //const aiScene* Renderer::GetAiScene()
 //{
 //	assert("해당 업데이트문은 Renderer 구현체가 필요합니다." && 0);

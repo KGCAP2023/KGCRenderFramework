@@ -25,18 +25,15 @@ void SpriteRenderer::Draw(const DirectX::XMMATRIX& viewProjectionMatrix)
 
 		if (selectedAnimation != nullptr)
 		{
-			selectedAnimation->Draw(t, spriteBatch);
+			selectedAnimation->Draw(t, spriteBatch,layer);
 		}
 		else
 		{
-			spriteBatch->Begin();
-
 			spriteBatch->Draw(this->sprite->Get(), pos, nullptr,
-				Colors::White, rot, DirectX::SimpleMath::Vector2(0, 0), scale);
-
-			spriteBatch->End();
+				Colors::White, rot, DirectX::SimpleMath::Vector2(0, 0), scale,SpriteEffects_None,layer);
 		}
 
+		this->bbox->SetLayerDepth(layer);
 		this->bbox->Draw(viewProjectionMatrix);
 	}
 }

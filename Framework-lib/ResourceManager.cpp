@@ -137,7 +137,13 @@ bool ResourceManager::LoadModel(const std::string& modelName, const std::string&
 		}
 		else
 		{
+			//경계선 계산 캐싱
+			BoundingBox3D bbox(model);
+			this->_bbox_vertices.insert(std::make_pair<>(modelName, bbox.getVertices()));
+
+			//모델 등록
 			this->_modelMap.insert(std::make_pair<>(modelName, model));
+			std::cout << "[O] 모델 <" << modelName << ">를 로드하였습니다." << std::endl;
 			return true;
 		}
 			
@@ -174,6 +180,17 @@ std::vector<Texture>* ResourceManager::GetCachedTexture(const std::string& model
 		std::vector<Texture>* tex = new std::vector<Texture>();
 		this->_textures_loaded.insert(std::make_pair<>(modelName, tex));
 		return tex;
+	}
+}
+
+std::vector<SimpleVertex>* ResourceManager::GetCachedBBOXVertices(const std::string& modelName)
+{
+	if (this->_bbox_vertices.find(modelName) != this->_bbox_vertices.end()) {
+		return this->_bbox_vertices[modelName];
+	}
+	else
+	{
+		return nullptr;
 	}
 }
 

@@ -156,9 +156,9 @@ float Ray::isPicked(BoundingBox3D* bbox)
 		int b = bbox->tri[k+1];
 		int c = bbox->tri[k+2];
 
-		SimpleVertex& t1 = bbox->vertices[a];
-		SimpleVertex& t2 = bbox->vertices[b];
-		SimpleVertex& t3 = bbox->vertices[c];
+		SimpleVertex& t1 = (bbox->vertices)->at(a);
+		SimpleVertex& t2 = (bbox->vertices)->at(b);
+		SimpleVertex& t3 = (bbox->vertices)->at(c);
 		
 		XMVECTOR x1 = XMVector3TransformCoord(XMVectorSet(t1.Pos.x, t1.Pos.y, t1.Pos.z, 1.0f), localToworld);
 		XMVECTOR x2 = XMVector3TransformCoord(XMVectorSet(t2.Pos.x, t2.Pos.y, t2.Pos.z, 1.0f), localToworld);

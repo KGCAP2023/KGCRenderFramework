@@ -105,6 +105,12 @@ public:
 	/// <returns></returns>
 	virtual std::vector<Texture>* GetCachedTexture(const std::string& modelName) { return nullptr; };
 	/// <summary>
+	/// 모델에 캐싱되어있는 경계 정점을 가져옵니다.
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <returns></returns>
+	virtual std::vector<SimpleVertex>* GetCachedBBOXVertices(const std::string& modelName) { return nullptr; };
+	/// <summary>
 	/// 스프라이트 맵을 순회합니다.
 	/// </summary>
 	/// <param name="callback"></param>
@@ -186,6 +192,7 @@ public:
 	Model* FindModel(const std::string& modelName) override;
 
 	std::vector<Texture>* GetCachedTexture(const std::string& modelName) override;
+	std::vector<SimpleVertex>* GetCachedBBOXVertices(const std::string& modelName) override;
 
 	void ModelForeach(std::function<void(Model*)> callback) override;
 	std::unordered_map<std::string, Model*> GetModelMap() override;
@@ -211,6 +218,7 @@ public:
 	std::unordered_map<std::string, SkinnedMesh*> _skinnedMap;
 	//텍스쳐
 	std::unordered_map<std::string, std::vector<Texture>*> _textures_loaded;
+	std::unordered_map<std::string, std::vector<SimpleVertex>*> _bbox_vertices;
 
 	//버텍스 쉐이더
 	std::unordered_map<std::string, VertexShader*> _vsMap;

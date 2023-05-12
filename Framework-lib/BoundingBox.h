@@ -13,6 +13,7 @@
 #include <directxcollision.h>
 
 class GameObject;
+class Model;
 class ResourceManager;
 
 class BoundingBoxRenderer : public Component
@@ -46,7 +47,11 @@ class BoundingBox3D : public BoundingBoxRenderer
 public:
 	virtual void Update() override;
 
+	//일반
 	BoundingBox3D(GameObject* owner, Component* component, ResourceManager* res);
+
+	//모델 정점 캐싱 용
+	BoundingBox3D(Model* model);
 
 	//경계박스 계산 코드
 	void processNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix)
@@ -86,12 +91,14 @@ public:
 	//도형을 그립니다.
 	virtual void Draw(const XMMATRIX& viewProjectionMatrix) override;
 	virtual std::vector<DWORD>* GetIndices() override;
+	
 	virtual void ChangeColor(float r, float g, float b, float alpha = 1.0f) override;
-
+	
 	DirectX::XMFLOAT3 min = { -1,-1,-1 };
 	DirectX::XMFLOAT3 max = { 1,1,1 };
 
-	std::vector<SimpleVertex> vertices;
+	std::vector<SimpleVertex>* getVertices();
+	std::vector<SimpleVertex>* vertices = nullptr;
 
 	DWORD tri[36] =
 	{
@@ -159,16 +166,17 @@ public:
 
 	XMFLOAT2 CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatrix);
 
+	float GetLayerDepth() { return this->layerDepth; };
+	void SetLayerDepth(float layerDepth) { this->layerDepth = layerDepth; };
 	int CalculatePointInBoundingBox(float pointX, float pointY);
 	int pnpoly(int nvert, float* vertx, float* verty, float testx, float testy);
-
-	std::vector<SimpleVertex> vertices;
 
 	Texture* color;
 
 	float width = 0;
 	float height = 0;
 	int lineWidth = 1;
+	float layerDepth = 0.0f;
 
 	SpriteBatch* spriteBatch;
 

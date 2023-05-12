@@ -60,24 +60,22 @@ public:
 		arr[gridX][gridY] = frame;
 	}
 
-	void Draw(const DirectX::XMMATRIX& viewProjectionMatrix , Transform& t)
+	void Draw(const DirectX::XMMATRIX& viewProjectionMatrix , Transform& t, float layer)
 	{
 		XMFLOAT3&  gameObjpos = t.position;
 		this->SetScale(t.scale.x);
 
 		if (sprite != nullptr)
 		{
-			spriteBatch->Begin();
 			for (int i = 0; i < grid.y; i++)
 			{
 				for (int j = 0; j < grid.x; j++)
 				{
 					DirectX::SimpleMath::Vector2 gridPos(gameObjpos.x + j * scale * tileSize, gameObjpos.y + i * scale * tileSize);
 					spriteBatch->Draw(sprite->Get(), gridPos, &arr[i][j],
-						DirectX::Colors::White, t.rotation.z, DirectX::SimpleMath::Vector2(0, 0), scale);
+						DirectX::Colors::White, t.rotation.z, DirectX::SimpleMath::Vector2(0, 0), scale, SpriteEffects_None, layer);
 				}
 			}
-			spriteBatch->End();
 		}
 	}
 

@@ -453,10 +453,10 @@ public:
 		}
 		
 		if (show_render) {
-			ImGui::OpenPopup("Error");
+			ImGui::OpenPopup("Caution");
 		}
 
-		if (ImGui::BeginPopupModal("Error", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal("Caution", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::Text(u8"렌더러는 1개만 가능합니다");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
@@ -466,10 +466,10 @@ public:
 		}
 
 		if (show_script) {
-			ImGui::OpenPopup("ErrorScript");
+			ImGui::OpenPopup("caution");
 		}
 
-		if (ImGui::BeginPopupModal("ErrorScript", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal("caution", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::Text(u8"스크립트는 1개만 가능합니다");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
@@ -1290,7 +1290,7 @@ public:
 			if (ImGui::Button("SpriteRenderer"))
 			{
 				GameObject* obj = gamelist.at(selected)->GetGameObject();
-				if (obj->GetComponentSize() != 0)
+				if (obj->GetComponentSize() == 1)
 				{
 					obj->ComponentForeach([&](Component* c) {
 						int count = 0;
@@ -1320,7 +1320,7 @@ public:
 							break;
 
 						}
-						default:
+						case Component::Type::SCRIPT:
 						{
 							GameObject* temp = gamelist.at(selected)->GetGameObject();
 							SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
@@ -1335,12 +1335,18 @@ public:
 
 						});
 				}
-				else
+				else if(obj->GetComponentSize() == 0)
 				{
 					GameObject* temp = gamelist.at(selected)->GetGameObject();
 					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
 					gamelist.at(selected)->GetGameObject()->AddComponent(render1);
 					component_active = false;
+					show_render = true;
+
+				}
+				else
+				{
+					
 				}
 
 			}
@@ -1399,6 +1405,8 @@ public:
 					//render->Init();
 					gamelist.at(selected)->GetGameObject()->AddComponent(render2);
 					component_active = false;
+					show_render = true;
+
 
 				}
 
@@ -1459,6 +1467,7 @@ public:
 					//render->Init();
 					gamelist.at(selected)->GetGameObject()->AddComponent(render3);
 					component_active = false;
+					show_render = true;
 
 
 				}
@@ -1467,7 +1476,7 @@ public:
 			{
 
 					GameObject* obj = gamelist.at(selected)->GetGameObject();
-					if (obj->GetComponentSize() != 0)
+					if (obj->GetComponentSize() == 1)
 					{
 						obj->ComponentForeach([&](Component* c) {
 							int count = 0;
@@ -1483,12 +1492,35 @@ public:
 								
 
 							}
-							default:
+							case Component::Type::RENDERER_SPRITE:
 							{
 								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
 								Script* script = new Script(scriptObj, (Framework*)framework);
 								scriptObj->AddComponent(script);
 								component_active = false;
+
+
+							}
+							case Component::Type::RENDERER_MODEL:
+							{
+								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+								Script* script = new Script(scriptObj, (Framework*)framework);
+								scriptObj->AddComponent(script);
+								component_active = false;
+
+							}
+							case Component::Type::RENDERER_TILEMAP:
+							{
+								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+								Script* script = new Script(scriptObj, (Framework*)framework);
+								scriptObj->AddComponent(script);
+								component_active = false;
+
+
+							}
+							default:
+							{
+								break;
 							}
 							}
 
@@ -1503,6 +1535,8 @@ public:
 						Script* script = new Script(scriptObj, (Framework*)framework);
 						scriptObj->AddComponent(script);
 						component_active = false;
+						show_script = true;
+
 					}
 			}
 			ImGui::End();

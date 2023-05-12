@@ -85,7 +85,7 @@ void Framework::SwitchObjectManager()
 		}
 
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
-		this->layerManager.SetDockingSpace(false);
+		
 	}
 	else
 	{
@@ -145,11 +145,12 @@ void Framework::Update()
 	timer.ReStart();
 
 	float speed = 0.006f;
-	
 	auto kb = this->InputManager.GetKeyboardState();
 	auto mouse = this->InputManager.GetMouseState();
 	std::queue<int>& xPosRelative = this->InputManager.GetXPoseRelative();
 	std::queue<int>& yPosRelative = this->InputManager.GetYPoseRelative();
+	SceneMode currentMode = this->currentgameObjManager->GetMode();
+
 
 	this->layerManager.Update();
 
@@ -159,16 +160,17 @@ void Framework::Update()
 
 	this->graphics.camera->Update();
 
+	//==========================================
+
 	static bool F5_BUTTON_PRESSED = false;
 
 	if (kb.F5)
 	{
 		if (!F5_BUTTON_PRESSED)
 		{
-			if (this->currentgameObjManager->GetMode() == SceneMode::PLAY)
+			if (currentMode == SceneMode::PLAY)
 			{
 				this->SwitchObjectManager();
-				this->layerManager.SetDockingSpace(true);
 			}
 		}
 		F5_BUTTON_PRESSED = true;
@@ -178,6 +180,29 @@ void Framework::Update()
 		F5_BUTTON_PRESSED = false;
 	}
 
+	//==========================================
+
+	static bool F12_BUTTON_PRESSED = false;
+
+	if (kb.F12)
+	{
+		if (!F12_BUTTON_PRESSED)
+		{
+			if (this->layerManager.isDockingSpace())
+				this->layerManager.SetDockingSpace(false);
+
+			else
+				this->layerManager.SetDockingSpace(true);
+		}
+		F12_BUTTON_PRESSED = true;
+	}
+	else
+	{
+		F12_BUTTON_PRESSED = false;
+	}
+
+	//==========================================
+
 	static bool F2_BUTTON_PRESSED = false;
 	static Camera3D::ViewType cameraType = Camera3D::ViewType::_3D;
 
@@ -185,19 +210,21 @@ void Framework::Update()
 	{
 		if (!F2_BUTTON_PRESSED)
 		{
-			if (cameraType == Camera3D::ViewType::_2D)
+			if (currentMode == SceneMode::DEV)
 			{
-				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
-				cameraType = Camera3D::ViewType::_3D;
-				this->ray->SetOrthoGrahpicProjection(false);
-			}
-			else
-			{
-				this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
-				cameraType = Camera3D::ViewType::_2D;
-				this->ray->SetOrthoGrahpicProjection(true);
-			}
-				
+				if (cameraType == Camera3D::ViewType::_2D)
+				{
+					this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_3D);
+					cameraType = Camera3D::ViewType::_3D;
+					this->ray->SetOrthoGrahpicProjection(false);
+				}
+				else
+				{
+					this->graphics.cameraComponent->ChangeProjectionValues(Camera3D::ViewType::_2D);
+					cameraType = Camera3D::ViewType::_2D;
+					this->ray->SetOrthoGrahpicProjection(true);
+				}
+			}	
 		}
 		F2_BUTTON_PRESSED = true;
 	}
@@ -209,7 +236,7 @@ void Framework::Update()
 	GameObjectManager* objMgr = this->GetGameObjectManagerInstance();
 	static bool MOUSE_LEFT_BUTTON_PRESSED = false;
 
-	if (mouse.leftButton && this->layerManager.isGameViewFocus())
+	if (currentMode == SceneMode::DEV && mouse.leftButton && this->layerManager.isGameViewFocus())
 	{
 		if (!MOUSE_LEFT_BUTTON_PRESSED)
 		{
@@ -221,6 +248,7 @@ void Framework::Update()
 				float min_dist = 10000;
 
 				this->ray->CalculatePicking(mouse.x, mouse.y);
+
 				for (auto& kv : objMgr->gameObjects) {
 					kv.second->ComponentForeach([&](Component* c) {
 						switch (c->GetType())
@@ -295,7 +323,7 @@ void Framework::Update()
 
 	//=========================================
 
-	if (mouse.rightButton && this->layerManager.isGameViewFocus())
+	if (currentMode == SceneMode::DEV && mouse.rightButton && this->layerManager.isGameViewFocus())
 	{
 		while (!yPosRelative.empty())
 		{
@@ -319,27 +347,27 @@ void Framework::Update()
 	//	return;
 	//}
 		
-	if (kb.Back) // Backspace key is down
+	if (currentMode == SceneMode::DEV && kb.Back) // Backspace key is down
 	{
-		std::cout << "Back" << std::endl;
+		//std::cout << "Back" << std::endl;
 	} 
 
-	if (kb.LeftShift && this->layerManager.isGameViewFocus()) // Backspace key is down
+	if (currentMode == SceneMode::DEV && kb.LeftShift && this->layerManager.isGameViewFocus()) // Backspace key is down
 	{
 		speed = 0.01f;
 	}
 
-	if (kb.C && this->layerManager.isGameViewFocus()) // Backspace key is down
+	if (currentMode == SceneMode::DEV && kb.C && this->layerManager.isGameViewFocus()) // Backspace key is down
 	{
 		this->graphics.camera->transform.Translate(0, -speed * dt,0);
 	}
 
-	if (kb.Space && this->layerManager.isGameViewFocus()) // Backspace key is down
+	if (currentMode == SceneMode::DEV && kb.Space && this->layerManager.isGameViewFocus()) // Backspace key is down
 	{
 		this->graphics.camera->transform.Translate(0, +speed * dt, 0);
 	}
 
-	if (kb.W && this->layerManager.isGameViewFocus()) // W key is down
+	if (currentMode == SceneMode::DEV && kb.W && this->layerManager.isGameViewFocus()) // W key is down
 	{
 
 		if (cameraType != Camera3D::ViewType::_2D)
@@ -349,12 +377,12 @@ void Framework::Update()
 
 	}
 
-	if (kb.A && this->layerManager.isGameViewFocus()) // A key is down
+	if (currentMode == SceneMode::DEV && kb.A && this->layerManager.isGameViewFocus()) // A key is down
 	{
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetLeft() * speed * dt);
 	}
 
-	if (kb.S && this->layerManager.isGameViewFocus()) // S key is down
+	if (currentMode == SceneMode::DEV && kb.S && this->layerManager.isGameViewFocus()) // S key is down
 	{
 		if (cameraType != Camera3D::ViewType::_2D)
 		{
@@ -362,7 +390,7 @@ void Framework::Update()
 		}
 	}
 
-	if (kb.D && this->layerManager.isGameViewFocus()) // D key is down
+	if (currentMode == SceneMode::DEV && kb.D && this->layerManager.isGameViewFocus()) // D key is down
 	{
 		this->graphics.camera->transform.Translate(this->graphics.camera->transform.GetRight() * speed * dt);
 	}

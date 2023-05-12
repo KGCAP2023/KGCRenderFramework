@@ -120,12 +120,13 @@ public:
 	bool my_tool_active = true;
 	bool active = false;
 	bool script_active = false;
+	bool show_script = false;
 	bool show_warning = false;
 	bool show_delete = false;
 	bool component_active = false;
 	bool show_render = false;
 	char name[20]{};
-	char s_name[20]{};
+
 	int g = 0;
 	DirectX::XMFLOAT3 pos{};
 	DirectX::XMFLOAT3 rot{};
@@ -198,12 +199,12 @@ public:
 
 	 void change()
 	{
-		gameTestList.clear();
+		gamelist.clear();
 		auto map3 = framework->GetGameObjectManager()->GetObejctMap();
 		for (auto& pair : map3)
 		{
 			GameObject* obj = pair.second;
-			gameTestList.push_back(new HierarchyObject(obj));
+			gamelist.push_back(new HierarchyObject(obj));
 
 		}
 	}
@@ -427,7 +428,6 @@ public:
 		ImGui::SameLine();
 		if (ImGui::Button("Add Component"))
 		{
-			
 			component_active = true;
 
 		}
@@ -451,7 +451,7 @@ public:
 			}
 			ImGui::EndPopup();
 		}
-		/*
+		
 		if (show_render) {
 			ImGui::OpenPopup("Error");
 		}
@@ -464,7 +464,21 @@ public:
 			}
 			ImGui::EndPopup();
 		}
-		*/
+
+		if (show_script) {
+			ImGui::OpenPopup("ErrorScript");
+		}
+
+		if (ImGui::BeginPopupModal("ErrorScript", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"스크립트는 1개만 가능합니다");
+			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
+				ImGui::CloseCurrentPopup();
+				show_script = false;
+			}
+			ImGui::EndPopup();
+		}
+
+
 		if (show_delete) {
 			ImGui::OpenPopup("Delete");
 		}
@@ -1251,6 +1265,8 @@ public:
 				ImGui::Text("TRANSFORM");
 				Transform();
 				ImGui::Text("Other Component");
+				if(gamelist.at(selected)->GetGameObject()->GetComponentSize()!=0)
+					ImGui::Separator();
 				component();
 				
 
@@ -1266,49 +1282,229 @@ public:
 			ImGui::End();
 		}
 
-
+		
 		if (component_active)
 		{
 			ImGui::Begin("Add Component", &component_active, ImGuiWindowFlags_MenuBar);
 
 			if (ImGui::Button("SpriteRenderer"))
 			{
+				GameObject* obj = gamelist.at(selected)->GetGameObject();
+				if (obj->GetComponentSize() != 0)
+				{
+					obj->ComponentForeach([&](Component* c) {
+						int count = 0;
+						std::string name = c->GetName();
+						Component::Type type = c->GetType();
 
-				GameObject* temp = gamelist.at(selected)->GetGameObject();
-				SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
-				gamelist.at(selected)->GetGameObject()->AddComponent(render1);
-				component_active = false;
+						switch (type)
+						{
+						case Component::Type::RENDERER_SPRITE:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						case Component::Type::RENDERER_MODEL:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						case Component::Type::RENDERER_TILEMAP:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						default:
+						{
+							GameObject* temp = gamelist.at(selected)->GetGameObject();
+							SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
+							gamelist.at(selected)->GetGameObject()->AddComponent(render1);
+							component_active = false;
+							break;
+
+						}
+						}
+
+
+
+						});
+				}
+				else
+				{
+					GameObject* temp = gamelist.at(selected)->GetGameObject();
+					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
+					gamelist.at(selected)->GetGameObject()->AddComponent(render1);
+					component_active = false;
+				}
 
 			}
 			if (ImGui::Button("ModelRenderer"))
 			{
 
-				GameObject* temp1 = gamelist.at(selected)->GetGameObject();
-				ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
-				//render->Init();
-				gamelist.at(selected)->GetGameObject()->AddComponent(render2);
-				component_active = false;
+				GameObject* obj = gamelist.at(selected)->GetGameObject();
+				if (obj->GetComponentSize() != 0)
+				{
+					obj->ComponentForeach([&](Component* c) {
+						int count = 0;
+						std::string name = c->GetName();
+						Component::Type type = c->GetType();
+
+						switch (type)
+						{
+						case Component::Type::RENDERER_SPRITE:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						case Component::Type::RENDERER_MODEL:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						case Component::Type::RENDERER_TILEMAP:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						default:
+						{
+							GameObject* temp1 = gamelist.at(selected)->GetGameObject();
+							ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
+							//render->Init();
+							gamelist.at(selected)->GetGameObject()->AddComponent(render2);
+							component_active = false;
+							break;
+
+
+						}
+						}
+						});
+				}
+				else
+				{
+					GameObject* temp1 = gamelist.at(selected)->GetGameObject();
+					ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
+					//render->Init();
+					gamelist.at(selected)->GetGameObject()->AddComponent(render2);
+					component_active = false;
+
+				}
+
 
 
 			}
+		
 			if (ImGui::Button("TileMapRender"))
 			{
-				GameObject* temp2 = gamelist.at(selected)->GetGameObject();
-				TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
-				//render->Init();
-				gamelist.at(selected)->GetGameObject()->AddComponent(render3);
-				component_active = false;
+				GameObject* obj = gamelist.at(selected)->GetGameObject();
+				if (obj->GetComponentSize() != 0)
+				{
+					obj->ComponentForeach([&](Component* c) {
+						int count = 0;
+						std::string name = c->GetName();
+						Component::Type type = c->GetType();
 
+						switch (type)
+						{
+						case Component::Type::RENDERER_SPRITE:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						case Component::Type::RENDERER_MODEL:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						case Component::Type::RENDERER_TILEMAP:
+						{
+							component_active = false;
+							show_render = true;
+							break;
+
+						}
+						default:
+							GameObject* temp2 = gamelist.at(selected)->GetGameObject();
+							TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
+							//render->Init();
+							gamelist.at(selected)->GetGameObject()->AddComponent(render3);
+							component_active = false;
+							break;
+
+
+						}
+
+						});
+				}
+				else
+				{
+					GameObject* temp2 = gamelist.at(selected)->GetGameObject();
+					TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
+					//render->Init();
+					gamelist.at(selected)->GetGameObject()->AddComponent(render3);
+					component_active = false;
+
+
+				}
 			}
-
 			if (ImGui::Button("Script"))
 			{
-				GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
-				Script* script = new Script(scriptObj,(Framework*)framework);
-				scriptObj->AddComponent(script);
-				component_active = false;
-			}
 
+					GameObject* obj = gamelist.at(selected)->GetGameObject();
+					if (obj->GetComponentSize() != 0)
+					{
+						obj->ComponentForeach([&](Component* c) {
+							int count = 0;
+							std::string name = c->GetName();
+							Component::Type type = c->GetType();
+
+							switch (type)
+							{
+							case Component::Type::SCRIPT:
+							{
+								component_active = false;
+								show_script = true;
+								
+
+							}
+							default:
+							{
+								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+								Script* script = new Script(scriptObj, (Framework*)framework);
+								scriptObj->AddComponent(script);
+								component_active = false;
+							}
+							}
+
+
+
+
+							});
+					}
+					else
+					{
+						GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+						Script* script = new Script(scriptObj, (Framework*)framework);
+						scriptObj->AddComponent(script);
+						component_active = false;
+					}
+			}
 			ImGui::End();
 		}
 
@@ -1317,4 +1513,5 @@ public:
 
 
 	}
+
 };

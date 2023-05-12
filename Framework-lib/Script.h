@@ -18,6 +18,8 @@ public:
 	Script(const Script& rhs, GameObject* owner) : Component(owner)
 	{
 		std::cout << "[=] Script CLONE Process - Copy constructor called" << std::endl;
+		this->type = Component::Type::SCRIPT;
+		this->name = "Script";
 		L = nullptr;
 		filepath = rhs.filepath;
 		lua = rhs.lua;

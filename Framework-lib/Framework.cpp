@@ -67,19 +67,23 @@ void Framework::SwitchObjectManager()
 			GameObject* copyObj = new GameObject(*gameObject.second);
 			newGameObjects[gameObject.first] = copyObj;
 
-			Script* s = (Script*)copyObj->GetComponent(Component::Type::SCRIPT);
-			if(s != nullptr) s->LoadScript();
+		}
+
+		testgameObjManager->gameObjects = std::move(newGameObjects);
+		currentgameObjManager = testgameObjManager;
+
+		for (const auto& gameObject : testgameObjManager->gameObjects)
+		{
+			Script* s = dynamic_cast<Script*>(gameObject.second->GetComponent(Component::Type::SCRIPT));
+			if (s != nullptr) s->LoadScript();
 
 			//경계박스 비활성화
 			if ((gameObject.second)->bbox != nullptr)
 			{
 				(gameObject.second)->bbox->SetBoundingBoxActive(false);
 			}
-
 		}
 
-		testgameObjManager->gameObjects = std::move(newGameObjects);
-		currentgameObjManager = testgameObjManager;
 		std::cout << SceneModeMap[(int)currentgameObjManager->GetMode()] << std::endl;
 		this->layerManager.SetDockingSpace(false);
 	}

@@ -135,11 +135,13 @@ void GraphicManager::RenderFrame()
 
 
 	{
+		res->spriteBatch->Begin(SpriteSortMode::SpriteSortMode_FrontToBack);
 		//Sprite를 그립니다.
 		for (const auto& kv : obj->gameObjects)
 		{
 			(kv.second)->DrawSprite(vp);
 		}
+		res->spriteBatch->End();
 
 		deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0); //뎁스 스텐실 뷰
 		deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF); //블렌딩
@@ -617,13 +619,32 @@ bool GraphicManager::InitializeScene()
 	//s->LoadScript();
 	//obj->AddComponent(s);
 
+	//GameObject* obj3 = gameObjectManager->CreateGameObject("dfg2");
+	//obj3->transform.SetPosition(10.0f, 10.0f, 0.0f);
+	//obj3->transform.SetScale(0.5f, 0.5f, 0.0f);
+	//SpriteRenderer* rrr2 = new SpriteRenderer(obj3, res);
+	//rrr2->SetLayer(4.0f);
+	//rrr2->SetSprite(res->FindSprite("test"));
+	//obj3->AddComponent(rrr2);
+
+
 
 	//GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
 	//obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
 	//obj2->transform.SetScale(0.5f, 0.5f, 0.0f);
 	//SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
+	//rrr->SetLayerDepth(0.7f);
 	//rrr->SetSprite(res->FindSprite("ani"));
 	//obj2->AddComponent(rrr);
+
+	//GameObject* obj3 = gameObjectManager->CreateGameObject("dfg2");
+	//obj3->transform.SetPosition(300.0f, 10.0f, 0.0f);
+	//obj3->transform.SetScale(0.5f, 0.5f, 0.0f);
+	//SpriteRenderer* rrr2 = new SpriteRenderer(obj3, res);
+	//rrr2->SetLayerDepth(0.0f);
+	//rrr2->SetSprite(res->FindSprite("ani"));
+	//obj3->AddComponent(rrr2);
+
 #pragma endregion
 
 

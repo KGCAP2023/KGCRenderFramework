@@ -166,6 +166,8 @@ public:
 
 	XMFLOAT2 CalculateRotation(LONG x, LONG y, XMMATRIX& rotationMatrix);
 
+	float GetLayerDepth() { return this->layerDepth; };
+	void SetLayerDepth(float layerDepth) { this->layerDepth = layerDepth; };
 	int CalculatePointInBoundingBox(float pointX, float pointY);
 	int pnpoly(int nvert, float* vertx, float* verty, float testx, float testy);
 
@@ -174,6 +176,7 @@ public:
 	float width = 0;
 	float height = 0;
 	int lineWidth = 1;
+	float layerDepth = 0.0f;
 
 	SpriteBatch* spriteBatch;
 

@@ -243,6 +243,8 @@ void Framework::Update()
 
 				if (selectedObject == nullptr)
 				{
+					float max = 0.0f;
+
 					for (auto& kv : objMgr->gameObjects) {
 						kv.second->ComponentForeach([&](Component* c) {
 							switch (c->GetType())
@@ -253,16 +255,16 @@ void Framework::Update()
 									BoundingBox2D* bbox = dynamic_cast<BoundingBox2D*>(dynamic_cast<Renderer*>(c)->GetBoundingBox());
 									int a = bbox->CalculatePointInBoundingBox(mouse.x, mouse.y);
 
-									if (a == 1)
+									if (a == 1 && bbox->GetLayerDepth() >= max)
 									{
 										selectedObject = kv.second;
+										max = bbox->GetLayerDepth();
 									}									
 								}
 								break;
 							}
 						});
 					}
-
 				}
 
 				std::cout << "distance >" << min_dist << std::endl;

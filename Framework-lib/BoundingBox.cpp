@@ -377,16 +377,12 @@ void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 			y + (LONG)result2.y + rectangle.top  + lineWidth
 		};
 
-		this->spriteBatch->Begin();
-
 		{
-			this->spriteBatch->Draw(this->color->Get(), a1, nullptr , Colors::White, rot, XMFLOAT2(0,0));
-			this->spriteBatch->Draw(this->color->Get(), a2, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
-			this->spriteBatch->Draw(this->color->Get(), a3, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
-			this->spriteBatch->Draw(this->color->Get(), a4, nullptr, Colors::White, rot, XMFLOAT2(0, 0));
+			this->spriteBatch->Draw(this->color->Get(), a1, nullptr, Colors::White, rot, XMFLOAT2(0, 0), SpriteEffects_None, this->layerDepth);
+			this->spriteBatch->Draw(this->color->Get(), a2, nullptr, Colors::White, rot, XMFLOAT2(0, 0), SpriteEffects_None, this->layerDepth);
+			this->spriteBatch->Draw(this->color->Get(), a3, nullptr, Colors::White, rot, XMFLOAT2(0, 0), SpriteEffects_None, this->layerDepth);
+			this->spriteBatch->Draw(this->color->Get(), a4, nullptr, Colors::White, rot, XMFLOAT2(0, 0), SpriteEffects_None, this->layerDepth);
 		}
-
-		this->spriteBatch->End();
 	}
 }
 

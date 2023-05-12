@@ -26,7 +26,7 @@ public:
 	//Animation2D(const Animation2D& rhs) = delete;
 	//Animation2D& operator=(const Animation2D& ref) = delete;
 
-	void Draw(Transform& transform, SpriteBatch* spriteBatch);
+	void Draw(Transform& transform, SpriteBatch* spriteBatch, float layer);
 	void Update(float dt);
 private:
 	void Advance();

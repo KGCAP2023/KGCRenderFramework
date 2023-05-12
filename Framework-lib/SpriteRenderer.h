@@ -38,6 +38,8 @@ public:
 		_AnimationMap = rhs._AnimationMap;
 		bbox = rhs.bbox;
 		res = rhs.res;
+		layer = rhs.layer;
+		isSpriteRender = rhs.isSpriteRender;
 	}
 
 	virtual Component* Copy(GameObject* owner)
@@ -65,12 +67,14 @@ public:
 			return false;
 	}
 
+	void SetLayerDepth(float layer) { this->layer = layer; }
+	float GetLayerDepth() { return this->layer; }
 	Sprite* GetSprite() { return this->sprite; };
 
 	//void Draw(const DirectX::SimpleMath::Vector2& pos, SpriteBatch* spriteBatch);
 
 	void AddAnimation2D(const std::string& name, int x, int y, int width, int height, int count,
-		float holdTime, XMVECTORF32 chroma)
+		float holdTime, XMVECTORF32 chroma = DirectX::Colors::Magenta)
 	{
 		Animation2D* animation = new Animation2D(x, y, width, height, count,
 			*sprite, holdTime, chroma);
@@ -106,11 +110,12 @@ public:
 	Animation2D* GetSelectedAnim() { return selectedAnimation; }
 
 private:
+	float layer = 0.0f;
 	Sprite* sprite = nullptr;
 	SpriteBatch* spriteBatch = nullptr;
 	Animation2D* selectedAnimation = nullptr;
 	std::unordered_map<std::string, Animation2D*> _AnimationMap;
 
-	BoundingBoxRenderer* bbox = nullptr;
+	BoundingBox2D* bbox = nullptr;
 	ResourceManager* res = nullptr;
 };

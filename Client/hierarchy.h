@@ -1107,7 +1107,7 @@ public:
 
 			ImGui::PushItemWidth(90);
 
-			ImGui::InputText("name", name, IM_ARRAYSIZE(name));
+			ImGui::InputText("Object Name", name, IM_ARRAYSIZE(name));
 
 			ImGui::Separator();
 			ImGui::Text("POS");

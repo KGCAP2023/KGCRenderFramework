@@ -120,6 +120,7 @@ public:
 	bool my_tool_active = true;
 	bool active = false;
 	bool script_active = false;
+	bool show_error_script = false; 
 	bool show_script = false;
 	bool show_warning = false;
 	bool show_delete = false;
@@ -457,7 +458,7 @@ public:
 		}
 
 		if (ImGui::BeginPopupModal("Caution", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"렌더러는 1개만 가능합니다");
+			ImGui::Text(u8"렌더러는 1개 가능합니다");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
 				show_render = false;
@@ -470,14 +471,26 @@ public:
 		}
 
 		if (ImGui::BeginPopupModal("caution", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"스크립트는 1개만 가능합니다");
+			ImGui::Text(u8"스크립트는 1개 가능합니다");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
 				show_script = false;
 			}
 			ImGui::EndPopup();
 		}
+		if (show_error_script) {
+			ImGui::OpenPopup("Script Error");
+		}
 
+		if (ImGui::BeginPopupModal("Script Error", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"렌더러를 추가하고 스크립트를 추가 하세요");
+			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
+				ImGui::CloseCurrentPopup();
+				show_error_script = false;
+			}
+			ImGui::EndPopup();
+		}
+	
 
 		if (show_delete) {
 			ImGui::OpenPopup("Delete");
@@ -1354,7 +1367,7 @@ public:
 			{
 
 				GameObject* obj = gamelist.at(selected)->GetGameObject();
-				if (obj->GetComponentSize() != 0)
+				if (obj->GetComponentSize() == 1)
 				{
 					obj->ComponentForeach([&](Component* c) {
 						int count = 0;
@@ -1384,7 +1397,7 @@ public:
 							break;
 
 						}
-						default:
+						case Component::Type::SCRIPT:
 						{
 							GameObject* temp1 = gamelist.at(selected)->GetGameObject();
 							ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
@@ -1398,7 +1411,7 @@ public:
 						}
 						});
 				}
-				else
+				else if(obj->GetComponentSize() == 0)
 				{
 					GameObject* temp1 = gamelist.at(selected)->GetGameObject();
 					ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
@@ -1406,6 +1419,11 @@ public:
 					gamelist.at(selected)->GetGameObject()->AddComponent(render2);
 					component_active = false;
 					show_render = true;
+
+
+				}
+				else
+				{
 
 
 				}
@@ -1417,7 +1435,7 @@ public:
 			if (ImGui::Button("TileMapRender"))
 			{
 				GameObject* obj = gamelist.at(selected)->GetGameObject();
-				if (obj->GetComponentSize() != 0)
+				if (obj->GetComponentSize() == 1)
 				{
 					obj->ComponentForeach([&](Component* c) {
 						int count = 0;
@@ -1447,7 +1465,8 @@ public:
 							break;
 
 						}
-						default:
+						case Component::Type::SCRIPT:
+						{
 							GameObject* temp2 = gamelist.at(selected)->GetGameObject();
 							TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
 							//render->Init();
@@ -1457,10 +1476,10 @@ public:
 
 
 						}
-
+						}
 						});
 				}
-				else
+				else if (obj->GetComponentSize() == 0)
 				{
 					GameObject* temp2 = gamelist.at(selected)->GetGameObject();
 					TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
@@ -1471,12 +1490,16 @@ public:
 
 
 				}
+				else
+				{
+
+				}
 			}
 			if (ImGui::Button("Script"))
 			{
 
 					GameObject* obj = gamelist.at(selected)->GetGameObject();
-					if (obj->GetComponentSize() == 1)
+					if (obj->GetComponentSize() != 0)
 					{
 						obj->ComponentForeach([&](Component* c) {
 							int count = 0;
@@ -1520,7 +1543,11 @@ public:
 							}
 							default:
 							{
-								break;
+								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+								Script* script = new Script(scriptObj, (Framework*)framework);
+								scriptObj->AddComponent(script);
+								component_active = false;
+								show_script = true;
 							}
 							}
 
@@ -1531,11 +1558,7 @@ public:
 					}
 					else
 					{
-						GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
-						Script* script = new Script(scriptObj, (Framework*)framework);
-						scriptObj->AddComponent(script);
-						component_active = false;
-						show_script = true;
+						show_error_script = true;
 
 					}
 			}

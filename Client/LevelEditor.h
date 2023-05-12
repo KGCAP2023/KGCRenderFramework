@@ -68,24 +68,20 @@ public:
 		if(SavemapWindow) {
 			ImGui::Begin(u8"Save Tilemap", &SavemapWindow);
 			ImGui::PushItemWidth(100);
-
 			TileMap* map = new TileMap();
 
 			ImGui::InputText("Tilemap Name", tilemap_name, 20);
-			if(ImGui::Button("Type Name")) {
-
-				map->Init(tilemap_name, image, tilemap_width, tilemap_height, width * height);
-
-				for (int i = 0, k = 0; i < tilemap_height; i++) {
-					for (int j = 0; j < tilemap_width; j++, k++) {
-						map->SelectTile(mouse_x[k], mouse_y[k], i, j);
-					}
+			if(ImGui::Button("Save This Name") && tilemap_name) {
+				map->Init(tilemap_name, image, tilemap_width, tilemap_height);
+			
+				for (int k = 0; k < tilemap_height * tilemap_width; k++) {
+					//gridX, gridY가 k / tilemap_width와 k % tilemap_width로 입력
+					map->SelectTile((int)mouse_x[k], (int)mouse_y[k], k / tilemap_width, k % tilemap_width);
 				}
 
-				this->ResM->RegisterTileMap("name", map);
-				ImGui::End();
+				this->ResM->RegisterTileMap(tilemap_name, map);
 			}
-
+			ImGui::End();
 		}
 	}
 
@@ -95,7 +91,7 @@ public:
 			ImGui::Begin(u8"Chosen Grid Block", &TilemapWindow, ImGuiWindowFlags_AlwaysAutoResize);
 
 			//현재 선택한 타일을 Image 형식으로 출력
-			ImGui::Text("Current Tile");	
+			ImGui::Text("Current Tile");
 			ImGui::Image((void*)image->Get(), ImVec2(125, 125),
 				ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit),
 				ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit + x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit + y_unit));

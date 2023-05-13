@@ -182,11 +182,11 @@ void Framework::Update()
 
 	//==========================================
 
-	static bool F12_BUTTON_PRESSED = false;
+	static bool F11_BUTTON_PRESSED = false;
 
-	if (kb.F12)
+	if (kb.F11)
 	{
-		if (!F12_BUTTON_PRESSED)
+		if (!F11_BUTTON_PRESSED)
 		{
 			if (this->layerManager.isDockingSpace())
 				this->layerManager.SetDockingSpace(false);
@@ -194,11 +194,11 @@ void Framework::Update()
 			else
 				this->layerManager.SetDockingSpace(true);
 		}
-		F12_BUTTON_PRESSED = true;
+		F11_BUTTON_PRESSED = true;
 	}
 	else
 	{
-		F12_BUTTON_PRESSED = false;
+		F11_BUTTON_PRESSED = false;
 	}
 
 	//==========================================

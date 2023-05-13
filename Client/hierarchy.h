@@ -261,7 +261,7 @@ public:
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
 
-					f = Hobj->FindMappingValue(Component::Type::RENDERER_SPRITE);
+					std::string f = Hobj->FindMappingValue(Component::Type::RENDERER_SPRITE);
 					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##combo", f.size() == 0 ? "" : f.c_str())) // The second parameter is the label previewed before opening the combo.
 					{

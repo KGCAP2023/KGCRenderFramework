@@ -91,6 +91,7 @@ private:
 		lua_register(L, "KeyInput_A", InputMapper::KeyInput_A);
 		lua_register(L, "KeyInput_S", InputMapper::KeyInput_S);
 		lua_register(L, "KeyInput_D", InputMapper::KeyInput_D);
+		lua_register(L, "GetDeltaTime", LuaManager::lua_GetDeltaTime);
 
 		this->RegisterMappingScript(L);
 		this->lua->GetGameObjectMapper()->RegisterMappingGameObjectManager(L);

@@ -27,6 +27,8 @@ public:
 		StartTimeMillis = rhs.StartTimeMillis;
 		bbox = rhs.bbox;
 		res = rhs.res;
+		type = rhs.type;
+		name = rhs.name;
 	}
 
 	~SkinnedMeshRenderer()

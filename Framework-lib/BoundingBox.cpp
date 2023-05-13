@@ -327,6 +327,12 @@ int BoundingBox2D::pnpoly(int nvert, float* vertx, float* verty, float testx, fl
 	return c;
 }
 
+void BoundingBox2D::SetSize(int width, int height)
+{
+	this->width = width;
+	this->height = height;
+}
+
 void BoundingBox2D::Draw(const XMMATRIX& viewProjectionMatrix)
 {
 	if (isActiveBoundingBox)

@@ -154,7 +154,7 @@ void Framework::Update()
 
 	this->layerManager.Update();
 
-	for (auto& kv : this->gameObjManager->gameObjects) {
+	for (auto& kv : this->currentgameObjManager->gameObjects) {
 		kv.second->Update();
 	}
 

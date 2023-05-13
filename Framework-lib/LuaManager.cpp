@@ -111,6 +111,12 @@ int LuaManager::lua_Camera_TraceObject(lua_State* lua)
 
 #pragma region 오디오메니저_관련_래핑_함수들
 
+int LuaManager::lua_GetDeltaTime(lua_State* L)
+{
+	lua_pushnumber(L, Framework::getDeltaTime());
+	return 1;
+}
+
 int LuaManager::lua_LoadAudio(lua_State* lua) {
 	
 	AudioManager** pmPtr = (AudioManager**)luaL_checkudata(

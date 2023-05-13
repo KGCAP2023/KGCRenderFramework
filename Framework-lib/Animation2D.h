@@ -15,6 +15,9 @@ public:
 		holdTime(holdTime),
 		chroma(chroma)
 	{
+		this->width = width;
+		this->height = height;
+
 		for (int i = 0; i < count; i++)
 		{
 			//frames.push_back({x + i * width, x + (i+1) * width, y, y + height});
@@ -26,8 +29,11 @@ public:
 	//Animation2D(const Animation2D& rhs) = delete;
 	//Animation2D& operator=(const Animation2D& ref) = delete;
 
-	void Draw(Transform& transform, SpriteBatch* spriteBatch, float layer);
+	void Draw(Transform& transform, SpriteBatch* spriteBatch, float layer, SpriteEffects effects = SpriteEffects_None);
 	void Update(float dt);
+
+	float GetWidth() { return this->width; };
+	float GetHeight() { return this->height; };
 private:
 	void Advance();
 
@@ -37,6 +43,7 @@ private:
 	int iCurFrame = 0;
 	float holdTime;
 	float curFrameTime = 0.0f;
-
+	int width = 0.0f;
+	int height = 0.0f;
 };
 

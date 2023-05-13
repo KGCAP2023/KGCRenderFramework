@@ -598,6 +598,9 @@ bool GraphicManager::InitializeScene()
 	res->cb_light.data.ambientLightStrength = 1.0f;
 
 	res->LoadSprite("ani", "..\\Resource\\a.jpg");
+	res->LoadSprite("man", "..\\Resource\\Textures\\man.png");
+
+
 	res->LoadModel("Nanosuit", "..\\Resource\\Objects\\Nanosuit\\Nanosuit.obj");
 
 	//카메라 
@@ -631,10 +634,12 @@ bool GraphicManager::InitializeScene()
 
 	//GameObject* obj2 = gameObjectManager->CreateGameObject("dfg");
 	//obj2->transform.SetPosition(10.0f, 10.0f, 0.0f);
-	//obj2->transform.SetScale(0.5f, 0.5f, 0.0f);
+	//obj2->transform.SetScale(1.0f, 1.0f, 1.0f);
 	//SpriteRenderer* rrr = new SpriteRenderer(obj2,res);
 	//rrr->SetLayerDepth(0.7f);
-	//rrr->SetSprite(res->FindSprite("ani"));
+	//rrr->SetSprite(res->FindSprite("man"));
+	//rrr->AddAnimation2D("run", 0, 0, 172, 188, 5, 80);
+	//rrr->SelectAnimation("run");
 	//obj2->AddComponent(rrr);
 
 	//GameObject* obj3 = gameObjectManager->CreateGameObject("dfg2");
@@ -651,12 +656,11 @@ bool GraphicManager::InitializeScene()
 #pragma region 루아스크립트1 테스트
 	//GameObject* obj = this->gameObjectManager->CreateGameObject("gooood");
 	//SpriteRenderer* rrr = new SpriteRenderer(obj,res);
-	//rrr->SetSprite(res->FindSprite("ani"));
+	//rrr->SetSprite(res->FindSprite("man"));
 	//obj->AddComponent(rrr);
 
 	//Script* s = new Script(obj, framework);
 	//s->SetLuaFilePath("..\\Lua\\script1.lua");
-	//s->LoadScript();
 	//obj->AddComponent(s);
 #pragma endregion
 	

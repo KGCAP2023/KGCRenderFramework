@@ -1,10 +1,15 @@
 #include "pch.h"
 #include "GameObjectMapper.h"
 #include "Framework.h"
+#include "SkinnedMeshRenderer.h"
+#include "SpriteRenderer.h"
+
+ResourceManager* GameObjectMapper::res = nullptr;
 
 GameObjectMapper::GameObjectMapper(Framework* framework)
 {
     this->framework = framework;
+    this->res = &framework->resourceManager;
 }
 
 void GameObjectMapper::RegisterMappingGameObjectManager(lua_State* lua)
@@ -43,6 +48,8 @@ void GameObjectMapper::RegisterMappingGameObject(lua_State* lua, GameObject* obj
         luaL_Reg GameObjectFunctions[] = {
            "GetName", lua_GameObject_GetName,
            "GetTransform",lua_GameObject_GetTransform,
+           "LoadAnim",lua_GameObject_LoadAnimation,
+           "PlayAnim2D",lua_GameObject_PlayAnim2D,
            nullptr, nullptr
         };
 
@@ -66,6 +73,56 @@ int GameObjectMapper::lua_GameObject_GetTransform(lua_State* lua)
     Transform* trans = &((*pptr)->transform);
     RegisterMappingTransform(lua, trans);
     return 1;
+}
+
+int GameObjectMapper::lua_GameObject_LoadAnimation(lua_State* lua)
+{
+    GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
+    GameObject* obj = (*pptr);
+   
+    std::string animationPreset = luaL_checkstring(lua, 2);
+
+    if (SpriteRenderer* render = dynamic_cast<SpriteRenderer*>(obj->GetComponent(Component::Type::RENDERER_SPRITE)))
+    {
+        Sprite* sp = render->GetSprite();
+
+        if (sp != nullptr && sp->GetName().compare(animationPreset) == 0)
+        {
+            render->AddAnimation2D("run", 0, 0, 172, 188, 5, 80);
+            render->AddAnimation2D("idle", 0, 0, 172, 188, 1, 20);
+        }
+    }
+    else if (SkinnedMeshRenderer* render = dynamic_cast<SkinnedMeshRenderer*>(obj->GetComponent(Component::Type::RENDERER_SPRITE)))
+    {
+        std::string name = render->GetName();
+        if (name.compare(animationPreset) == 0)
+        {
+            render->AddAnimation("..\\Resource\\Objects\\walking\\Idle.fbx");
+            render->AddAnimation("..\\Resource\\Objects\\walking\\walk.fbx");
+        }
+    }
+
+    return 0;
+}
+
+int GameObjectMapper::lua_GameObject_PlayAnim2D(lua_State* lua)
+{
+    GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
+    GameObject* obj = (*pptr);
+
+    std::string animationName = luaL_checkstring(lua, 2);
+    int flip = luaL_checkinteger(lua, 3);
+
+    SpriteRenderer* render = dynamic_cast<SpriteRenderer*>(obj->GetComponent(Component::Type::RENDERER_SPRITE));
+    if (render != nullptr)
+    {
+        if (flip)
+            render->SetImageFlip(true);
+        else
+            render->SetImageFlip(false);
+        render->SelectAnimation(animationName);
+    }
+    return 0;
 }
 
 void GameObjectMapper::RegisterMappingTransform(lua_State* lua, Transform* obj)

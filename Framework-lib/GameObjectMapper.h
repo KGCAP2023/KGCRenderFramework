@@ -3,6 +3,7 @@
 #include "GameObject.h"
 
 class Framework;
+class ResourceManager;
 
 class GameObjectMapper
 {
@@ -17,6 +18,8 @@ public:
 	static void RegisterMappingGameObject(lua_State* lua, GameObject* obj);
 	static int lua_GameObject_GetName(lua_State* lua);
     static int lua_GameObject_GetTransform(lua_State* lua);
+	static int lua_GameObject_LoadAnimation(lua_State* lua);
+	static int lua_GameObject_PlayAnim2D(lua_State* lua);
 
 	//Mapping Transform
 	static void RegisterMappingTransform(lua_State* lua, Transform* obj);
@@ -27,6 +30,7 @@ public:
 
 
 private: 
+	static ResourceManager* res;
 	Framework* framework = nullptr;
 };
 

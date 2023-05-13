@@ -20,6 +20,7 @@ public:
     void SetDockingSpace(bool value);
     void DockingSpace();
     bool isGameViewFocus() { return _isGameViewFocus; }
+    bool isDockingSpace() { return _isActiveDockingSpace; }
 private:
 
     bool _isActiveDemo = false;

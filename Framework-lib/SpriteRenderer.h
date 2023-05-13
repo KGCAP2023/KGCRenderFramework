@@ -33,13 +33,17 @@ public:
 	{
 		std::cout << "[=] SpriteRenderer CLONE Process - Copy constructor called" << std::endl;
 		sprite = rhs.sprite;
+
 		spriteBatch = rhs.spriteBatch;
 		selectedAnimation = rhs.selectedAnimation;
 		_AnimationMap = rhs._AnimationMap;
 		bbox = rhs.bbox;
 		res = rhs.res;
 		layer = rhs.layer;
+		effects = rhs.effects;
 		isSpriteRender = rhs.isSpriteRender;
+		type = rhs.type;
+		name = rhs.name;
 	}
 
 	virtual Component* Copy(GameObject* owner)
@@ -100,17 +104,34 @@ public:
 
 		if (selected != nullptr)
 		{
+			bbox->SetSize(selected->GetWidth(),selected->GetHeight());
 			selectedAnimation = selected;
 			return true;
 		}
 		else
+		{
+			bbox->SetSize(sprite->GetWidth(), sprite->GetHeight());
 			return false;
+		}	
 	}
 
 	Animation2D* GetSelectedAnim() { return selectedAnimation; }
 
+	void SetImageFlip(bool value)
+	{
+		if (value)
+		{
+			effects = SpriteEffects_FlipHorizontally;
+		}
+		else
+		{
+			effects = SpriteEffects_None;
+		}
+	}
+
 private:
 	float layer = 0.0f;
+	SpriteEffects effects = SpriteEffects_None;
 	Sprite* sprite = nullptr;
 	SpriteBatch* spriteBatch = nullptr;
 	Animation2D* selectedAnimation = nullptr;

@@ -70,6 +70,9 @@ public:
 		return 0;
 	}
 
+	static int lua_GetDeltaTime(lua_State* L);
+
+
 
 	static int lua_LoadAudio(lua_State* lua);
 	static int lua_PlayAudio(lua_State* lua);
@@ -110,8 +113,8 @@ public:
 	std::vector<std::string>& GetLogBuffer() { return this->logBuffer; };
 
 private:
+	ResourceManager* res;
 	Framework* framework = nullptr;
-	ResourceManager* res = nullptr;
 	GameObjectManager* objManager = nullptr;
 	GameObjectMapper* gameMapper = nullptr;
 	std::vector<std::string> logBuffer;

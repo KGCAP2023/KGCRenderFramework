@@ -68,6 +68,7 @@ void LayerManager::SetImGuiDemo(bool value)
 void LayerManager::SetDockingSpace(bool value)
 {
 	this->_isActiveDockingSpace = value;
+	InputManager::isDockingSpace = value;
 }
 
 void LayerManager::DockingSpace()

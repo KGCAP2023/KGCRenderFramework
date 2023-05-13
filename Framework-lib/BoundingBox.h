@@ -170,6 +170,7 @@ public:
 	void SetLayerDepth(float layerDepth) { this->layerDepth = layerDepth; };
 	int CalculatePointInBoundingBox(float pointX, float pointY);
 	int pnpoly(int nvert, float* vertx, float* verty, float testx, float testy);
+	void SetSize(int width, int height);
 
 	Texture* color;
 

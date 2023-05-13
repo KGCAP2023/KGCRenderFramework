@@ -48,6 +48,7 @@ public:
 	virtual BoundingBoxRenderer* GetBoundingBox() override;
 	virtual std::string GetName() override;
 
+	Model* GetModel() { return this->model; }
 	bool SetModel(Model* model);
 	std::vector<Mesh>& GetMeshes();
 	std::string GetPath();

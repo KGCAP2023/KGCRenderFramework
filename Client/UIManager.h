@@ -30,7 +30,7 @@ public:
 	{
 		LevelEditExample* temp2 = new LevelEditExample(this->objMgr, resMgr, "example2");
 		uiList.push_back(temp2);
-		Hierarchy* hierarachy = new Hierarchy(this->objMgr,this->resMgr, "hierarachy", this->framework);
+		this->hierarachy = new Hierarchy(this->objMgr,this->resMgr, "hierarachy", this->framework);
 		uiList.push_back(hierarachy);
 		DebugView* debug = new DebugView(this->framework,this->objMgr, "DebugView");
 		uiList.push_back(debug);
@@ -38,6 +38,11 @@ public:
 		uiList.push_back(RMV);
 		ScriptEditor* SE = new ScriptEditor(this->objMgr, "ScriptEditor");
 		uiList.push_back(SE);
+	}
+
+	void ChangeHierachyObject()
+	{
+		this->hierarachy->change();
 	}
 
 	void InitResource()
@@ -90,4 +95,5 @@ public:
 	IAudioManager* audMgr = nullptr;
 	IFramework* framework = nullptr;
 	Sprite* sp = nullptr;
+	Hierarchy* hierarachy = nullptr;
 };

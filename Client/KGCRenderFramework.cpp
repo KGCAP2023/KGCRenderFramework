@@ -81,6 +81,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				if (ImGui::MenuItem("test"))
 				{
 					rw->SwitchObjectManager();
+					uiMgr->ChangeHierachyObject();
 				}
 				ImGui::EndMenu();
 			}

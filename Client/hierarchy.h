@@ -198,9 +198,10 @@ public:
 
 	}
 
-	 void change()
+	void change()
 	{
 		gamelist.clear();
+
 		auto map3 = framework->GetGameObjectManager()->GetObejctMap();
 		for (auto& pair : map3)
 		{

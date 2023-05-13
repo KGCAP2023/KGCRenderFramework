@@ -20,7 +20,11 @@ class ResourceManagerView : public ILayer
 public:
     bool show_popup = false;
     bool isplaying = false;
-    bool openFile()     // file 버튼 구현 부분
+    bool delete_condition = false;
+    int selected = 0;
+    std::vector<HierarchyObject*> gamelist;
+
+    bool openFile()     // add 버튼 (파일 탐색기 호출)
     {
         HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         if (FAILED(f_SysHr))
@@ -59,36 +63,35 @@ public:
 
         std::wstring path(f_Path);
         std::string c(path.begin(), path.end());
-        std::string FilePath = c;                                               //파일 경로 가져옴!
+        std::string FilePath = c;                                                   //파일 경로 가져옴
 
         const size_t slash = FilePath.find_last_of("/\\");
-        std::string SelectedFile = FilePath.substr(slash + 1);                  //선택된 파일 이름 가져옴
+        std::string SelectedFile = FilePath.substr(slash + 1);                      //선택된 파일이름 가져옴
         std::string ext = getFileExtension(FilePath);
-        std::string FileName = SelectedFile.substr(0,SelectedFile.length()-4);
-        std::string jFileName = SelectedFile.substr(0, SelectedFile.length() - 5);
+        std::string FileName = SelectedFile.substr(0,SelectedFile.length()-4);      //mp3,obj,jpg,png 이름처리
+        std::string jFileName = SelectedFile.substr(0, SelectedFile.length() - 5);  //jpeg 이름처리
+
         CoTaskMemFree(f_Path);
         f_Files->Release();
         f_FileSystem->Release();
         CoUninitialize();
-
-        std::cout << "선택파일)" << SelectedFile << std::endl;
         
-        if (ext._Equal("mp3"))                                                  //오디오 파일
+        if (ext._Equal("mp3"))                                                      //오디오 파일
         {
             ResM->LoadAudio(FileName.c_str(), FilePath.c_str());
         }
 
-        else if (ext._Equal("obj"))                                             //모델 파일
+        else if (ext._Equal("obj"))                                                 //모델 파일
         { 
             ResM->LoadModel(FileName, FilePath);
         }
 
-        else if (ext._Equal("jpg") || ext._Equal("jpeg") || ext._Equal("png"))  //사진 파일 #1
+        else if (ext._Equal("jpg") || ext._Equal("jpeg") || ext._Equal("png"))      //사진 파일 #1
         {
             ResM->LoadSprite(FileName, FilePath);
         }
 
-        else if (ext._Equal("jpeg"))                                            //사진 파일 #2
+        else if (ext._Equal("jpeg"))                                                //사진 파일 #2
         {
             ResM->LoadSprite(jFileName, FilePath);
         }
@@ -100,7 +103,7 @@ public:
         return TRUE;
     }
 
-    std::string getFileExtension(std::string& path)                             //확장자 처리
+    std::string getFileExtension(std::string& path)                                 //확장자 처리
     {
         size_t index = path.rfind(".");
         if (index != std::wstring::npos) {
@@ -135,36 +138,57 @@ public:
 
     void Render()
     {
-        auto keyboard = InputManager::GetKeyboardState();
-        auto mouse = InputManager::GetMouseState();
-        
-        if (_isActive) {
+        if (_isActive)
+        {
             ImGui::Begin(u8"Resource Manager View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
 
-            if(ImGui::Button("add")) {                                   //add 버튼
-                ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
-
+            if(ImGui::Button("add"))
+            {                                                           //add 버튼
+                openFile();
             }
             ImGui::SameLine();
             ImGui::Button("delete");                                    //delete 버튼
-            {
-
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("file"))                                  //file 버튼
-            {
-                openFile();
+            {/*
+                if (gamelist.size() != 0)
+                {
+                    if (selected > 0)
+                    {
+                        if (selected == gamelist.size() - 1)
+                        {
+                            ObjM->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
+                            gamelist.pop_back();
+                            selected--;
+                            show_delete = true;
+                        }
+                        else
+                        {
+                            ObjM->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
+                            gamelist.erase(gamelist.begin() + selected);
+                            show_delete = true;
+                        }
+                    }
+                    else
+                    {
+                        ObjM->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
+                        gamelist.erase(gamelist.begin() + selected);
+                        show_delete = true;
+                    }
+                */}
             }
             ImGui::Separator();
 
-            if (ImGui::CollapsingHeader("Sprite")) {
+            if (ImGui::CollapsingHeader("Sprite"))                              //사진 담당
+            {
                 auto map = ResM->GetSpriteMap();
-                for (auto& pair : map) {
+                for (auto& pair : map)
+                {
                     Sprite* sp = pair.second;
                     sp->GetName();
 
                     if (ImGui::Selectable(sp->GetName().c_str()))
+                    {
                         ImGui::OpenPopup(sp->GetName().c_str());
+                    }
 
                     if (ImGui::BeginPopup(sp->GetName().c_str()))
                     {
@@ -174,14 +198,18 @@ public:
                 }
             }
 
-            if (ImGui::CollapsingHeader("Object")) {
+            if (ImGui::CollapsingHeader("Object"))                              //모델 담당
+            {
                 auto map = ResM->GetModelMap();
-                for (auto& pair : map) {
+                for (auto& pair : map)
+                {
                     Model* mo = pair.second;
                     mo->GetName();
 
                     if (ImGui::Selectable(mo->GetName().c_str()))
+                    {
                         ImGui::OpenPopup(mo->GetName().c_str());
+                    }
 
                     if (ImGui::BeginPopup(mo->GetName().c_str()))
                     {
@@ -191,9 +219,11 @@ public:
                 }
             }
            
-            if (ImGui::CollapsingHeader("Audio")) {
+            if (ImGui::CollapsingHeader("Audio"))                               //오디오 담당
+            {
                 auto map = ResM->GetAudioMap();
-                for (auto& pair : map) {
+                for (auto& pair : map)
+                {
                     const char* name = pair.first.c_str();
 
                     if (ImGui::Selectable(name))
@@ -231,5 +261,4 @@ public:
             }
             ImGui::End();
         }
-    }
 };

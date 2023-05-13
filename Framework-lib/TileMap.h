@@ -36,8 +36,7 @@ public:
 			{
 				for (int j = 0; j < grid.x; j++)
 				{
-					//arr[i][j] = RECT{ 0,0,0,0};
-					arr[i][j] = RECT{ tileSize,  tileSize, 2 * tileSize, 2 * tileSize };
+					arr[i][j] = RECT{ -1 , -1 , -1 , -1 };
 				}
 			}
 
@@ -72,8 +71,10 @@ public:
 				for (int j = 0; j < grid.x; j++)
 				{
 					DirectX::SimpleMath::Vector2 gridPos(gameObjpos.x + j * scale * tileSize, gameObjpos.y + i * scale * tileSize);
-					spriteBatch->Draw(sprite->Get(), gridPos, &arr[i][j],
-						DirectX::Colors::White, t.rotation.z, DirectX::SimpleMath::Vector2(0, 0), scale, SpriteEffects_None, layer);
+
+					if(arr[i][j].bottom != -1) //undefined case
+						spriteBatch->Draw(sprite->Get(), gridPos, &arr[i][j],
+							DirectX::Colors::White, t.rotation.z, DirectX::SimpleMath::Vector2(0, 0), scale, SpriteEffects_None, layer);
 				}
 			}
 		}

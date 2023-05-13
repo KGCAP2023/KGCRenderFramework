@@ -56,15 +56,21 @@ public:
 			{
 				this->lua->CheckLua(L, lua_pcall(L, 0, 0, 0));
 			}
+			isLoaded = true;
 			return true;
 		}
 		else
+		{
+			isLoaded = false;
 			return false;
+		}
+			
 	}
 
 	//업데이트문
 	virtual void Update()
 	{
+		if (isLoaded == false) return;
 
 		//루아 파일 실행 
 		if (L != nullptr)
@@ -150,6 +156,6 @@ private:
 	lua_State* L = nullptr;
 	std::string filepath; // = "..\\Lua\\gui.lua";
 	LuaManager* lua;
-
+	bool isLoaded = false;
 };
 

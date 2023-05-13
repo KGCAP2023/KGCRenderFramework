@@ -1628,14 +1628,7 @@ public:
 			}
 
 
-			if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
-			{
-				change();
-			}
-			if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
-			{
-				change();
-			}
+
 			//object 리스트 보여주는 곳
 			// SetFocus()기능도 존재
 

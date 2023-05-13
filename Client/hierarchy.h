@@ -129,6 +129,7 @@ public:
 	char name[20]{};
 
 	int g = 0;
+
 	DirectX::XMFLOAT3 pos{};
 	DirectX::XMFLOAT3 rot{};
 	DirectX::XMFLOAT3 scale{ 1,1,1 };
@@ -213,8 +214,8 @@ public:
 	void component()
 	{
 		spriteList.clear();
+		modelList.clear();
 		tileList.clear();
-
 
 
 		auto map = ResM->GetSpriteMap();
@@ -246,8 +247,7 @@ public:
 		if (gamelist.at(selected)->GetGameObject()->GetComponentSize() != 0)
 		{
 			GameObject* obj = gamelist.at(selected)->GetGameObject();
-			
-
+			HierarchyObject* Hobj = gamelist.at(selected);
 			obj->ComponentForeach([&](Component* c) {
 				int count = 0;
 				std::string name = c->GetName();
@@ -258,20 +258,20 @@ public:
 				case Component::Type::RENDERER_SPRITE:
 				{
 					SpriteRenderer* render4 = dynamic_cast<SpriteRenderer*>(c);
-					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
 
-					std::string f = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE);
+					f = Hobj->FindMappingValue(Component::Type::RENDERER_SPRITE);
 					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##combo", f.size() == 0 ? "" : f.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
 						for (int n = 0; n < spriteList.size(); n++)
 						{
-							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_SPRITE) == spriteList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
+							bool is_selected = (Hobj->FindMappingValue(Component::Type::RENDERER_SPRITE) == spriteList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
 							if (ImGui::Selectable(spriteList[n].c_str(), is_selected))
 							{
-								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_SPRITE, spriteList.at(n).c_str()); ;
+								Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
+								Hobj->SetMappingValue(Component::Type::RENDERER_SPRITE, spriteList.at(n).c_str()); ;
 								render4->SetSprite(ResM->FindSprite(spriteList.at(n).c_str()));
 							}
 							if (is_selected)
@@ -299,7 +299,6 @@ public:
 				case Component::Type::RENDERER_MODEL:
 				{
 					ModelRenderer* render5 = dynamic_cast<ModelRenderer*>(c);
-					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
 
@@ -307,11 +306,12 @@ public:
 					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##model", modelName.size() == 0 ? "" : modelName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
-						for (int n = 0; n < spriteList.size(); n++)
+						for (int n = 0; n < modelList.size(); n++)
 						{
 							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_MODEL) == modelList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
 							if (ImGui::Selectable(modelList[n].c_str(), is_selected))
 							{
+								Hobj->DeleteMappingValue(Component::Type::RENDERER_MODEL);
 								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_MODEL, modelList.at(n).c_str()); ;
 								render5->SetModel(ResM->FindModel(modelList.at(n).c_str()));
 							}
@@ -340,7 +340,6 @@ public:
 				{
 					TileMapRenderer* render6 = dynamic_cast<TileMapRenderer*>(c);
 
-					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
 					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP);
@@ -352,6 +351,7 @@ public:
 							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP) == tileList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
 							if (ImGui::Selectable(tileList[n].c_str(), is_selected))
 							{
+								Hobj->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
 								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_TILEMAP, tileList.at(n).c_str()); ;
 								render6->SetTileMap(ResM->FindTileMap(tileList.at(n).c_str()));
 							}
@@ -417,7 +417,8 @@ public:
 
 
 				});
-	
+
+
 
 			gamelist.at(selected)->DeleteComponent();
 
@@ -1558,7 +1559,7 @@ public:
 			if (ImGui::Button("create"))
 			{
 
-				GameObject* ob = framework->GetGameObjectManager()->CreateGameObject(name);
+				GameObject* ob = _manager->CreateGameObject(name);
 				if (ob != nullptr) {
 					ob->transform.SetPosition(pos.x, pos.y, pos.z);
 					ob->transform.SetRotation(rot.x, rot.y, rot.z);

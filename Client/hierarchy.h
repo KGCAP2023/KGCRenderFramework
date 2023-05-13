@@ -1557,7 +1557,7 @@ public:
 			if (ImGui::Button("create"))
 			{
 
-				GameObject* ob = _manager->CreateGameObject(name);
+				GameObject* ob = framework->GetGameObjectManager()->CreateGameObject(name);
 				if (ob != nullptr) {
 					ob->transform.SetPosition(pos.x, pos.y, pos.z);
 					ob->transform.SetRotation(rot.x, rot.y, rot.z);
@@ -1631,14 +1631,17 @@ public:
 			{
 				change();
 			}
+			if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
+			{
+				change();
+			}
 			//object 리스트 보여주는 곳
 			// SetFocus()기능도 존재
 
 			if (gamelist.size() != 0)
 			{
 				ImGui::BeginChild("Scrolling", ImVec2(150, 0), true);
-				if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
-				{
+				
 					for (int i = 0; i < gamelist.size(); i++)
 					{
 						if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
@@ -1650,19 +1653,9 @@ public:
 
 
 					}
-				}
-
-				for (int i = 0; i < gameTestList.size(); i++)
-				{
-						if (ImGui::Selectable((gameTestList.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
-						{
-							selected = i;
-							gameTestList.at(i)->GetGameObject()->SetFocus();
-
-						}
+				
 
 
-				}
 				
 				ImGui::EndChild();
 				ImGui::SetScrollX(100.0f);

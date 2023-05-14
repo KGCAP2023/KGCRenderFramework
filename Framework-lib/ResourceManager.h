@@ -157,11 +157,6 @@ public:
 	/// <returns></returns>
 	virtual std::unordered_map<std::string, Model*> GetModelMap() { return std::unordered_map<std::string, Model*>(); };
 	/// <summary>
-	/// 불러온 오디오를 삭제합니다.
-	/// </summary>
-	/// <param name="audioName">삭제할 오디오 이름입니다.</param>
-	virtual void DeleteAudio(const char* audioName) {};
-	/// <summary>
 	/// 불러온 스프라이트를 삭제합니다.
 	/// </summary>
 	/// <param name="audioName">삭제할 스프라이트 이름입니다.</param>

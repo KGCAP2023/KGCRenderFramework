@@ -85,7 +85,12 @@ public:
 		this->detail = b;
 	}
 
-
+	void Copy(HierarchyObject* h)
+	{
+		this->map1 = h->map1;
+		strcpy_s(this->script_name, 20 * sizeof(char), h->script_name);
+		this->detail = h->detail;
+	}
 
 private:
 	GameObject* obj;
@@ -93,8 +98,6 @@ private:
 	char script_name[20]{};
 	bool detail = false;
 	std::vector<Component::Type> _delete;
-	
-
 };
 static bool testMode = false;
 
@@ -109,11 +112,16 @@ public:
 	IResourceManager* ResM;
 
 	std::vector<HierarchyObject*> gamelist;
-	GameObject* obj;          //GameObject 함수를 쓰려고 하는 obj = gamelist.at(selected)->getGameObject(); 로 표현됨
-	HierarchyObject* Hobj;    //HierarachyObject를 관리 하기 위해  씀 obj = gamelist.at(selected); 로 표현
+	std::vector<HierarchyObject*> gameTestList;
+	std::vector<HierarchyObject*>* current = &gamelist;
+
+	GameObject* obj;          //GameObject 함수를 쓰려고 하는 obj = current->at(selected)->getGameObject(); 로 표현됨
+	HierarchyObject* Hobj;    //HierarachyObject를 관리 하기 위해  씀 obj = current->at(selected); 로 표현
 	bool check1 = true;
 	bool check2 = true;
 	bool check3 = true;
+
+	int test_check = 1;
 
 	int component_selected = 0;
 	int selected = 0;
@@ -145,18 +153,29 @@ public:
 	std::vector<std::string> testList;
 	std::vector<Component::Type> componentList;
 
+	HierarchyObject* FindHierarchyObjectInGamelist(std::string name)
+	{
+		for (HierarchyObject* h : gamelist)
+		{
+			std::string objName = h->GetGameObject()->GetName();
+			if (objName.compare(name) == 0)
+				return h;
+		}
+		return nullptr;
+	}
+
+
 	Hierarchy(IGameObjectManager* manager, IResourceManager* res, const std::string& name, IFramework* framework) : ILayer(name)
 	{
 		this->framework = framework;
 		this->_manager = manager;
 		this->ResM = res;
-
 		if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY) {
 			this->_manager->AddFocusedObjectListener([&](GameObject* selectedObject) {
 
-				for (int k = 0; k < gamelist.size(); k++)
+				for (int k = 0; k < current->size(); k++)
 				{
-					if (selectedObject->GetName() == gamelist.at(k)->GetGameObject()->GetName())
+					if (selectedObject->GetName() == current->at(k)->GetGameObject()->GetName())
 					{
 						selected = k;
 					}
@@ -193,15 +212,32 @@ public:
 
 	void change()
 	{
-		gamelist.clear();
-
-		auto map3 = framework->GetGameObjectManager()->GetObejctMap();
-		for (auto& pair : map3)
+		if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 		{
-			GameObject* obj = pair.second;
-			gamelist.push_back(new HierarchyObject(obj));
+			//gamelist -> gametestlist 로 복사
+			for(auto& pair : framework->GetCurrentGameObjectManager()->GetObejctMap())
+			{
+				GameObject* obj = pair.second;
+				HierarchyObject* play_obj = new HierarchyObject(obj);
+				HierarchyObject* dev_obj = FindHierarchyObjectInGamelist(obj->GetName());
+				play_obj->Copy(dev_obj);
+
+				gameTestList.push_back(play_obj);
+
+			}
+
+			current = &gameTestList;
 
 		}
+		else
+		{
+			std::cout << 'z';
+			current = &gamelist;
+			// 날려주기
+			gameTestList.clear();
+			
+		}
+
 	}
 	/// <summary>
 	/// Object의 컴포넌트 기능 코드를 모아둔 함수
@@ -209,8 +245,8 @@ public:
 	void component()
 	{
 		//obj 은 gameObject쪽 함수, Hobj는 HierarcyObject쪽 함수
-		obj = gamelist.at(selected)->GetGameObject();
-		Hobj = gamelist.at(selected);
+		obj = current->at(selected)->GetGameObject();
+		Hobj = current->at(selected);
 
 		//render로 돌아기 떄문에 다시 돌아 올때 비워줌
 		spriteList.clear();
@@ -349,7 +385,7 @@ public:
 					{
 						for (int n = 0; n < tileList.size(); n++)
 						{
-							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP) == tileList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
+							bool is_selected = (current->at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP) == tileList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
 							if (ImGui::Selectable(tileList[n].c_str(), is_selected))
 							{
 								Hobj->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
@@ -514,8 +550,8 @@ public:
 	/// </summary>
 	void CheckSpriteTransform()
 	{
-		obj = gamelist.at(selected)->GetGameObject();
-		Hobj = gamelist.at(selected);
+		obj = current->at(selected)->GetGameObject();
+		Hobj = current->at(selected);
 
 		float posX = obj->transform.position.x;
 		float posY = obj->transform.position.y;
@@ -563,7 +599,7 @@ public:
 			obj->transform.rotation.z = rotZ;
 		}
 
-		float scaleX = gamelist.at(selected)->GetGameObject()->transform.scale.x;
+		float scaleX = current->at(selected)->GetGameObject()->transform.scale.x;
 
 		if (scaleX < minScaleValue) {
 			scaleX = minScaleValue;
@@ -581,8 +617,8 @@ public:
 	/// </summary>
 	void CheckTransform()
 	{
-		obj = gamelist.at(selected)->GetGameObject();
-		Hobj = gamelist.at(selected);
+		obj = current->at(selected)->GetGameObject();
+		Hobj = current->at(selected);
 
 		float posX = obj->transform.position.x;
 		float posY = obj->transform.position.y;
@@ -767,13 +803,13 @@ public:
 			if (ImGui::Button("create"))
 			{
 
-				GameObject* ob = _manager->CreateGameObject(name);
+				GameObject* ob = framework->GetCurrentGameObjectManager()->CreateGameObject(name);
 				if (ob != nullptr) {
 					ob->transform.SetPosition(pos.x, pos.y, pos.z);
 					ob->transform.SetRotation(rot.x, rot.y, rot.z);
 					ob->transform.SetScale(scale.x, scale.y, scale.z);
 
-					gamelist.push_back(new HierarchyObject(ob));
+					current->push_back(new HierarchyObject(ob));
 				}
 				else
 				{
@@ -806,29 +842,29 @@ public:
 			ImGui::SameLine();
 			if (ImGui::Button("delete"))
 			{
-				if (gamelist.size() != 0)
+				if (current->size() != 0)
 				{
 					//selected=0~12 size 13
 					if (selected > 0)
 					{
-						if (selected == gamelist.size() - 1)
+						if (selected == current->size() - 1)
 						{
-							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-							gamelist.pop_back();
+							_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
+							current->pop_back();
 							selected--;
 							show_delete = true;
 						}
 						else
 						{
-							_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-							gamelist.erase(gamelist.begin() + selected);
+							_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
+							current->erase(current->begin() + selected);
 							show_delete = true;
 						}
 					}
 					else
 					{
-						_manager->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-						gamelist.erase(gamelist.begin() + selected);
+						_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
+						current->erase(current->begin() + selected);
 						show_delete = true;
 					}
 				}
@@ -841,16 +877,16 @@ public:
 			//object 리스트 보여주는 곳
 			// SetFocus()기능도 존재
 
-			if (gamelist.size() != 0)
+			if (current->size() != 0)
 			{
 				ImGui::BeginChild("Scrolling", ImVec2(150, 0), true);
 				
-					for (int i = 0; i < gamelist.size(); i++)
+					for (int i = 0; i < current->size(); i++)
 					{
-						if (ImGui::Selectable((gamelist.at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
+						if (ImGui::Selectable((current->at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
 						{
 							selected = i;
-							gamelist.at(i)->GetGameObject()->SetFocus();
+							current->at(i)->GetGameObject()->SetFocus();
 
 						}
 
@@ -866,14 +902,14 @@ public:
 				ImGui::SameLine();
 				ImGui::BeginGroup();
 
-				ImGui::Text(const_cast<char*>(gamelist.at(selected)->GetGameObject()->ObjectName.c_str()));
+				ImGui::Text(const_cast<char*>(current->at(selected)->GetGameObject()->ObjectName.c_str()));
 				ImGui::Separator();
 
 				ImGui::Text("TRANSFORM");
 				// 좌표 기능 코드 들어있는 함수
 				Transform();
 				ImGui::Text("Other Component");
-				if(gamelist.at(selected)->GetGameObject()->GetComponentSize()!=0)
+				if(current->at(selected)->GetGameObject()->GetComponentSize()!=0)
 					ImGui::Separator();
 				// 컴포넌트 추가 버튼 등 코드 들어있는 함수
 				component();
@@ -896,7 +932,7 @@ public:
 		{
 			ImGui::Begin("Add Component", &component_active);
 
-			GameObject* obj = gamelist.at(selected)->GetGameObject();
+			GameObject* obj = current->at(selected)->GetGameObject();
 			componentList.clear();
 			auto map = obj->GetComponentMap();
 			// coponentList에 obj 컴포넌트 정보 맵으로 받기
@@ -939,9 +975,9 @@ public:
 						}
 						case Component::Type::SCRIPT:
 						{
-							GameObject* temp = gamelist.at(selected)->GetGameObject();
+							GameObject* temp = current->at(selected)->GetGameObject();
 							SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
-							gamelist.at(selected)->GetGameObject()->AddComponent(render1);
+							current->at(selected)->GetGameObject()->AddComponent(render1);
 							component_active = false;
 							break;
 
@@ -952,9 +988,9 @@ public:
 				}
 				else if(obj->GetComponentSize() == 0)
 				{
-					GameObject* temp = gamelist.at(selected)->GetGameObject();
+					GameObject* temp = current->at(selected)->GetGameObject();
 					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
-					gamelist.at(selected)->GetGameObject()->AddComponent(render1);
+					current->at(selected)->GetGameObject()->AddComponent(render1);
 					component_active = false;
 
 				}
@@ -998,10 +1034,10 @@ public:
 						}
 						case Component::Type::SCRIPT:
 						{
-							GameObject* temp1 = gamelist.at(selected)->GetGameObject();
+							GameObject* temp1 = current->at(selected)->GetGameObject();
 							ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
 							//render->Init();
-							gamelist.at(selected)->GetGameObject()->AddComponent(render2);
+							current->at(selected)->GetGameObject()->AddComponent(render2);
 							component_active = false;
 							break;
 
@@ -1012,10 +1048,10 @@ public:
 				}
 				else if (obj->GetComponentSize() == 0)
 				{
-					GameObject* temp1 = gamelist.at(selected)->GetGameObject();
+					GameObject* temp1 = current->at(selected)->GetGameObject();
 					ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
 					//render->Init();
-					gamelist.at(selected)->GetGameObject()->AddComponent(render2);
+					current->at(selected)->GetGameObject()->AddComponent(render2);
 					component_active = false;
 				
 
@@ -1061,10 +1097,10 @@ public:
 						}
 						case Component::Type::SCRIPT:
 						{
-							GameObject* temp2 = gamelist.at(selected)->GetGameObject();
+							GameObject* temp2 = current->at(selected)->GetGameObject();
 							TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
 							//render->Init();
-							gamelist.at(selected)->GetGameObject()->AddComponent(render3);
+							current->at(selected)->GetGameObject()->AddComponent(render3);
 							component_active = false;
 							break;
 
@@ -1075,10 +1111,10 @@ public:
 				}
 				else if (obj->GetComponentSize() == 0)
 				{
-					GameObject* temp2 = gamelist.at(selected)->GetGameObject();
+					GameObject* temp2 = current->at(selected)->GetGameObject();
 					TileMapRenderer* render3 = new TileMapRenderer(temp2, (ResourceManager*)this->ResM);
 					//render->Init();
-					gamelist.at(selected)->GetGameObject()->AddComponent(render3);
+					current->at(selected)->GetGameObject()->AddComponent(render3);
 					component_active = false;
 			
 
@@ -1109,7 +1145,7 @@ public:
 							}
 							default:
 							{
-								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+								GameObject* scriptObj = current->at(selected)->GetGameObject();
 								Script* script = new Script(scriptObj, (Framework*)framework);
 								scriptObj->AddComponent(script);
 								component_active = false;
@@ -1121,7 +1157,7 @@ public:
 				}
 				else if (obj->GetComponentSize() == 0)
 				{
-					GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+					GameObject* scriptObj = current->at(selected)->GetGameObject();
 					Script* script = new Script(scriptObj, (Framework*)framework);
 					scriptObj->AddComponent(script);
 					component_active = false;
@@ -1148,8 +1184,8 @@ public:
 /// </summary>
 	void Transform()
 	{
-		obj = gamelist.at(selected)->GetGameObject();
-		Hobj = gamelist.at(selected);
+		obj = current->at(selected)->GetGameObject();
+		Hobj = current->at(selected);
 		if (obj->GetComponentSize() == 0)
 		{
 			ImGui::PushItemWidth(90);
@@ -1278,7 +1314,7 @@ public:
 					obj->transform.scale.y = 0;
 					obj->transform.scale.z = 0;
 
-					if (gamelist.at(selected)->Detail() == false)
+					if (current->at(selected)->Detail() == false)
 					{
 						ImGui::PushItemWidth(90);
 
@@ -1466,7 +1502,7 @@ public:
 
 				case Component::Type::RENDERER_TILEMAP:
 				{
-					if (gamelist.at(selected)->Detail() == false)
+					if (current->at(selected)->Detail() == false)
 					{
 						obj->transform.position.z = 0;
 						obj->transform.rotation.x = 0;
@@ -1750,7 +1786,7 @@ public:
 
 				case Component::Type::RENDERER_MODEL:
 				{
-					if (gamelist.at(selected)->Detail() == false)
+					if (current->at(selected)->Detail() == false)
 					{
 						ImGui::PushItemWidth(90);
 
@@ -1855,9 +1891,9 @@ public:
 
 					}
 					ImGui::Separator();
-					bool check_detail = gamelist.at(selected)->Detail();
+					bool check_detail = current->at(selected)->Detail();
 					ImGui::Checkbox("Detail", &check_detail);
-					gamelist.at(selected)->SetDetail(check_detail);
+					current->at(selected)->SetDetail(check_detail);
 
 					ImGui::Separator();
 					break;
@@ -1865,7 +1901,7 @@ public:
 
 				case Component::Type::RENDERER_TILEMAP:
 				{
-					if (gamelist.at(selected)->Detail() == false)
+					if (current->at(selected)->Detail() == false)
 					{
 						ImGui::PushItemWidth(90);
 

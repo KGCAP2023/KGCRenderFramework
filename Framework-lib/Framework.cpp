@@ -111,6 +111,19 @@ void Framework::SwitchObjectManager()
 	}
 }
 
+void Framework::AddSwitchEventListener(std::function<void(SceneMode mode)> callback)
+{
+	this->_switch.push_back(callback);
+}
+
+void Framework::CallSwitchEvent(SceneMode mode)
+{
+	for (auto func : this->_switch)
+	{
+		func(mode);
+	}
+}
+
 IGameObjectManager* Framework::GetCurrentGameObjectManager()
 {
 	return this->currentgameObjManager;
@@ -171,6 +184,12 @@ void Framework::Update()
 			if (currentMode == SceneMode::PLAY)
 			{
 				this->SwitchObjectManager();
+				this->CallSwitchEvent(SceneMode::DEV);
+			}
+			else
+			{
+				this->SwitchObjectManager();
+				this->CallSwitchEvent(SceneMode::PLAY);
 			}
 		}
 		F5_BUTTON_PRESSED = true;

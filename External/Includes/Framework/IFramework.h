@@ -38,9 +38,18 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual void SwitchObjectManager() {};
-
+	/// <summary>
+	/// 스위치 리스너를 등록합니다.
+	/// 내부에서 모드가 바뀐 후에 호출됩니다.
+	/// </summary>
+	/// <param name="callback"></param>
+	virtual void AddSwitchEventListener(std::function<void(SceneMode mode)> callback) {};
+	/// <summary>
+	/// 스위치 리스너 이벤트를 호출합니다.
+	/// </summary>
+	/// <param name="mode"></param>
+	virtual void CallSwitchEvent(SceneMode mode) {};
 	virtual IGameObjectManager* GetCurrentGameObjectManager() { return nullptr; };
-
 
 	/// <summary>
 	/// 리소스 매니저를 반환합니다.

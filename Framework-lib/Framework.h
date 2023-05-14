@@ -49,7 +49,20 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual void SwitchObjectManager() override;
-
+	/// <summary>
+	/// 모드 스위치시 호출되는 리스너를 등록합니다.
+	/// </summary>
+	/// <param name="callback"></param>
+	virtual void AddSwitchEventListener(std::function<void(SceneMode mode)> callback) override;
+	/// <summary>
+	/// 스위치 이벤트리스너를 호출합니다.
+	/// </summary>
+	/// <param name="mode"></param>
+	virtual void CallSwitchEvent(SceneMode mode) override;
+	/// <summary>
+	/// 현 게임 오브젝트 매니저를 가져옵니다.
+	/// </summary>
+	/// <returns></returns>
 	virtual IGameObjectManager* GetCurrentGameObjectManager() override;
 	/// <summary>
 	/// 리소스 매니저를 반환합니다. 
@@ -110,7 +123,7 @@ public:
 	HINSTANCE hInstance = NULL; // 어플리케이션 인스턴스
 
 private:
-
+	std::vector<std::function<void(SceneMode mode)>> _switch;
 	static float dt;
 	Timer timer;
 	

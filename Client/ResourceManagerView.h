@@ -21,8 +21,19 @@ public:
     bool show_popup = false;
     bool isplaying = false;
     bool delete_condition = false;
-    int selected = 0;
-    std::vector<HierarchyObject*> gamelist;
+    
+    // 각 벡터 안에서 순서 표현
+    int spriteSelect = 0;
+    int modelSelect = 0;
+    int tileSelect = 0;
+    int audioSelect = 0;
+
+    //  check를 통해 삭제할 벡터 정하기
+
+    int sprite_check = false;
+    int audio_check = true;
+    std::vector<Sprite*> spriteList;
+    std::vector <std::string> audioList;
 
     bool openFile()     // add 버튼 (파일 탐색기 호출)
     {
@@ -142,57 +153,45 @@ public:
         {
             ImGui::Begin(u8"Resource Manager View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
 
-            if(ImGui::Button("add"))
+            if (ImGui::Button("add"))
             {                                                           //add 버튼
                 openFile();
             }
             ImGui::SameLine();
             ImGui::Button("delete");                                    //delete 버튼
-            {/*
-                if (gamelist.size() != 0)
-                {
-                    if (selected > 0)
-                    {
-                        if (selected == gamelist.size() - 1)
-                        {
-                            ObjM->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-                            gamelist.pop_back();
-                            selected--;
-                            show_delete = true;
-                        }
-                        else
-                        {
-                            ObjM->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-                            gamelist.erase(gamelist.begin() + selected);
-                            show_delete = true;
-                        }
-                    }
-                    else
-                    {
-                        ObjM->DestroyGameObject(gamelist.at(selected)->GetGameObject()->GetName());
-                        gamelist.erase(gamelist.begin() + selected);
-                        show_delete = true;
-                    }
-                */}
+            {
+
+               
+
             }
             ImGui::Separator();
 
             if (ImGui::CollapsingHeader("Sprite"))                              //사진 담당
             {
                 auto map = ResM->GetSpriteMap();
+                spriteList.clear();
                 for (auto& pair : map)
                 {
                     Sprite* sp = pair.second;
-                    sp->GetName();
+                    spriteList.push_back(sp);
 
-                    if (ImGui::Selectable(sp->GetName().c_str()))
+                }
+
+                for (int i = 0; i < spriteList.size(); i++)
+                {
+                    std::string spriteName = spriteList.at(i)->GetName();
+
+                    if (ImGui::Selectable(spriteName.c_str(), spriteSelect == i))
                     {
-                        ImGui::OpenPopup(sp->GetName().c_str());
+                        ImGui::OpenPopup(spriteName.c_str());
+
+                        spriteSelect = i;
+
                     }
 
-                    if (ImGui::BeginPopup(sp->GetName().c_str()))
+                    if (ImGui::BeginPopup(spriteName.c_str()))
                     {
-                        ImGui::Image((void*)sp->Get(), ImVec2(128, 128));
+                        ImGui::Image((void*)spriteList.at(i)->Get(), ImVec2(128, 128));
                         ImGui::EndPopup();
                     }
                 }
@@ -218,47 +217,61 @@ public:
                     }
                 }
             }
-           
+
             if (ImGui::CollapsingHeader("Audio"))                               //오디오 담당
             {
                 auto map = ResM->GetAudioMap();
+                audioList.clear();
                 for (auto& pair : map)
                 {
-                    const char* name = pair.first.c_str();
+                    std::string name = pair.first;
+                    audioList.push_back(name);
+                }
+                for (int i = 0;  i < audioList.size(); i++)
+                {
 
-                    if (ImGui::Selectable(name))
+                    std::string audioName = audioList.at(i);
+
+                    if (ImGui::Selectable(audioName.c_str(), audioSelect == i))
                     {
-                        ImGui::OpenPopup(name);
+                        ImGui::OpenPopup(audioName.c_str());
+                        audio_check == true;
+                        audioSelect = i;
+
                     }
 
-                    if (ImGui::BeginPopup(name))
+                    if (ImGui::BeginPopup(audioName.c_str()))
                     {
-                        if (ImGui::Button("Play")) 
+                        if (ImGui::Button("Play"))
                         {
-                            if(isplaying)
-                                this->AudM->StopAudio(name);
-                            
-                            this->AudM->PlayAudio(name);
+                            if (isplaying)
+                                this->AudM->StopAudio(audioName.c_str());
+
+                            this->AudM->PlayAudio(audioName.c_str());
                             isplaying = true;
                         }
-                        if (ImGui::Button("Stop")) 
+                        if (ImGui::Button("Stop"))
                         {
-                            this->AudM->StopAudio(name);
+                            this->AudM->StopAudio(audioName.c_str());
                             isplaying = false;
                         }
                         ImGui::EndPopup();
                     }
 
-                    if (!ImGui::IsPopupOpen(name))
+
+
+                    if (!ImGui::IsPopupOpen(audioName.c_str()))
                     {
                         if (isplaying)
                         {
-                            this->AudM->StopAudio(name);
+                            this->AudM->StopAudio(audioName.c_str());
                             isplaying = false;
                         }
                     }
                 }
+
             }
             ImGui::End();
         }
+    }
 };

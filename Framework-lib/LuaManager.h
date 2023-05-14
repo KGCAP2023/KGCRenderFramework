@@ -27,6 +27,11 @@ public:
 	lua_State* Lua_Begin();
 	void Lua_End(lua_State* L);
 
+	void AddLog(std::string log)
+	{
+		this->logBuffer.push_back(log);
+	}
+
 	// Little error checking utility function
 	bool CheckLua(lua_State* L, int r)
 	{

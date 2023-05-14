@@ -248,8 +248,31 @@ void ResourceManager::DeleteAudio(const char* audioName)
 
 std::unordered_map<std::string, FMOD::Sound*> ResourceManager::GetAudioMap()
 {
+	
 	return this->m_sound;
 }
 
+void ResourceManager::DeleteSprite(const char* Name)
+{
+	this->_spriteMap.erase(Name);
+}
 
+void ResourceManager::DeleteTile(const char* Name)
+{
+	this->_TileMap.erase(Name);
+}
 
+void ResourceManager::DeleteModel(const char* Name)
+{
+	this->_modelMap.erase(Name);
+}
+
+void ResourceManager::DeleteSkinnedModel(const char* Name)
+{
+	this->_skinnedMap.erase(Name);
+}
+
+void ResourceManager::DeleteTextures(const char* Name)
+{
+	this->_textures_loaded.erase(Name);
+}

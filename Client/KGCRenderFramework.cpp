@@ -85,6 +85,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Script Editor"))
+				{
+					rw->FindLayer("ScriptEditor")->Activate();
+				}
+					
+				ImGui::EndMenu();
+			}
 			});
 	}
 

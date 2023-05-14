@@ -36,7 +36,7 @@ public:
 
     virtual void Init()
     {
-        //this->Deactivate();
+        this->Deactivate();
         
     };
 

@@ -156,6 +156,36 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual std::unordered_map<std::string, Model*> GetModelMap() { return std::unordered_map<std::string, Model*>(); };
+	/// <summary>
+	/// 불러온 오디오를 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 오디오 이름입니다.</param>
+	virtual void DeleteAudio(const char* audioName) {};
+	/// <summary>
+	/// 불러온 스프라이트를 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 스프라이트 이름입니다.</param>
+	virtual void DeleteSprite(const char* Name) {};
+	/// <summary>
+	/// 불러온 타일을 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 타일 이름입니다.</param>
+	virtual void DeleteTile(const char* Name) {};
+	/// <summary>
+	/// 불러온 모델를 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 모델 이름입니다.</param>
+	virtual void DeleteModel(const char* Name) {};
+	/// <summary>
+	/// 불러온 스키닝 모델을 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 스키닝 모델 이름입니다.</param>
+	virtual void DeleteSkinnedModel(const char* Name) {};
+	/// <summary>
+	/// 불러온 텍스쳐를 삭제합니다.
+	/// </summary>
+	/// <param name="audioName">삭제할 텍스쳐 이름입니다.</param>
+	virtual void DeleteTextures(const char* Name) {};
 };
 
 
@@ -173,10 +203,12 @@ public:
 	//Sprite
 	Sprite* LoadSprite(const std::string& name, const std::string& spritePath) override;
 	Sprite* FindSprite(const std::string& name) override;
+	void DeleteSprite(const char* Name) override;
 
 	//Sprite
 	void RegisterTileMap(const std::string& name, TileMap* tileMap) override;
 	TileMap* FindTileMap(const std::string& name) override;
+	void DeleteTile(const char* Name) override;
 
 	//Shader
 	bool LoadVertexShader(const std::string& name, const std::wstring& path, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements2D) override;
@@ -190,9 +222,12 @@ public:
 
 	SkinnedMesh* FindSkinnedModel(const std::string& modelName) override;
 	Model* FindModel(const std::string& modelName) override;
+	void DeleteModel(const char* Name) override;
+	void DeleteSkinnedModel(const char* Name) override;
 
 	std::vector<Texture>* GetCachedTexture(const std::string& modelName) override;
 	std::vector<SimpleVertex>* GetCachedBBOXVertices(const std::string& modelName) override;
+	void DeleteTextures(const char* Name) override;
 
 	void ModelForeach(std::function<void(Model*)> callback) override;
 	std::unordered_map<std::string, Model*> GetModelMap() override;
@@ -207,6 +242,8 @@ public:
 	void LoadAudio(const char* audioName, const char* audioFilePath) override;
 	void DeleteAudio(const char* audioName) override;
 	std::unordered_map<std::string, FMOD::Sound*> GetAudioMap() override;
+
+	
 
 	//스프라이트
 	std::unordered_map<std::string, Sprite*> _spriteMap;

@@ -158,12 +158,7 @@ public:
                 openFile();
             }
             ImGui::SameLine();
-            ImGui::Button("delete");                                    //delete 버튼
-            {
-
-               
-
-            }
+           
             ImGui::Separator();
 
             if (ImGui::CollapsingHeader("Sprite"))                              //사진 담당

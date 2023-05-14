@@ -107,24 +107,27 @@ public:
 	IFramework* framework = nullptr;
 	IGameObjectManager* _manager;
 	IResourceManager* ResM;
-	Sprite* sp;
+
 	std::vector<HierarchyObject*> gamelist;
-	std::vector<HierarchyObject*> gameTestList;
-	std::vector<Component*> componentlist;
+	GameObject* obj;          //GameObject 함수를 쓰려고 하는 obj = gamelist.at(selected)->getGameObject(); 로 표현됨
+	HierarchyObject* Hobj;    //HierarachyObject를 관리 하기 위해  씀 obj = gamelist.at(selected); 로 표현
 	bool check1 = true;
 	bool check2 = true;
 	bool check3 = true;
 
 	int component_selected = 0;
 	int selected = 0;
+	//창 끄고 키는 bool 변수들
 	bool my_tool_active = true;
 	bool active = false;
-	bool script_active = false;
+	bool component_active = false;
+
+	// 팝업창을 위한 bool 변수들
 	bool show_error_script = false; 
 	bool show_script = false;
 	bool show_warning = false;
+	bool Exceed = false;                     
 	bool show_delete = false;
-	bool component_active = false;
 	bool show_render = false;
 	char name[20]{};
 
@@ -133,11 +136,14 @@ public:
 	DirectX::XMFLOAT3 pos{};
 	DirectX::XMFLOAT3 rot{};
 	DirectX::XMFLOAT3 scale{ 1,1,1 };
+	/// <summary>
+	/// map 함수를 이용하여 담기 위한 vector 
+	/// </summary>
 	std::vector<std::string> spriteList;
 	std::vector<std::string> tileList;
 	std::vector<std::string> modelList;
 	std::vector<std::string> testList;
-
+	std::vector<Component::Type> componentList;
 
 	Hierarchy(IGameObjectManager* manager, IResourceManager* res, const std::string& name, IFramework* framework) : ILayer(name)
 	{
@@ -160,21 +166,7 @@ public:
 				});
 
 		}
-		if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY) {
-			this->_manager->AddFocusedObjectListener([&](GameObject* selectedObject) {
 
-				for (int k = 0; k < gameTestList.size(); k++)
-				{
-					if (selectedObject->GetName() == gameTestList.at(k)->GetGameObject()->GetName())
-					{
-						selected = k;
-					}
-
-				}
-
-				});
-
-		}
 
 
 
@@ -211,43 +203,52 @@ public:
 
 		}
 	}
+	/// <summary>
+	/// Object의 컴포넌트 기능 코드를 모아둔 함수
+	/// </summary>
 	void component()
 	{
+		//obj 은 gameObject쪽 함수, Hobj는 HierarcyObject쪽 함수
+		obj = gamelist.at(selected)->GetGameObject();
+		Hobj = gamelist.at(selected);
+
+		//render로 돌아기 떄문에 다시 돌아 올때 비워줌
 		spriteList.clear();
 		modelList.clear();
 		tileList.clear();
 
-
-		auto map = ResM->GetSpriteMap();
-		auto map1 = ResM->GetModelMap();
-		auto map2 = ResM->GetTileMap();
+		// sprite , model , tile 를 map 에 저장하여 꺼내 쓸 코드
+		auto spriteMap = ResM->GetSpriteMap();
+		auto modelMap = ResM->GetModelMap();
+		auto tileMap = ResM->GetTileMap();
 		
-
-		for (auto& pair : map)
+		
+		for (auto& spritePair : spriteMap)
 		{
-			Sprite* sp = pair.second;
-			std::string name = sp->GetName();
-			spriteList.push_back(name);
-
-		}
-		for (auto& pair1 : map1)
-		{
-			Model* md = pair1.second;
-			std::string name1 = md->GetName();
-			modelList.push_back(name1);
+			Sprite* sp = spritePair.second;
+			std::string spriteName = sp->GetName();
+			spriteList.push_back(spriteName);
 
 		}
-		for (auto& pair2 : map2)
+		for (auto& modelPair : modelMap)
 		{
-			TileMap* tp = pair2.second;
-			std::string name2 = tp->GetName();
-			tileList.push_back(name2);
+			Model* md = modelPair.second;
+			std::string modelName = md->GetName();
+			modelList.push_back(modelName);
 
 		}
-		if (gamelist.at(selected)->GetGameObject()->GetComponentSize() != 0)
+		for (auto& tilePair : tileMap)
 		{
-			GameObject* obj = gamelist.at(selected)->GetGameObject();
-			HierarchyObject* Hobj = gamelist.at(selected);
+			TileMap* tp = tilePair.second;
+			std::string tileName = tp->GetName();
+			tileList.push_back(tileName);
+
+		}
+		// 컴포넌트가 추가 되면 forEach 문으로 탐색하면서 switch 문으로 각 컴포넌트 타입 마다 생기는 칸 생성 하는 코드
+		if (obj->GetComponentSize() != 0)
+		{
+
+
 			obj->ComponentForeach([&](Component* c) {
 				int count = 0;
 				std::string name = c->GetName();
@@ -287,8 +288,8 @@ public:
 
 					if (ImGui::Button("Sprite Del"))
 					{
-						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
-						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
+						Hobj->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
+						Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
 					}
 
 					ImGui::Separator();
@@ -302,17 +303,17 @@ public:
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
 
-					std::string modelName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_MODEL);
+					std::string modelName = Hobj->FindMappingValue(Component::Type::RENDERER_MODEL);
 					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##model", modelName.size() == 0 ? "" : modelName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
 						for (int n = 0; n < modelList.size(); n++)
 						{
-							bool is_selected = (gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_MODEL) == modelList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
+							bool is_selected = (Hobj->FindMappingValue(Component::Type::RENDERER_MODEL) == modelList.at(n).c_str()); // You can store your selection however you want, outside or inside your objects
 							if (ImGui::Selectable(modelList[n].c_str(), is_selected))
 							{
 								Hobj->DeleteMappingValue(Component::Type::RENDERER_MODEL);
-								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_MODEL, modelList.at(n).c_str()); ;
+								Hobj->SetMappingValue(Component::Type::RENDERER_MODEL, modelList.at(n).c_str()); ;
 								render5->SetModel(ResM->FindModel(modelList.at(n).c_str()));
 							}
 							if (is_selected)
@@ -327,8 +328,8 @@ public:
 					ImGui::SameLine();
 					if (ImGui::Button("Model del"))
 					{
-						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_MODEL);
-						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_MODEL);
+						Hobj->AddDeleteComponent(Component::Type::RENDERER_MODEL);
+						Hobj->DeleteMappingValue(Component::Type::RENDERER_MODEL);
 					}
 
 					ImGui::Separator();
@@ -342,7 +343,7 @@ public:
 
 					ImGui::Text(name.c_str());
 					ImGui::SameLine();
-					std::string tileName = gamelist.at(selected)->FindMappingValue(Component::Type::RENDERER_TILEMAP);
+					std::string tileName = Hobj->FindMappingValue(Component::Type::RENDERER_TILEMAP);
 					ImGui::PushItemWidth(100);
 					if (ImGui::BeginCombo("##tile", tileName.size() == 0 ? "" : tileName.c_str())) // The second parameter is the label previewed before opening the combo.
 					{
@@ -352,7 +353,7 @@ public:
 							if (ImGui::Selectable(tileList[n].c_str(), is_selected))
 							{
 								Hobj->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
-								gamelist.at(selected)->SetMappingValue(Component::Type::RENDERER_TILEMAP, tileList.at(n).c_str()); ;
+								Hobj->SetMappingValue(Component::Type::RENDERER_TILEMAP, tileList.at(n).c_str()); ;
 								render6->SetTileMap(ResM->FindTileMap(tileList.at(n).c_str()));
 							}
 							if (is_selected)
@@ -369,8 +370,8 @@ public:
 
 					if (ImGui::Button("Tile del"))
 					{
-						gamelist.at(selected)->AddDeleteComponent(Component::Type::RENDERER_TILEMAP);
-						gamelist.at(selected)->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
+						Hobj->AddDeleteComponent(Component::Type::RENDERER_TILEMAP);
+						Hobj->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
 					}
 					ImGui::Separator();
 
@@ -381,13 +382,12 @@ public:
 					Script* script = dynamic_cast<Script*>(c);
 
 
-					componentlist.push_back(c);
 					ImGui::Text(name.c_str());
 					ImGui::PushItemWidth(90);
 
 					
 
-					char* script_name = gamelist.at(selected)->GetScriptName();
+					char* script_name = Hobj->GetScriptName();
 
 					ImGui::InputText("name", script_name, IM_ARRAYSIZE(script_name));
 					ImGui::SameLine();
@@ -404,8 +404,8 @@ public:
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))
 					{
-						gamelist.at(selected)->AddDeleteComponent(Component::Type::SCRIPT);
-						gamelist.at(selected)->DeleteMappingValue(Component::Type::SCRIPT);
+						Hobj->AddDeleteComponent(Component::Type::SCRIPT);
+						Hobj->DeleteMappingValue(Component::Type::SCRIPT);
 					}
 					ImGui::Separator();
 
@@ -420,7 +420,7 @@ public:
 
 
 
-			gamelist.at(selected)->DeleteComponent();
+				Hobj->DeleteComponent();
 
 
 
@@ -479,7 +479,18 @@ public:
 			ImGui::EndPopup();
 		}
 
-	
+		if (Exceed) {
+			ImGui::OpenPopup("Exceed");
+		}
+
+		if (ImGui::BeginPopupModal("Exceed", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"더이상 컴포넌트 추가가 불가능합니다");
+			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
+				ImGui::CloseCurrentPopup();
+				Exceed = false;
+			}
+			ImGui::EndPopup();
+		}
 
 		if (show_delete) {
 			ImGui::OpenPopup("Delete");
@@ -503,9 +514,12 @@ public:
 	/// </summary>
 	void CheckSpriteTransform()
 	{
-		float posX = gamelist.at(selected)->GetGameObject()->transform.position.x;
-		float posY = gamelist.at(selected)->GetGameObject()->transform.position.y;
-		float rotZ = gamelist.at(selected)->GetGameObject()->transform.rotation.z;
+		obj = gamelist.at(selected)->GetGameObject();
+		Hobj = gamelist.at(selected);
+
+		float posX = obj->transform.position.x;
+		float posY = obj->transform.position.y;
+		float rotZ = obj->transform.rotation.z;
 
 
 		float minPosX = 0.0f;
@@ -524,40 +538,40 @@ public:
 
 		if (posX < minPosX) {
 			posX = minPosX;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = posX;
+			obj->transform.position.x = posX;
 		}
 		else if (posX > maxPosX) {
 			posX = maxPosX;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = posX;
+			obj->transform.position.x = posX;
 		}
 
 		if (posY < minPosY) {
 			posY = minPosY;
-			gamelist.at(selected)->GetGameObject()->transform.position.y = posY;
+			obj->transform.position.y = posY;
 		}
 		else if (posY > maxPosY) {
 			posY = maxPosY;
-			gamelist.at(selected)->GetGameObject()->transform.position.y = posY;
+			obj->transform.position.y = posY;
 		}
 
 		if (rotZ < minRotValue) {
 			rotZ = minRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.z = rotZ;
+			obj->transform.rotation.z = rotZ;
 		}
 		else if (rotZ > maxRotValue) {
 			rotZ = maxRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.z = rotZ;
+			obj->transform.rotation.z = rotZ;
 		}
 
 		float scaleX = gamelist.at(selected)->GetGameObject()->transform.scale.x;
 
 		if (scaleX < minScaleValue) {
 			scaleX = minScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
+			obj->transform.position.x = scaleX;
 		}
 		else if (scaleX > maxScaleValue) {
 			scaleX = maxScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
+			obj->transform.position.x = scaleX;
 		}
 
 
@@ -567,17 +581,20 @@ public:
 	/// </summary>
 	void CheckTransform()
 	{
-		float posX = gamelist.at(selected)->GetGameObject()->transform.position.x;
-		float posY = gamelist.at(selected)->GetGameObject()->transform.position.y;
-		float posZ = gamelist.at(selected)->GetGameObject()->transform.position.z;
+		obj = gamelist.at(selected)->GetGameObject();
+		Hobj = gamelist.at(selected);
 
-		float rotX = gamelist.at(selected)->GetGameObject()->transform.rotation.x;
-		float rotY = gamelist.at(selected)->GetGameObject()->transform.rotation.y;
-		float rotZ = gamelist.at(selected)->GetGameObject()->transform.rotation.z;
+		float posX = obj->transform.position.x;
+		float posY = obj->transform.position.y;
+		float posZ = obj->transform.position.z;
 
-		float scaleX = gamelist.at(selected)->GetGameObject()->transform.scale.x;
-		float scaleY = gamelist.at(selected)->GetGameObject()->transform.scale.y;
-		float scaleZ = gamelist.at(selected)->GetGameObject()->transform.scale.z;
+		float rotX = obj->transform.rotation.x;
+		float rotY = obj->transform.rotation.y;
+		float rotZ = obj->transform.rotation.z;
+
+		float scaleX = obj->transform.scale.x;
+		float scaleY = obj->transform.scale.y;
+		float scaleZ = obj->transform.scale.z;
 
 
 		float minPosValue = -100.0f;
@@ -594,912 +611,103 @@ public:
 		/// </summary>
 		if (posX < minPosValue) {
 			posX = minPosValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = posX;
+			obj->transform.position.x = posX;
 		}
 		else if (posX > maxPosValue) {
 			posX = maxPosValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = posX;
+			obj->transform.position.x = posX;
 		}
 
 		if (posY < minPosValue) {
 			posY = minPosValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.y = posY;
+			obj->transform.position.y = posY;
 		}
 		else if (posY > maxPosValue) {
 			posY = maxPosValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.y = posY;
+			obj->transform.position.y = posY;
 		}
 
 		if (posZ < minPosValue) {
 			posZ = minPosValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.z = posZ;
+			obj->transform.position.z = posZ;
 		}
 		else if (posZ > maxPosValue) {
 			posZ = maxPosValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.z = posZ;
+			obj->transform.position.z = posZ;
 		}
 		/// <summary>
 		/// Rot x , y ,z 에 대한 값이 -1.58 보다 작거나 1.58보다 크면 -1.58 ,1.58 값으로 치환 시켜주는 곳
 		/// </summary>
 		if (rotX < minRotValue) {
 			rotX = minRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.x = rotX;
+			obj->transform.rotation.x = rotX;
 		}
 		else if (rotX > maxRotValue) {
 			rotX = maxRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.x = rotX;
+			obj->transform.rotation.x = rotX;
 		}
 
 		if (rotY < minRotValue) {
 			rotY = minRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.y = rotY;
+			obj->transform.rotation.y = rotY;
 		}
 		else if (rotY > maxRotValue) {
 			rotY = maxRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.y = rotY;
+			obj->transform.rotation.y = rotY;
 		}
 
 		if (rotZ < minRotValue) {
 			rotZ = minRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.z = rotZ;
+			obj->transform.rotation.z = rotZ;
 		}
 		else if (rotZ > maxRotValue) {
 			rotZ = maxRotValue;
-			gamelist.at(selected)->GetGameObject()->transform.rotation.z = rotZ;
+			obj->transform.rotation.z = rotZ;
 		}
 		/// <summary>
 		/// Scale x , y ,z 에 대한 값이 1 보다 작거나 3보다 크면 1 ,3 값으로 치환 시켜주는 곳
 		/// </summary>
 		if (scaleX < minScaleValue) {
 			scaleX = minScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
+			obj->transform.position.x = scaleX;
 		}
 		else if (scaleX > maxScaleValue) {
 			scaleX = maxScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.x = scaleX;
+			obj->transform.position.x = scaleX;
 		}
 
 		if (scaleY < minScaleValue) {
 			scaleY = minScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.y = scaleY;
+			obj->transform.position.y = scaleY;
 		}
 		else if (scaleY > maxScaleValue) {
 			scaleY = maxScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.y = scaleY;
+			obj->transform.position.y = scaleY;
 		}
 
 		if (scaleZ < minScaleValue) {
 			scaleZ = minScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.z = scaleZ;
+			obj->transform.position.z = scaleZ;
 		}
 		else if (scaleZ > maxScaleValue) {
 			scaleZ = maxScaleValue;
-			gamelist.at(selected)->GetGameObject()->transform.position.z = scaleZ;
+			obj->transform.position.z = scaleZ;
 		}
 
 	}
-	/// <summary>
-	/// Object의 pos,rot,scale 크기 조절하는 곳 
-	/// </summary>
-	void Transform()
-	{
-		GameObject* transObj = gamelist.at(selected)->GetGameObject();
-		if (transObj->GetComponentSize() == 0)
-		{
-			ImGui::PushItemWidth(90);
 
-			if (gamelist.at(selected)->Detail() == false)
-			{
 
-				ImGui::Separator();
-				ImGui::Text("POS");
-				ImGui::Text("X:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##pos", &transObj->transform.position.x, -100, 100);
-				ImGui::SameLine();
-				ImGui::Text("Y:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##pos1", &transObj->transform.position.y, -100, 100);
-				ImGui::SameLine();
-				ImGui::Text("Z:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##pos2", &transObj->transform.position.z, -100, 100);
 
-
-				ImGui::Separator();
-				ImGui::Text("ROTATION");
-				ImGui::Text("X:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##rot", &transObj->transform.rotation.x, -1.58, 1.58);
-				ImGui::SameLine();
-				ImGui::Text("Y:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##rot1", &transObj->transform.rotation.y, -1.58, 1.58);
-				ImGui::SameLine();
-				ImGui::Text("Z:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##rot2", &transObj->transform.rotation.z, -1.58, 1.58);
-
-				ImGui::Separator();
-				ImGui::Text("SCALE");
-				ImGui::Text("X:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale", &transObj->transform.scale.x, 1, 3);
-				ImGui::SameLine();
-				ImGui::Text("Y:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale1", &transObj->transform.scale.y, 1, 3);
-				ImGui::SameLine();
-				ImGui::Text("Z:");
-				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale2", &transObj->transform.scale.z, 1, 3);
-				ImGui::PopItemWidth();
-
-
-			}
-			else
-			{
-				CheckTransform();
-
-				ImGui::Separator();
-				ImGui::Text("POS");
-				ImGui::Text("X:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-				ImGui::SameLine();
-				ImGui::Text("Y:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-				ImGui::SameLine();
-				ImGui::Text("Z:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##pos5", &gamelist.at(selected)->GetGameObject()->transform.position.z);
-
-				ImGui::Separator();
-				ImGui::Text("ROTATION");
-				ImGui::Text("X:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##rot3", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58f, 1.58f);
-				ImGui::SameLine();
-				ImGui::Text("Y:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##rot4", &gamelist.at(selected)->GetGameObject()->transform.rotation.y, -1.58f, 1.58f);
-				ImGui::SameLine();
-				ImGui::Text("Z:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-				ImGui::Separator();
-				ImGui::Text("SCALE");
-				ImGui::Text("X:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-				ImGui::SameLine();
-				ImGui::Text("Y:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale4", &gamelist.at(selected)->GetGameObject()->transform.scale.y);
-				ImGui::SameLine();
-				ImGui::Text("Z:");
-				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale5", &gamelist.at(selected)->GetGameObject()->transform.scale.z);
-				ImGui::PopItemWidth();
-
-
-
-			}
-			ImGui::Separator();
-			bool check_detail = gamelist.at(selected)->Detail();
-			ImGui::Checkbox("Detail", &check_detail);
-			gamelist.at(selected)->SetDetail(check_detail);
-
-			ImGui::Separator();
-
-		}
-		else if (transObj->GetComponentSize() == 1) 
-		{
-		GameObject* obj = gamelist.at(selected)->GetGameObject();
-		obj->ComponentForeach([&](Component* c) {
-			int count = 0;
-			std::string name = c->GetName();
-			Component::Type type = c->GetType();
-
-			switch (type)
-			{
-			case Component::Type::RENDERER_SPRITE:
-			{
-				gamelist.at(selected)->GetGameObject()->transform.position.z = 0;
-				gamelist.at(selected)->GetGameObject()->transform.rotation.x = 0;
-				gamelist.at(selected)->GetGameObject()->transform.rotation.y = 0;
-				gamelist.at(selected)->GetGameObject()->transform.scale.y=0;
-				gamelist.at(selected)->GetGameObject()->transform.scale.z=0;
-
-				if (gamelist.at(selected)->Detail() == false)
-				{
-					ImGui::PushItemWidth(90);
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, 0, 1400);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, 0, 1600);
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot2", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58, 1.58);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-					ImGui::PopItemWidth();
-
-
-
-				}
-				else
-				{
-					CheckSpriteTransform();
-
-					ImGui::PushItemWidth(90);
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-					ImGui::PopItemWidth();
-
-
-				}
-				ImGui::Separator();
-				bool check_detail = gamelist.at(selected)->Detail();
-				ImGui::Checkbox("Detail", &check_detail);
-				gamelist.at(selected)->SetDetail(check_detail);
-
-				ImGui::Separator();
-				break;
-			}
-
-			case Component::Type::RENDERER_MODEL:
-			{
-				if (gamelist.at(selected)->Detail() == false)
-				{
-					ImGui::PushItemWidth(90);
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, -100, 100);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos2", &gamelist.at(selected)->GetGameObject()->transform.position.z, -100, 100);
-
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58, 1.58);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot1", &gamelist.at(selected)->GetGameObject()->transform.rotation.y, -1.58, 1.58);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot2", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58, 1.58);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale1", &gamelist.at(selected)->GetGameObject()->transform.scale.y, 1, 3);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale2", &gamelist.at(selected)->GetGameObject()->transform.scale.z, 1, 3);
-					ImGui::PopItemWidth();
-
-
-				}
-				else
-				{
-					CheckTransform();
-
-					ImGui::PushItemWidth(90);
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos5", &gamelist.at(selected)->GetGameObject()->transform.position.z);
-
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot3", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58f, 1.58f);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot4", &gamelist.at(selected)->GetGameObject()->transform.rotation.y, -1.58f, 1.58f);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale4", &gamelist.at(selected)->GetGameObject()->transform.scale.y);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale5", &gamelist.at(selected)->GetGameObject()->transform.scale.z);
-					ImGui::PopItemWidth();
-
-
-
-				}
-				ImGui::Separator();
-				bool check_detail = gamelist.at(selected)->Detail();
-				ImGui::Checkbox("Detail", &check_detail);
-				gamelist.at(selected)->SetDetail(check_detail);
-
-				ImGui::Separator();
-				break;
-			}
-
-			case Component::Type::RENDERER_TILEMAP:
-			{
-				if (gamelist.at(selected)->Detail() == false)
-				{
-					gamelist.at(selected)->GetGameObject()->transform.position.z = 0;
-					gamelist.at(selected)->GetGameObject()->transform.rotation.x = 0;
-					gamelist.at(selected)->GetGameObject()->transform.rotation.y = 0;
-					gamelist.at(selected)->GetGameObject()->transform.scale.y = 0;
-					gamelist.at(selected)->GetGameObject()->transform.scale.z = 0;
-					ImGui::PushItemWidth(90);
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, -100, 100);
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot2", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58, 1.58);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-					ImGui::PopItemWidth();
-
-
-
-				}
-				else
-				{
-					CheckTransform();
-
-					ImGui::PushItemWidth(90);
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-					ImGui::PopItemWidth();
-
-
-				}
-				ImGui::Separator();
-				bool check_detail = gamelist.at(selected)->Detail();
-				ImGui::Checkbox("Detail", &check_detail);
-				gamelist.at(selected)->SetDetail(check_detail);
-
-				ImGui::Separator();
-				break;
-
-			}
-
-			case Component::Type::SCRIPT:
-			{
-				ImGui::PushItemWidth(90);
-
-				if (gamelist.at(selected)->Detail() == false)
-				{
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos", &transObj->transform.position.x, -100, 100);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos1", &transObj->transform.position.y, -100, 100);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##pos2", &transObj->transform.position.z, -100, 100);
-
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot", &transObj->transform.rotation.x, -1.58, 1.58);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot1", &transObj->transform.rotation.y, -1.58, 1.58);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##rot2", &transObj->transform.rotation.z, -1.58, 1.58);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale", &transObj->transform.scale.x, 1, 3);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale1", &transObj->transform.scale.y, 1, 3);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::SliderFloat(u8"##scale2", &transObj->transform.scale.z, 1, 3);
-					ImGui::PopItemWidth();
-
-
-				}
-				else
-				{
-					CheckTransform();
-
-					ImGui::Separator();
-					ImGui::Text("POS");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##pos5", &gamelist.at(selected)->GetGameObject()->transform.position.z);
-
-					ImGui::Separator();
-					ImGui::Text("ROTATION");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot3", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58f, 1.58f);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot4", &gamelist.at(selected)->GetGameObject()->transform.rotation.y, -1.58f, 1.58f);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-					ImGui::Separator();
-					ImGui::Text("SCALE");
-					ImGui::Text("X:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-					ImGui::SameLine();
-					ImGui::Text("Y:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale4", &gamelist.at(selected)->GetGameObject()->transform.scale.y);
-					ImGui::SameLine();
-					ImGui::Text("Z:");
-					ImGui::SameLine();
-					ImGui::InputFloat(u8"##scale5", &gamelist.at(selected)->GetGameObject()->transform.scale.z);
-					ImGui::PopItemWidth();
-
-
-
-				}
-				ImGui::Separator();
-				bool check_detail = gamelist.at(selected)->Detail();
-				ImGui::Checkbox("Detail", &check_detail);
-				gamelist.at(selected)->SetDetail(check_detail);
-
-				ImGui::Separator();
-				break;
-
-			}
-
-
-			}
-
-			});
-		}
-		else
-		{
-			GameObject* obj = gamelist.at(selected)->GetGameObject();
-			obj->ComponentForeach([&](Component* c) {
-				int count = 0;
-				std::string name = c->GetName();
-				Component::Type type = c->GetType();
-
-				switch (type)
-				{
-				case Component::Type::RENDERER_SPRITE:
-				{
-					gamelist.at(selected)->GetGameObject()->transform.position.z = 0;
-					gamelist.at(selected)->GetGameObject()->transform.rotation.x = 0;
-					gamelist.at(selected)->GetGameObject()->transform.rotation.y = 0;
-					gamelist.at(selected)->GetGameObject()->transform.scale.y = 0;
-					gamelist.at(selected)->GetGameObject()->transform.scale.z = 0;
-					if (gamelist.at(selected)->Detail() == false)
-					{
-						ImGui::PushItemWidth(90);
-
-						ImGui::Separator();
-						ImGui::Text("POS");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, 0, 1400);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, 0, 1600);
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58, 1.58);
-
-						ImGui::Separator();
-						ImGui::Text("SCALE");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-						ImGui::PopItemWidth();
-
-
-
-					}
-					else
-					{
-						CheckSpriteTransform();
-
-						ImGui::PushItemWidth(90);
-
-						ImGui::Separator();
-						ImGui::Text("POS");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-						ImGui::Separator();
-						ImGui::Text("SCALE");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-						ImGui::PopItemWidth();
-
-
-					}
-					ImGui::Separator();
-					bool check_detail = gamelist.at(selected)->Detail();
-					ImGui::Checkbox("Detail", &check_detail);
-					gamelist.at(selected)->SetDetail(check_detail);
-
-					ImGui::Separator();
-					break;
-				}
-
-				case Component::Type::RENDERER_MODEL:
-				{
-					if (gamelist.at(selected)->Detail() == false)
-					{
-						ImGui::PushItemWidth(90);
-
-						ImGui::Separator();
-						ImGui::Text("POS");
-						ImGui::Text("X:");
-
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, -100, 100);
-						ImGui::SameLine();
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos2", &gamelist.at(selected)->GetGameObject()->transform.position.z, -100, 100);
-
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58, 1.58);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot1", &gamelist.at(selected)->GetGameObject()->transform.rotation.y, -1.58, 1.58);
-						ImGui::SameLine();
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58, 1.58);
-
-						ImGui::Separator();
-						ImGui::Text("SCALE");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &gamelist.at(selected)->GetGameObject()->transform.scale.y, 1, 3);
-						ImGui::SameLine();
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &gamelist.at(selected)->GetGameObject()->transform.scale.z, 1, 3);
-						ImGui::PopItemWidth();
-
-
-					}
-					else
-					{
-						CheckTransform();
-
-						ImGui::PushItemWidth(90);
-
-						ImGui::Separator();
-						ImGui::Text("POS");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-						ImGui::SameLine();
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos5", &gamelist.at(selected)->GetGameObject()->transform.position.z);
-
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot3", &gamelist.at(selected)->GetGameObject()->transform.rotation.x, -1.58f, 1.58f);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot4", &gamelist.at(selected)->GetGameObject()->transform.rotation.y, -1.58f, 1.58f);
-						ImGui::SameLine();
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-						ImGui::Separator();
-						ImGui::Text("SCALE");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &gamelist.at(selected)->GetGameObject()->transform.scale.y);
-						ImGui::SameLine();
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &gamelist.at(selected)->GetGameObject()->transform.scale.z);
-						ImGui::PopItemWidth();
-
-
-
-					}
-					ImGui::Separator();
-					bool check_detail = gamelist.at(selected)->Detail();
-					ImGui::Checkbox("Detail", &check_detail);
-					gamelist.at(selected)->SetDetail(check_detail);
-
-					ImGui::Separator();
-					break;
-				}
-
-				case Component::Type::RENDERER_TILEMAP:
-				{
-					if (gamelist.at(selected)->Detail() == false)
-					{
-						ImGui::PushItemWidth(90);
-
-						gamelist.at(selected)->GetGameObject()->transform.position.z = 0;
-						gamelist.at(selected)->GetGameObject()->transform.rotation.x = 0;
-						gamelist.at(selected)->GetGameObject()->transform.rotation.y = 0;
-						gamelist.at(selected)->GetGameObject()->transform.scale.y = 0;
-						gamelist.at(selected)->GetGameObject()->transform.scale.z = 0;
-
-						ImGui::Separator();
-						ImGui::Text("POS");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &gamelist.at(selected)->GetGameObject()->transform.position.x, -100, 100);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &gamelist.at(selected)->GetGameObject()->transform.position.y, -100, 100);
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58, 1.58);
-
-						ImGui::Separator();
-						ImGui::Text("SCALE");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &gamelist.at(selected)->GetGameObject()->transform.scale.x, 1, 3);
-						ImGui::PopItemWidth();
-
-
-
-					}
-					else
-					{
-						CheckTransform();
-
-						ImGui::PushItemWidth(90);
-
-						ImGui::Separator();
-						ImGui::Text("POS");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos3", &gamelist.at(selected)->GetGameObject()->transform.position.x);
-						ImGui::SameLine();
-						ImGui::Text("Y:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##pos4", &gamelist.at(selected)->GetGameObject()->transform.position.y);
-
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &gamelist.at(selected)->GetGameObject()->transform.rotation.z, -1.58f, 1.58f);
-
-						ImGui::Separator();
-						ImGui::Text("SCALE");
-						ImGui::Text("X:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &gamelist.at(selected)->GetGameObject()->transform.scale.x);
-						ImGui::PopItemWidth();
-
-
-					}
-					ImGui::Separator();
-					bool check_detail = gamelist.at(selected)->Detail();
-					ImGui::Checkbox("Detail", &check_detail);
-					gamelist.at(selected)->SetDetail(check_detail);
-
-					ImGui::Separator();
-					break;
-
-				}
-
-
-				}
-
-				});
-
-
-
-		}
-
-
-	}
-	/// <summary>
-	/// test 실행시 필요한 함수들 모음
-	/// testTransform(), transComponent()
-	/// </summary>
 
 	virtual void Render()
 	{
 
-
+		/// <summary>
+		/// 정리 해둔 팝업 창 뛰우는 코드 모아둔 함수 추가
+		/// </summary>
 		Warning();
+
+		/// 오브젝트 추가하는 창 
 		if (active)
 		{
 			ImGui::SetNextWindowSize(ImVec2(700, 600));
@@ -1583,7 +791,7 @@ public:
 		}
 
 
-
+		// 계층뷰 창 
 		if (_isActive)
 		{
 			ImGui::Begin(u8"Hierarchy View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
@@ -1662,10 +870,12 @@ public:
 				ImGui::Separator();
 
 				ImGui::Text("TRANSFORM");
+				// 좌표 기능 코드 들어있는 함수
 				Transform();
 				ImGui::Text("Other Component");
 				if(gamelist.at(selected)->GetGameObject()->GetComponentSize()!=0)
 					ImGui::Separator();
+				// 컴포넌트 추가 버튼 등 코드 들어있는 함수
 				component();
 				
 
@@ -1681,22 +891,30 @@ public:
 			ImGui::End();
 		}
 
-		
+		// 컴포넌트 함수 안에 있는 component_active = true 되면 열리는 컴포넌트 추가하는 창 
 		if (component_active)
 		{
 			ImGui::Begin("Add Component", &component_active);
 
+			GameObject* obj = gamelist.at(selected)->GetGameObject();
+			componentList.clear();
+			auto map = obj->GetComponentMap();
+			// coponentList에 obj 컴포넌트 정보 맵으로 받기
+			for (auto& pair : map)
+			{
+				Component::Type type = pair.first;
+				componentList.push_back(type);
+
+			}
+			// sprite 버튼 눌렀을때 for문으로 List 탐색해서 존재 여부 탐색
 			if (ImGui::Button("SpriteRenderer"))
 			{
-				GameObject* obj = gamelist.at(selected)->GetGameObject();
+
 				if (obj->GetComponentSize() == 1)
 				{
-					obj->ComponentForeach([&](Component* c) {
-						int count = 0;
-						std::string name = c->GetName();
-						Component::Type type = c->GetType();
-
-						switch (type)
+					for (int k = 0; k < componentList.size(); k++)
+					{
+						switch (componentList.at(k))
 						{
 						case Component::Type::RENDERER_SPRITE:
 						{
@@ -1730,9 +948,7 @@ public:
 						}
 						}
 
-
-
-						});
+					}
 				}
 				else if(obj->GetComponentSize() == 0)
 				{
@@ -1740,27 +956,24 @@ public:
 					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
 					gamelist.at(selected)->GetGameObject()->AddComponent(render1);
 					component_active = false;
-					show_render = true;
 
 				}
 				else
 				{
-					
+					Exceed = true;
 				}
 
 			}
+			// model 버튼 눌렀을때 for문으로 List 탐색해서 존재 여부 탐색
+
 			if (ImGui::Button("ModelRenderer"))
 			{
 
-				GameObject* obj = gamelist.at(selected)->GetGameObject();
 				if (obj->GetComponentSize() == 1)
 				{
-					obj->ComponentForeach([&](Component* c) {
-						int count = 0;
-						std::string name = c->GetName();
-						Component::Type type = c->GetType();
-
-						switch (type)
+					for (int k = 0; k < componentList.size(); k++)
+					{
+						switch (componentList.at(k))
 						{
 						case Component::Type::RENDERER_SPRITE:
 						{
@@ -1792,43 +1005,38 @@ public:
 							component_active = false;
 							break;
 
+						}
+						}
 
-						}
-						}
-						});
+					}
 				}
-				else if(obj->GetComponentSize() == 0)
+				else if (obj->GetComponentSize() == 0)
 				{
 					GameObject* temp1 = gamelist.at(selected)->GetGameObject();
 					ModelRenderer* render2 = new ModelRenderer(temp1, (ResourceManager*)this->ResM);
 					//render->Init();
 					gamelist.at(selected)->GetGameObject()->AddComponent(render2);
 					component_active = false;
-					show_render = true;
-
+				
 
 				}
 				else
 				{
-
-
+					Exceed = true;
 				}
 
 
 
 			}
-		
+			// TileMapRender 버튼 눌렀을때 for문으로 List 탐색해서 존재 여부 탐색
+
 			if (ImGui::Button("TileMapRender"))
 			{
-				GameObject* obj = gamelist.at(selected)->GetGameObject();
 				if (obj->GetComponentSize() == 1)
 				{
-					obj->ComponentForeach([&](Component* c) {
-						int count = 0;
-						std::string name = c->GetName();
-						Component::Type type = c->GetType();
-
-						switch (type)
+					for (int k = 0; k < componentList.size(); k++)
+					{
+						switch (componentList.at(k))
 						{
 						case Component::Type::RENDERER_SPRITE:
 						{
@@ -1860,10 +1068,10 @@ public:
 							component_active = false;
 							break;
 
+						}
+						}
 
-						}
-						}
-						});
+					}
 				}
 				else if (obj->GetComponentSize() == 0)
 				{
@@ -1872,86 +1080,877 @@ public:
 					//render->Init();
 					gamelist.at(selected)->GetGameObject()->AddComponent(render3);
 					component_active = false;
-					show_render = true;
+			
 
 
 				}
 				else
 				{
-
+					Exceed = true;
 				}
 			}
+			// Script 버튼 눌렀을때 for문으로 List 탐색해서 존재 여부 탐색
+
 			if (ImGui::Button("Script"))
 			{
 
-					GameObject* obj = gamelist.at(selected)->GetGameObject();
-					if (obj->GetComponentSize() != 0)
+				if (obj->GetComponentSize() == 1)
+				{
+					for (int k = 0; k < componentList.size(); k++)
 					{
-						obj->ComponentForeach([&](Component* c) {
-							int count = 0;
-							std::string name = c->GetName();
-							Component::Type type = c->GetType();
-
-							switch (type)
-							{
+						switch (componentList.at(k))
+						{
 							case Component::Type::SCRIPT:
 							{
 								component_active = false;
 								show_script = true;
 								break;
-
-							}
-							case Component::Type::RENDERER_SPRITE:
-							{
-								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
-								Script* script = new Script(scriptObj, (Framework*)framework);
-								scriptObj->AddComponent(script);
-								component_active = false;
-								break;
-
-							}
-							case Component::Type::RENDERER_MODEL:
-							{
-								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
-								Script* script = new Script(scriptObj, (Framework*)framework);
-								scriptObj->AddComponent(script);
-								component_active = false;
-								break;
-							}
-							case Component::Type::RENDERER_TILEMAP:
-							{
-								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
-								Script* script = new Script(scriptObj, (Framework*)framework);
-								scriptObj->AddComponent(script);
-								component_active = false;
-								break;
-
+	
 							}
 							default:
 							{
+								GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+								Script* script = new Script(scriptObj, (Framework*)framework);
+								scriptObj->AddComponent(script);
+								component_active = false;
 								break;
 							}
-							}
+						}
 
-
-
-
-							});
 					}
-					else
-					{
-						GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
-						Script* script = new Script(scriptObj, (Framework*)framework);
-						scriptObj->AddComponent(script);
-						component_active = false;
-						show_script = true;
-					}
+				}
+				else if (obj->GetComponentSize() == 0)
+				{
+					GameObject* scriptObj = gamelist.at(selected)->GetGameObject();
+					Script* script = new Script(scriptObj, (Framework*)framework);
+					scriptObj->AddComponent(script);
+					component_active = false;
+
+
+
+				}
+				else
+				{
+					Exceed = true;
+				}
 			}
 			ImGui::End();
 		}
 
 
 
+
+
+	}
+
+/// <summary>
+/// Object의 pos,rot,scale 크기 조절하는 곳 
+/// </summary>
+	void Transform()
+	{
+		obj = gamelist.at(selected)->GetGameObject();
+		Hobj = gamelist.at(selected);
+		if (obj->GetComponentSize() == 0)
+		{
+			ImGui::PushItemWidth(90);
+
+			if (Hobj->Detail() == false)
+			{
+
+				ImGui::Separator();
+				ImGui::Text("POS");
+				ImGui::Text("X:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+				ImGui::SameLine();
+				ImGui::Text("Y:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+				ImGui::SameLine();
+				ImGui::Text("Z:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+
+
+				ImGui::Separator();
+				ImGui::Text("ROTATION");
+				ImGui::Text("X:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+				ImGui::SameLine();
+				ImGui::Text("Y:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+				ImGui::SameLine();
+				ImGui::Text("Z:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+				ImGui::Separator();
+				ImGui::Text("SCALE");
+				ImGui::Text("X:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+				ImGui::SameLine();
+				ImGui::Text("Y:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+				ImGui::SameLine();
+				ImGui::Text("Z:");
+				ImGui::SameLine();
+				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+				ImGui::PopItemWidth();
+
+
+			}
+			else
+			{
+				CheckTransform();
+
+				ImGui::Separator();
+				ImGui::Text("POS");
+				ImGui::Text("X:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+				ImGui::SameLine();
+				ImGui::Text("Y:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+				ImGui::SameLine();
+				ImGui::Text("Z:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##pos5", &obj->transform.position.z);
+
+				ImGui::Separator();
+				ImGui::Text("ROTATION");
+				ImGui::Text("X:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+				ImGui::SameLine();
+				ImGui::Text("Y:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+				ImGui::SameLine();
+				ImGui::Text("Z:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+				ImGui::Separator();
+				ImGui::Text("SCALE");
+				ImGui::Text("X:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+				ImGui::SameLine();
+				ImGui::Text("Y:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+				ImGui::SameLine();
+				ImGui::Text("Z:");
+				ImGui::SameLine();
+				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+				ImGui::PopItemWidth();
+
+
+
+			}
+			ImGui::Separator();
+			bool check_detail = Hobj->Detail();
+			ImGui::Checkbox("Detail", &check_detail);
+			Hobj->SetDetail(check_detail);
+
+			ImGui::Separator();
+
+		}
+		else if (obj->GetComponentSize() == 1)
+		{
+			obj->ComponentForeach([&](Component* c) {
+				int count = 0;
+				std::string name = c->GetName();
+				Component::Type type = c->GetType();
+
+				switch (type)
+				{
+				case Component::Type::RENDERER_SPRITE:
+				{
+					obj->transform.position.z = 0;
+					obj->transform.rotation.x = 0;
+					obj->transform.rotation.y = 0;
+					obj->transform.scale.y = 0;
+					obj->transform.scale.z = 0;
+
+					if (gamelist.at(selected)->Detail() == false)
+					{
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, 0, 1400);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, 0, 1600);
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					else
+					{
+						CheckSpriteTransform();
+
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::PopItemWidth();
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = Hobj->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					Hobj->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+				}
+
+				case Component::Type::RENDERER_MODEL:
+				{
+					if (Hobj->Detail() == false)
+					{
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+						ImGui::PopItemWidth();
+
+
+					}
+					else
+					{
+						CheckTransform();
+
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos5", &obj->transform.position.z);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = Hobj->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					Hobj->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+				}
+
+				case Component::Type::RENDERER_TILEMAP:
+				{
+					if (gamelist.at(selected)->Detail() == false)
+					{
+						obj->transform.position.z = 0;
+						obj->transform.rotation.x = 0;
+						obj->transform.rotation.y = 0;
+						obj->transform.scale.y = 0;
+						obj->transform.scale.z = 0;
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					else
+					{
+						CheckTransform();
+
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::PopItemWidth();
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = Hobj->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					Hobj->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+
+				}
+
+				case Component::Type::SCRIPT:
+				{
+					ImGui::PushItemWidth(90);
+
+					if (Hobj->Detail() == false)
+					{
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+						ImGui::PopItemWidth();
+
+
+					}
+					else
+					{
+						CheckTransform();
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos5", &obj->transform.position.z);
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = Hobj->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					Hobj->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+
+				}
+
+
+				}
+
+				});
+		}
+		else
+		{
+			obj->ComponentForeach([&](Component* c) {
+				int count = 0;
+				std::string name = c->GetName();
+				Component::Type type = c->GetType();
+
+				switch (type)
+				{
+				case Component::Type::RENDERER_SPRITE:
+				{
+					obj->transform.position.z = 0;
+					obj->transform.rotation.x = 0;
+					obj->transform.rotation.y = 0;
+					obj->transform.scale.y = 0;
+					obj->transform.scale.z = 0;
+					if (Hobj->Detail() == false)
+					{
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, 0, 1400);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, 0, 1600);
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					else
+					{
+						CheckSpriteTransform();
+
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::PopItemWidth();
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = Hobj->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					Hobj->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+				}
+
+				case Component::Type::RENDERER_MODEL:
+				{
+					if (gamelist.at(selected)->Detail() == false)
+					{
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+						ImGui::PopItemWidth();
+
+
+					}
+					else
+					{
+						CheckTransform();
+
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos5", &obj->transform.position.z);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+						ImGui::SameLine();
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = gamelist.at(selected)->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					gamelist.at(selected)->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+				}
+
+				case Component::Type::RENDERER_TILEMAP:
+				{
+					if (gamelist.at(selected)->Detail() == false)
+					{
+						ImGui::PushItemWidth(90);
+
+						obj->transform.position.z = 0;
+						obj->transform.rotation.x = 0;
+						obj->transform.rotation.y = 0;
+						obj->transform.scale.y = 0;
+						obj->transform.scale.z = 0;
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::PopItemWidth();
+
+
+
+					}
+					else
+					{
+						CheckTransform();
+
+						ImGui::PushItemWidth(90);
+
+						ImGui::Separator();
+						ImGui::Text("POS");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos3", &obj->transform.position.x);
+						ImGui::SameLine();
+						ImGui::Text("Y:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
+
+
+						ImGui::Separator();
+						ImGui::Text("ROTATION");
+						ImGui::Text("Z:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+
+						ImGui::Separator();
+						ImGui::Text("SCALE");
+						ImGui::Text("X:");
+						ImGui::SameLine();
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::PopItemWidth();
+
+
+					}
+					ImGui::Separator();
+					bool check_detail = Hobj->Detail();
+					ImGui::Checkbox("Detail", &check_detail);
+					Hobj->SetDetail(check_detail);
+
+					ImGui::Separator();
+					break;
+
+				}
+
+
+				}
+
+				});
+
+
+
+		}
 
 
 	}

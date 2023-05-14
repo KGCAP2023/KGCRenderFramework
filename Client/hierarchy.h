@@ -110,6 +110,8 @@ public:
 	IFramework* framework = nullptr;
 	IGameObjectManager* _manager;
 	IResourceManager* ResM;
+	LuaManager* lua;
+
 
 	std::vector<HierarchyObject*> gamelist;
 	std::vector<HierarchyObject*> gameTestList;
@@ -170,6 +172,8 @@ public:
 		this->framework = framework;
 		this->_manager = manager;
 		this->ResM = res;
+		this->lua = framework->GetLuaManager();
+
 		if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY) {
 			this->_manager->AddFocusedObjectListener([&](GameObject* selectedObject) {
 
@@ -436,6 +440,9 @@ public:
 						path = path + script_name + path2;
 						std::cout << path;
 						script->SetLuaFilePath(path);
+
+						this->lua->AddLog("Set Lua FilePath > "+path);
+						this->lua->AddLog("Set Lua FilePath > " + path);
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))

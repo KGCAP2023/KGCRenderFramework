@@ -81,7 +81,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				if (ImGui::MenuItem("test"))
 				{
 					rw->SwitchObjectManager();
-					uiMgr->ChangeHierachyObject();
+					rw->CallSwitchEvent(rw->GetCurrentGameObjectManager()->GetMode());
 				}
 				ImGui::EndMenu();
 			}
@@ -95,7 +95,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				ImGui::EndMenu();
 			}
 			});
+
+		rw->AddSwitchEventListener([&](SceneMode mode) {
+				uiMgr->ChangeHierachyObject();
+		});
+
 	}
+
+
+
 
 	//Example* temp = new Example(objM, "example");
 

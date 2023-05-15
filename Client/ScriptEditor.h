@@ -81,7 +81,7 @@ public:
 
                 if (ImGui::MenuItem("Clear"))
                 {
-                    buffer[0] = '\0';
+                    strcpy(buffer, "function Start()\nend\n\nfunction Update()\nend");
                 }
             }
             ImGui::EndMenuBar();

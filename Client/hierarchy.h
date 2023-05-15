@@ -141,6 +141,7 @@ public:
 	bool show_render = false;
 	bool delete_sprite = false;
 	bool can_delete = true;
+	bool delete_script = false;
 	char name[20]{};
 
 	int g = 0;
@@ -335,13 +336,24 @@ public:
 							switch (type) {
 							case Component::Type::SCRIPT:
 							{
-								delete_sprite = true;
-								can_delete = false;
+								if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
+								{
+									delete_sprite = true;
+								}
+								else {
+									if (obj->GetComponentSize() == 1)
+										can_delete = false;
+									if (obj->GetComponentSize() == 2)
+										can_delete = true;
+								}
 								break;
 							}
 							case Component::Type::RENDERER_SPRITE:
 							{
-								can_delete = true;
+								if (obj->GetComponentSize() == 1 && framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
+									can_delete = true;
+								else
+									can_delete = false;
 								break;
 							}
 							}
@@ -357,7 +369,7 @@ public:
 					ImGui::PushItemWidth(100);
 					float x = render4->GetLayerDepth();
 					ImGui::Text("Layer");
-				    ImGui::SameLine();
+					ImGui::SameLine();
 					ImGui::InputFloat("##layer", &x, 0.2);
 					if (x < 0)
 						x = 0;
@@ -480,8 +492,14 @@ public:
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))
 					{
-						Hobj->AddDeleteComponent(Component::Type::SCRIPT);
-						Hobj->DeleteMappingValue(Component::Type::SCRIPT);
+						if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
+						{
+							delete_script = true;
+						}
+						else {
+							Hobj->AddDeleteComponent(Component::Type::SCRIPT);
+							Hobj->DeleteMappingValue(Component::Type::SCRIPT);
+						}
 					}
 
 
@@ -542,6 +560,20 @@ public:
 			}
 			ImGui::EndPopup();
 		}
+
+		if (delete_script) {
+			ImGui::OpenPopup("Play Mode");
+		}
+
+		if (ImGui::BeginPopupModal("Play Mode", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"실행 모드일때 스크립트 삭제가 안됩니다.");
+			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
+				ImGui::CloseCurrentPopup();
+				delete_script = false;
+			}
+			ImGui::EndPopup();
+		}
+
 		if (show_render) {
 			ImGui::OpenPopup("Caution");
 		}
@@ -1559,6 +1591,7 @@ public:
 						obj->transform.position.z = 0;
 						obj->transform.rotation.x = 0;
 						obj->transform.rotation.y = 0;
+						obj->transform.rotation.y = 0;
 						obj->transform.scale.y = 0;
 						obj->transform.scale.z = 0;
 						ImGui::PushItemWidth(130);
@@ -1573,11 +1606,7 @@ public:
 						ImGui::SameLine();
 						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -1000, 1600);
 
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
+
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
@@ -1605,12 +1634,6 @@ public:
 						ImGui::SameLine();
 						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
 
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
@@ -1960,6 +1983,7 @@ public:
 						obj->transform.position.z = 0;
 						obj->transform.rotation.x = 0;
 						obj->transform.rotation.y = 0;
+						obj->transform.rotation.z = 0;
 						obj->transform.scale.y = 0;
 						obj->transform.scale.z = 0;
 
@@ -1973,11 +1997,7 @@ public:
 						ImGui::SameLine();
 						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
 
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
+
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
@@ -2005,12 +2025,6 @@ public:
 						ImGui::SameLine();
 						ImGui::InputFloat(u8"##pos4", &obj->transform.position.y);
 
-
-						ImGui::Separator();
-						ImGui::Text("ROTATION");
-						ImGui::Text("Z:");
-						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");

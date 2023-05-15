@@ -25,6 +25,7 @@
 #include <memory.h>
 #include <tchar.h>
 #include <atlstr.h>
+#include <io.h>
 
 // C++ 헤더파일 선언
 #include <iostream>

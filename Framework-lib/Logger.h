@@ -4,7 +4,6 @@
 class Logger
 {
 public:
-
 	/// <summary>
 	/// 콘솔 로그
 	/// </summary>
@@ -38,6 +37,8 @@ public:
 	}
 
 	static std::vector<std::string>& GetLogBuffer() { return logBuffer; };
+
+private:
 	static std::vector<std::string> logBuffer;
 };
 

@@ -2,7 +2,7 @@
 #include "Logger.h"
 #include <comdef.h>
 
-
+std::vector<std::string> Logger::logBuffer;
 //MessageBoxA ¿Í MessageBoxW
 
 void Logger::Log(std::string message)

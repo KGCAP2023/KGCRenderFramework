@@ -162,7 +162,7 @@ public:
             static ExampleAppLog my_log;                                                                                            //Log View 창 출력 Start
             my_log.Draw("Log View");                                                                                                
 
-            auto& a = rw->GetLuaManager()->GetLogBuffer();                                                                          //LuaCheck로 Error를 체크, Errormsg 출력
+            auto& a = Logger::GetLogBuffer();                                                                          //LuaCheck로 Error를 체크, Errormsg 출력
 
             for (std::string str : a)                                                                                               //반복문을 통한 메시지 출력
             {

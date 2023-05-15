@@ -90,6 +90,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				if (ImGui::MenuItem("Script Editor"))
 				{
 					rw->FindLayer("ScriptEditor")->Activate();
+					Logger::AddLog("ScriptEditor Activated");
 				}
 					
 				ImGui::EndMenu();
@@ -97,6 +98,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			});
 
 		rw->AddSwitchEventListener([&](SceneMode mode) {
+
+			if(mode == SceneMode::PLAY)
+				Logger::AddLog("SceneMode Switch > PLAY");
+			else
+				Logger::AddLog("SceneMode Switch > DEV");
+
 				uiMgr->ChangeHierachyObject();
 		});
 

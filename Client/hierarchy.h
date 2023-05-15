@@ -475,7 +475,7 @@ public:
 						std::cout << path;
 						script->SetLuaFilePath(path);
 
-						this->lua->AddLog("Set Lua FilePath > " + path);
+						Logger::AddLog("Set Lua FilePath > " + path);
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))

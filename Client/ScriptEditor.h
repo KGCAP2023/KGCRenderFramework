@@ -23,7 +23,7 @@ public:
 
     char savename[20]="";
     char loadname[20]="";
-    char buffer[1024 * 16] = "type script";
+    char buffer[1024 * 16] = "function Start()\nend\n\nfunction Update()\nend";
 
     ScriptEditor(IGameObjectManager* manager, const std::string name) : ILayer(name)
     {
@@ -81,7 +81,7 @@ public:
 
                 if (ImGui::MenuItem("Clear"))
                 {
-                    buffer[0] = '\0';
+                    strcpy(buffer, "function Start()\nend\n\nfunction Update()\nend");
                 }
             }
             ImGui::EndMenuBar();
@@ -129,12 +129,9 @@ public:
                     strcat(path, loadname);
                     strcpy(loadname, path);
                     std::ifstream readFile(loadname);
-                    if (readFile.is_open()) {
-                        while (!readFile.eof()) {
-                            readFile.getline(buffer, 1024 * 16);
-                        }
-                        readFile.close();
-                    }
+                    readFile.read(buffer, sizeof(buffer));
+                    int numCharsRead = readFile.gcount();
+                    buffer[numCharsRead] = '\0';
                     _Loadwin = false;
                     loadname[0] = '\0';
                 }

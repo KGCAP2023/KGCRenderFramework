@@ -48,6 +48,7 @@ public:
 	void InitResource()
 	{
 		sp = this->resMgr->LoadSprite("test", "..//Resource//Textures//sand.PNG");
+		sp2 = this->resMgr->LoadSprite("empty", "..//Resource//Textures//no.PNG");
 		//this->TileMapping();
 	}
 
@@ -95,5 +96,6 @@ public:
 	IAudioManager* audMgr = nullptr;
 	IFramework* framework = nullptr;
 	Sprite* sp = nullptr;
+	Sprite* sp2 = nullptr;
 	Hierarchy* hierarachy = nullptr;
 };

@@ -16,6 +16,7 @@ public:
 	IResourceManager* ResM;
 	ImVector<ImVec2> points;
 	Sprite* image;
+	Sprite* image2;
 	bool opt_enable_grid = true;
 	bool Resizable = true;
 	bool TilemapWindow = false;
@@ -38,6 +39,7 @@ public:
 		this->ObjM = manager;
 		this->ResM = res;
 		image = ResM->FindSprite("test");
+		image2 = ResM->FindSprite("empty");
 		width = image->GetWidth();
 		height = image->GetHeight();
 
@@ -99,7 +101,7 @@ public:
 			ImGui::OpenPopup("Select Window Closed");
 
 		if (ImGui::BeginPopupModal("Select Window Closed", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"Please Re open Tilemap");
+			ImGui::Text(u8"Please Reopen Tilemap");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
 				AlreadyClosedAlert = false;
@@ -162,12 +164,18 @@ public:
 			//전체 타일맵을 Image 형식으로 출력
 			ImGui::Text("Tilemap");
 			ImGui::Text("");
+			
 			for (int i = 0, k = 0; i < tilemap_height; i++) {
 				for (int j = 0; j < tilemap_width; j++, k++) {
 					ImGui::SameLine();
-					ImGui::Image((void*)image->Get(), ImVec2(50, 50),
-						ImVec2((int)mouse_x[k] * x_unit, (int)mouse_y[k] * y_unit),
-						ImVec2((int)mouse_x[k] * x_unit + x_unit, (int)mouse_y[k] * y_unit + y_unit));
+					if (mouse_cnt - 1 < 0 || k > mouse_cnt - 1) {
+						ImGui::Image((void*)image2->Get(), ImVec2(50, 50), ImVec2(0,0), ImVec2(10,10));
+					}
+					else{
+						ImGui::Image((void*)image->Get(), ImVec2(50, 50),
+							ImVec2((int)mouse_x[k] * x_unit, (int)mouse_y[k] * y_unit),
+							ImVec2((int)mouse_x[k] * x_unit + x_unit, (int)mouse_y[k] * y_unit + y_unit));
+					}
 				}
 				ImGui::Text("");	//줄바꿈을 위해 빈 텍스트 출력
 			}

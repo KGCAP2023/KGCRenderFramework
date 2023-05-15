@@ -37,7 +37,7 @@ public:
 
 	char* GetScriptName()
 	{
-	    
+
 		return script_name;
 	}
 
@@ -133,10 +133,10 @@ public:
 	bool component_active = false;
 
 	// 팝업창을 위한 bool 변수들
-	bool show_error_script = false; 
+	bool show_error_script = false;
 	bool show_script = false;
 	bool show_warning = false;
-	bool Exceed = false;                     
+	bool Exceed = false;
 	bool show_delete = false;
 	bool show_render = false;
 	bool delete_sprite = false;
@@ -221,7 +221,7 @@ public:
 		if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 		{
 			//gamelist -> gametestlist 로 복사
-			for(auto& pair : framework->GetCurrentGameObjectManager()->GetObejctMap())
+			for (auto& pair : framework->GetCurrentGameObjectManager()->GetObejctMap())
 			{
 				GameObject* obj = pair.second;
 				HierarchyObject* play_obj = new HierarchyObject(obj);
@@ -241,7 +241,7 @@ public:
 			current = &gamelist;
 			// 날려주기
 			gameTestList.clear();
-			
+
 		}
 
 	}
@@ -263,8 +263,8 @@ public:
 		auto spriteMap = ResM->GetSpriteMap();
 		auto modelMap = ResM->GetModelMap();
 		auto tileMap = ResM->GetTileMap();
-		
-		
+
+
 		for (auto& spritePair : spriteMap)
 		{
 			Sprite* sp = spritePair.second;
@@ -352,8 +352,18 @@ public:
 							Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
 
 						}
-						
+
 					}
+					ImGui::PushItemWidth(100);
+					float x = render4->GetLayerDepth();
+					ImGui::Text("Layer");
+				    ImGui::SameLine();
+					ImGui::InputFloat("##layer", &x, 0.2);
+					if (x < 0)
+						x = 0;
+					if (x > 1)
+						x = 1;
+					render4->SetLayerDepth(x);
 					ImGui::Separator();
 
 					break;
@@ -393,6 +403,8 @@ public:
 						Hobj->AddDeleteComponent(Component::Type::RENDERER_MODEL);
 						Hobj->DeleteMappingValue(Component::Type::RENDERER_MODEL);
 					}
+
+
 
 					ImGui::Separator();
 
@@ -447,14 +459,14 @@ public:
 					ImGui::Text(name.c_str());
 					ImGui::PushItemWidth(130);
 
-					
+
 
 					char* script_name = Hobj->GetScriptName();
 
 					ImGui::InputText("name", script_name, IM_ARRAYSIZE(script_name));
 					ImGui::SameLine();
-					
-					if (ImGui::Button("input")) 
+
+					if (ImGui::Button("input"))
 					{
 						std::string s(script_name);
 						std::string path = "..\\Lua\\";
@@ -463,7 +475,7 @@ public:
 						std::cout << path;
 						script->SetLuaFilePath(path);
 
-						this->lua->AddLog("Set Lua FilePath > "+path);
+						this->lua->AddLog("Set Lua FilePath > " + path);
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))
@@ -471,6 +483,8 @@ public:
 						Hobj->AddDeleteComponent(Component::Type::SCRIPT);
 						Hobj->DeleteMappingValue(Component::Type::SCRIPT);
 					}
+
+
 					ImGui::Separator();
 
 					break;
@@ -484,7 +498,7 @@ public:
 
 
 
-				Hobj->DeleteComponent();
+			Hobj->DeleteComponent();
 
 
 
@@ -870,7 +884,7 @@ public:
 		if (_isActive)
 		{
 			ImGui::Begin(u8"Hierarchy View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
-			
+
 			if (ImGui::Button("add"))
 			{
 				ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
@@ -919,22 +933,22 @@ public:
 			if (current->size() != 0)
 			{
 				ImGui::BeginChild("Scrolling", ImVec2(150, 0), true);
-				
-					for (int i = 0; i < current->size(); i++)
+
+				for (int i = 0; i < current->size(); i++)
+				{
+					if (ImGui::Selectable((current->at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
 					{
-						if (ImGui::Selectable((current->at(i)->GetGameObject()->ObjectName.c_str()), selected == i))
-						{
-							selected = i;
-							current->at(i)->GetGameObject()->SetFocus();
-
-						}
-
+						selected = i;
+						current->at(i)->GetGameObject()->SetFocus();
 
 					}
-				
 
 
-				
+				}
+
+
+
+
 				ImGui::EndChild();
 				ImGui::SetScrollX(100.0f);
 
@@ -948,11 +962,11 @@ public:
 				// 좌표 기능 코드 들어있는 함수
 				Transform();
 				ImGui::Text("Other Component");
-				if(current->at(selected)->GetGameObject()->GetComponentSize()!=0)
+				if (current->at(selected)->GetGameObject()->GetComponentSize() != 0)
 					ImGui::Separator();
 				// 컴포넌트 추가 버튼 등 코드 들어있는 함수
 				component();
-				
+
 
 				ImGui::Separator();
 
@@ -1025,7 +1039,7 @@ public:
 
 					}
 				}
-				else if(obj->GetComponentSize() == 0)
+				else if (obj->GetComponentSize() == 0)
 				{
 					GameObject* temp = current->at(selected)->GetGameObject();
 					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
@@ -1092,7 +1106,7 @@ public:
 					//render->Init();
 					current->at(selected)->GetGameObject()->AddComponent(render2);
 					component_active = false;
-				
+
 
 				}
 				else
@@ -1155,7 +1169,7 @@ public:
 					//render->Init();
 					current->at(selected)->GetGameObject()->AddComponent(render3);
 					component_active = false;
-			
+
 
 
 				}
@@ -1175,21 +1189,21 @@ public:
 					{
 						switch (componentList.at(k))
 						{
-							case Component::Type::SCRIPT:
-							{
-								component_active = false;
-								show_script = true;
-								break;
-	
-							}
-							default:
-							{
-								GameObject* scriptObj = current->at(selected)->GetGameObject();
-								Script* script = new Script(scriptObj, (Framework*)framework);
-								scriptObj->AddComponent(script);
-								component_active = false;
-								break;
-							}
+						case Component::Type::SCRIPT:
+						{
+							component_active = false;
+							show_script = true;
+							break;
+
+						}
+						default:
+						{
+							GameObject* scriptObj = current->at(selected)->GetGameObject();
+							Script* script = new Script(scriptObj, (Framework*)framework);
+							scriptObj->AddComponent(script);
+							component_active = false;
+							break;
+						}
 						}
 
 					}
@@ -1217,10 +1231,9 @@ public:
 
 
 	}
-
-/// <summary>
-/// Object의 pos,rot,scale 크기 조절하는 곳 
-/// </summary>
+	/// <summary>
+	/// Object의 pos,rot,scale 크기 조절하는 곳 
+	/// </summary>
 	void Transform()
 	{
 		obj = current->at(selected)->GetGameObject();

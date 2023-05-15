@@ -423,7 +423,7 @@ public:
 
 
 					ImGui::Text(name.c_str());
-					ImGui::PushItemWidth(90);
+					ImGui::PushItemWidth(130);
 
 					
 
@@ -565,18 +565,18 @@ public:
 		float rotZ = obj->transform.rotation.z;
 
 
-		float minPosX = 0.0f;
-		float maxPosX = 1400.0f;
+		float minPosX = -1000.0f;
+		float maxPosX = 1600.0f;
 
-		float minPosY = 000.0f;
+		float minPosY = -1000.0f;
 		float maxPosY = 1600.0f;
 
 
-		float minRotValue = -1.58f;
-		float maxRotValue = 1.58f;
+		float minRotValue = -3.16f;
+		float maxRotValue = 3.16f;
 
 
-		float minScaleValue = 1.0f;
+		float minScaleValue = 0.01f;
 		float maxScaleValue = 3.0f;
 
 		if (posX < minPosX) {
@@ -610,11 +610,11 @@ public:
 
 		if (scaleX < minScaleValue) {
 			scaleX = minScaleValue;
-			obj->transform.position.x = scaleX;
+			obj->transform.scale.x = scaleX;
 		}
 		else if (scaleX > maxScaleValue) {
 			scaleX = maxScaleValue;
-			obj->transform.position.x = scaleX;
+			obj->transform.scale.x = scaleX;
 		}
 
 
@@ -640,13 +640,13 @@ public:
 		float scaleZ = obj->transform.scale.z;
 
 
-		float minPosValue = -100.0f;
-		float maxPosValue = 100.0f;
+		float minPosValue = -1000.0f;
+		float maxPosValue = 1600.0f;
 
-		float minRotValue = -1.58f;
-		float maxRotValue = 1.58f;
+		float minRotValue = -3.16f;
+		float maxRotValue = 3.16f;
 
-		float minScaleValue = 1.0f;
+		float minScaleValue = 0.01f;
 		float maxScaleValue = 3.0f;
 
 		/// <summary>
@@ -712,29 +712,29 @@ public:
 		/// </summary>
 		if (scaleX < minScaleValue) {
 			scaleX = minScaleValue;
-			obj->transform.position.x = scaleX;
+			obj->transform.scale.x = scaleX;
 		}
 		else if (scaleX > maxScaleValue) {
 			scaleX = maxScaleValue;
-			obj->transform.position.x = scaleX;
+			obj->transform.scale.x = scaleX;
 		}
 
 		if (scaleY < minScaleValue) {
 			scaleY = minScaleValue;
-			obj->transform.position.y = scaleY;
+			obj->transform.scale.y = scaleY;
 		}
 		else if (scaleY > maxScaleValue) {
 			scaleY = maxScaleValue;
-			obj->transform.position.y = scaleY;
+			obj->transform.scale.y = scaleY;
 		}
 
 		if (scaleZ < minScaleValue) {
 			scaleZ = minScaleValue;
-			obj->transform.position.z = scaleZ;
+			obj->transform.scale.z = scaleZ;
 		}
 		else if (scaleZ > maxScaleValue) {
 			scaleZ = maxScaleValue;
-			obj->transform.position.z = scaleZ;
+			obj->transform.scale.z = scaleZ;
 		}
 
 	}
@@ -756,7 +756,7 @@ public:
 			ImGui::SetNextWindowSize(ImVec2(700, 600));
 			ImGui::Begin("Add Object", &active);
 
-			ImGui::PushItemWidth(90);
+			ImGui::PushItemWidth(130);
 
 			ImGui::InputText("Object Name", name, IM_ARRAYSIZE(name));
 
@@ -764,30 +764,30 @@ public:
 			ImGui::Text("POS");
 			ImGui::Text("X:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##pos", &pos.x, -100, 100);
+			ImGui::SliderFloat(u8"##pos", &pos.x, -1000, 1600);
 			ImGui::SameLine();
 			ImGui::Text("Y:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##pos1", &pos.y, -100, 100);
+			ImGui::SliderFloat(u8"##pos1", &pos.y, -1000, 1600);
 			ImGui::SameLine();
 			ImGui::Text("Z:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##pos2", &pos.z, -100, 100);
+			ImGui::SliderFloat(u8"##pos2", &pos.z, -1000, 1600);
 
 
 			ImGui::Separator();
 			ImGui::Text("ROTATION");
 			ImGui::Text("X:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##rot", &rot.x, -1.58, 1.58);
+			ImGui::SliderFloat(u8"##rot", &rot.x, -3.16, 3.16);
 			ImGui::SameLine();
 			ImGui::Text("Y:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##rot1", &rot.y, -1.58, 1.58);
+			ImGui::SliderFloat(u8"##rot1", &rot.y, -3.16, 3.16);
 			ImGui::SameLine();
 			ImGui::Text("Z:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##rot2", &rot.z, -1.58, 1.58);
+			ImGui::SliderFloat(u8"##rot2", &rot.z, -3.16, 3.16);
 			scale.x = 1;
 			scale.y = 1;
 			scale.z = 1;
@@ -795,15 +795,15 @@ public:
 			ImGui::Text("SCALE");
 			ImGui::Text("X:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale", &scale.x, 1, 3);
+			ImGui::SliderFloat(u8"##scale", &scale.x, 0.01, 3);
 			ImGui::SameLine();
 			ImGui::Text("Y:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale1", &scale.y, 1, 3);
+			ImGui::SliderFloat(u8"##scale1", &scale.y, 0.01, 3);
 			ImGui::SameLine();
 			ImGui::Text("Z:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale2", &scale.z, 1, 3);
+			ImGui::SliderFloat(u8"##scale2", &scale.z, 0.01, 3);
 			ImGui::PopItemWidth();
 
 			ImGui::Separator();
@@ -1195,7 +1195,7 @@ public:
 		Hobj = current->at(selected);
 		if (obj->GetComponentSize() == 0)
 		{
-			ImGui::PushItemWidth(90);
+			ImGui::PushItemWidth(130);
 
 			if (Hobj->Detail() == false)
 			{
@@ -1204,44 +1204,44 @@ public:
 				ImGui::Text("POS");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+				ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -1000, 1600);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+				ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -1000, 1600);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+				ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -1000, 1600);
 
 
 				ImGui::Separator();
 				ImGui::Text("ROTATION");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+				ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -3.16, 3.16);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+				ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -3.16, 3.16);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+				ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 				ImGui::Separator();
 				ImGui::Text("SCALE");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
 				ImGui::PopItemWidth();
 
 
@@ -1268,29 +1268,29 @@ public:
 				ImGui::Text("ROTATION");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+				ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+				ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+				ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 				ImGui::Separator();
 				ImGui::Text("SCALE");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 3);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
 				ImGui::PopItemWidth();
 
 
@@ -1323,29 +1323,29 @@ public:
 
 					if (current->at(selected)->Detail() == false)
 					{
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, 0, 1400);
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -1000, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, 0, 1600);
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -1000, 1600);
 
 						ImGui::Separator();
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1355,7 +1355,7 @@ public:
 					{
 						CheckSpriteTransform();
 
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1372,13 +1372,13 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1396,51 +1396,51 @@ public:
 				{
 					if (Hobj->Detail() == false)
 					{
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
 						ImGui::Text("X:");
 
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -1000, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -1000, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -1000, 1600);
 
 
 						ImGui::Separator();
 						ImGui::Text("ROTATION");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -3.16, 3.16);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -3.16, 3.16);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1449,7 +1449,7 @@ public:
 					{
 						CheckTransform();
 
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1470,29 +1470,29 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 3);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1516,29 +1516,29 @@ public:
 						obj->transform.rotation.y = 0;
 						obj->transform.scale.y = 0;
 						obj->transform.scale.z = 0;
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -1000, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -1000, 1600);
 
 						ImGui::Separator();
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1548,7 +1548,7 @@ public:
 					{
 						CheckTransform();
 
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1565,13 +1565,13 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1588,7 +1588,7 @@ public:
 
 				case Component::Type::SCRIPT:
 				{
-					ImGui::PushItemWidth(90);
+					ImGui::PushItemWidth(130);
 
 					if (Hobj->Detail() == false)
 					{
@@ -1597,44 +1597,44 @@ public:
 						ImGui::Text("POS");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -100, 100);
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, -1000, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -100, 100);
+						ImGui::SliderFloat(u8"##pos1", &obj->transform.position.y, -1000, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -100, 100);
+						ImGui::SliderFloat(u8"##pos2", &obj->transform.position.z, -1000, 1600);
 
 
 						ImGui::Separator();
 						ImGui::Text("ROTATION");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -3.16, 3.16);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -3.16, 3.16);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1661,29 +1661,29 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 001, 3);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1722,13 +1722,13 @@ public:
 					obj->transform.scale.z = 0;
 					if (Hobj->Detail() == false)
 					{
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, 0, 1400);
+						ImGui::SliderFloat(u8"##pos", &obj->transform.position.x, 0, 1600);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
@@ -1738,13 +1738,13 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1754,7 +1754,7 @@ public:
 					{
 						CheckSpriteTransform();
 
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1771,13 +1771,13 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -3.16f, 3.16f);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1795,7 +1795,7 @@ public:
 				{
 					if (current->at(selected)->Detail() == false)
 					{
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1817,29 +1817,29 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot", &obj->transform.rotation.x, -3.16, 3.16);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot1", &obj->transform.rotation.y, -3.16, 3.16);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 1, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 1, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1848,7 +1848,7 @@ public:
 					{
 						CheckTransform();
 
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1869,29 +1869,29 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot3", &obj->transform.rotation.x, -3.16f, 3.16f);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot4", &obj->transform.rotation.y, -3.16f, 3.16f);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -3.16f, 3.16f);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.01, 3);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1910,7 +1910,7 @@ public:
 				{
 					if (current->at(selected)->Detail() == false)
 					{
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						obj->transform.position.z = 0;
 						obj->transform.rotation.x = 0;
@@ -1932,13 +1932,13 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -1.58, 1.58);
+						ImGui::SliderFloat(u8"##rot2", &obj->transform.rotation.z, -3.16, 3.16);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 1, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
 						ImGui::PopItemWidth();
 
 
@@ -1948,7 +1948,7 @@ public:
 					{
 						CheckTransform();
 
-						ImGui::PushItemWidth(90);
+						ImGui::PushItemWidth(130);
 
 						ImGui::Separator();
 						ImGui::Text("POS");
@@ -1965,13 +1965,13 @@ public:
 						ImGui::Text("ROTATION");
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z, -1.58f, 1.58f);
+						ImGui::InputFloat(u8"##rot5", &obj->transform.rotation.z);
 
 						ImGui::Separator();
 						ImGui::Text("SCALE");
-						ImGui::Text("X:");
+						ImGui::Text(u8"农扁:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
 						ImGui::PopItemWidth();
 
 

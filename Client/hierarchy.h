@@ -350,7 +350,9 @@ public:
 							}
 							case Component::Type::RENDERER_SPRITE:
 							{
-								if (obj->GetComponentSize() == 1 && framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
+								if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
+									can_delete = true;
+								else if(obj->GetComponentSize() == 1 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 									can_delete = true;
 								else
 									can_delete = false;
@@ -553,7 +555,7 @@ public:
 		}
 
 		if (ImGui::BeginPopupModal("Script Delete", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"스크립트를 먼저 삭제 해주세요");
+			ImGui::Text(u8"실행모드일때 스크립트가 포함된 오브젝트는 컴포넌트를 삭제할수 없습니다.");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
 				delete_sprite = false;

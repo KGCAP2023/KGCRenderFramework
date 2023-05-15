@@ -4,10 +4,6 @@
 class Logger
 {
 public:
-	Logger()
-	{
-		logBuffer.reserve(500);
-	}
 
 	/// <summary>
 	/// 콘솔 로그

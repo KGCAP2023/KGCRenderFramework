@@ -15,7 +15,7 @@ class LuaManager
 public:
 	LuaManager()
 	{
-		this->logBuffer.reserve(500);
+		Logger::GetLogBuffer().reserve(500);
 	};
 
 	bool Initialize(Framework* framework);
@@ -39,7 +39,7 @@ public:
 		{
 			std::string errormsg = lua_tostring(L, -1);
 			std::cout << errormsg << std::endl;
-			this->logBuffer.push_back(errormsg);
+			Logger::AddLog(errormsg);
 			return false;
 		}
 		return true;

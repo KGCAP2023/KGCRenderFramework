@@ -139,6 +139,8 @@ public:
 	bool Exceed = false;                     
 	bool show_delete = false;
 	bool show_render = false;
+	bool delete_sprite = false;
+	bool can_delete = true;
 	char name[20]{};
 
 	int g = 0;
@@ -328,10 +330,30 @@ public:
 
 					if (ImGui::Button("Sprite Del"))
 					{
-						Hobj->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
-						Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
-					}
+						obj->ComponentForeach([&](Component* c) {
+							Component::Type type = c->GetType();
+							switch (type) {
+							case Component::Type::SCRIPT:
+							{
+								delete_sprite = true;
+								can_delete = false;
+								break;
+							}
+							case Component::Type::RENDERER_SPRITE:
+							{
+								can_delete = true;
+								break;
+							}
+							}
+							});
+						if (can_delete)
+						{
+							Hobj->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
+							Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
 
+						}
+						
+					}
 					ImGui::Separator();
 
 					break;
@@ -442,7 +464,6 @@ public:
 						script->SetLuaFilePath(path);
 
 						this->lua->AddLog("Set Lua FilePath > "+path);
-						this->lua->AddLog("Set Lua FilePath > " + path);
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))
@@ -495,7 +516,18 @@ public:
 			}
 			ImGui::EndPopup();
 		}
-		
+		if (delete_sprite) {
+			ImGui::OpenPopup("Script Delete");
+		}
+
+		if (ImGui::BeginPopupModal("Script Delete", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"스크립트를 먼저 삭제 해주세요");
+			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
+				ImGui::CloseCurrentPopup();
+				delete_sprite = false;
+			}
+			ImGui::EndPopup();
+		}
 		if (show_render) {
 			ImGui::OpenPopup("Caution");
 		}

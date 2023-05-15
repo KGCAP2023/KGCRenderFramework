@@ -24,7 +24,7 @@ bool AudioManager::Initialize(Framework* framework)
 
 void AudioManager::LoadAudio(const char* audioName, const char* audioFilePath) 
 {
-	if (_access(audioFilePath, 0) != false) 
+	if (_access(audioFilePath, 0) != -1) 
 	{
 		if (res->m_sound.find(audioName) == res->m_sound.end())
 		{

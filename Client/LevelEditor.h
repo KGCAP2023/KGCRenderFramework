@@ -99,7 +99,7 @@ public:
 			ImGui::OpenPopup("Select Window Closed");
 
 		if (ImGui::BeginPopupModal("Select Window Closed", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::Text(u8"Please Reopen Tilemap");
+			ImGui::Text(u8"Please Re open Tilemap");
 			if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
 				ImGui::CloseCurrentPopup();
 				AlreadyClosedAlert = false;

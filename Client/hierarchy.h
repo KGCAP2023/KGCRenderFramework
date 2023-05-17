@@ -227,7 +227,8 @@ public:
 				GameObject* obj = pair.second;
 				HierarchyObject* play_obj = new HierarchyObject(obj);
 				HierarchyObject* dev_obj = FindHierarchyObjectInGamelist(obj->GetName());
-				play_obj->Copy(dev_obj);
+
+				if(dev_obj != nullptr) play_obj->Copy(dev_obj);
 
 				gameTestList.push_back(play_obj);
 

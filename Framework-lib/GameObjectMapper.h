@@ -19,7 +19,10 @@ public:
 	static int lua_GameObject_GetName(lua_State* lua);
     static int lua_GameObject_GetTransform(lua_State* lua);
 	static int lua_GameObject_LoadAnimation(lua_State* lua);
+	static int lua_GameObject_AddAnimation2D(lua_State* lua);
 	static int lua_GameObject_PlayAnim2D(lua_State* lua);
+	static int lua_GameObject_IsActive(lua_State* lua);
+	static int lua_GameObject_SetActive(lua_State* lua);
 
 	//Mapping Transform
 	static void RegisterMappingTransform(lua_State* lua, Transform* obj);
@@ -27,6 +30,8 @@ public:
     static int lua_Transform_MoveDown(lua_State* lua);
     static int lua_Transform_MoveRight(lua_State* lua);
     static int lua_Transform_MoveLeft(lua_State* lua);
+	static int lua_Transform_Translate(lua_State* lua);
+	static int lua_Transform_SetPosition(lua_State* lua);
 
 
 private: 

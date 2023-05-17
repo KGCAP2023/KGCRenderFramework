@@ -135,7 +135,8 @@ void GraphicManager::RenderFrame()
 
 
 	{
-		res->spriteBatch->Begin(SpriteSortMode::SpriteSortMode_FrontToBack);
+		
+		res->spriteBatch->Begin(SpriteSortMode::SpriteSortMode_FrontToBack, res->m_states->NonPremultiplied());
 		//Sprite를 그립니다.
 		for (const auto& kv : obj->gameObjects)
 		{

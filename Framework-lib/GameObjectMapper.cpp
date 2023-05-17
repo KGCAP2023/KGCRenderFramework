@@ -169,7 +169,7 @@ int GameObjectMapper::lua_GameObject_SetActive(lua_State* lua)
     GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
     GameObject* obj = (*pptr);
 
-    bool value = lua_isboolean(lua, 2);
+    bool value = lua_toboolean(lua, 2);
     obj->SetActive(value);
     return 0;
 }

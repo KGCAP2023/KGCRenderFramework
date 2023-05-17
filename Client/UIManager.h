@@ -30,7 +30,7 @@ public:
 	{
 		LevelEditExample* temp2 = new LevelEditExample(this->objMgr, resMgr, "example2");
 		uiList.push_back(temp2);
-		Hierarchy* hierarachy = new Hierarchy(this->objMgr,this->resMgr, "hierarachy", this->framework);
+		this->hierarachy = new Hierarchy(this->objMgr,this->resMgr, "hierarachy", this->framework);
 		uiList.push_back(hierarachy);
 		DebugView* debug = new DebugView(this->framework,this->objMgr, "DebugView");
 		uiList.push_back(debug);
@@ -40,9 +40,15 @@ public:
 		uiList.push_back(SE);
 	}
 
+	void ChangeHierachyObject()
+	{
+		this->hierarachy->change();
+	}
+
 	void InitResource()
 	{
 		sp = this->resMgr->LoadSprite("test", "..//Resource//Textures//sand.PNG");
+		sp2 = this->resMgr->LoadSprite("empty", "..//Resource//Textures//no.PNG");
 		//this->TileMapping();
 	}
 
@@ -90,4 +96,6 @@ public:
 	IAudioManager* audMgr = nullptr;
 	IFramework* framework = nullptr;
 	Sprite* sp = nullptr;
+	Sprite* sp2 = nullptr;
+	Hierarchy* hierarachy = nullptr;
 };

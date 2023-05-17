@@ -81,11 +81,36 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				if (ImGui::MenuItem("test"))
 				{
 					rw->SwitchObjectManager();
+					rw->CallSwitchEvent(rw->GetCurrentGameObjectManager()->GetMode());
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Script Editor"))
+				{
+					rw->FindLayer("ScriptEditor")->Activate();
+					Logger::AddLog("ScriptEditor Activated");
+				}
+					
+				ImGui::EndMenu();
+			}
 			});
+
+		rw->AddSwitchEventListener([&](SceneMode mode) {
+
+			if(mode == SceneMode::PLAY)
+				Logger::AddLog("SceneMode Switch > PLAY");
+			else
+				Logger::AddLog("SceneMode Switch > DEV");
+
+				uiMgr->ChangeHierachyObject();
+		});
+
 	}
+
+
+
 
 	//Example* temp = new Example(objM, "example");
 

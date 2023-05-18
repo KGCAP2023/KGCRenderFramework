@@ -912,7 +912,7 @@ public:
 				}
 
 				std::string Log = name;
-				Logger::AddLog("Add Obeject : " + Log);
+				Logger::AddLog("Add Object : " + Log);
 
 				std::memset(name, 0, IM_ARRAYSIZE(name));
 				active = false;
@@ -945,7 +945,7 @@ public:
 					{
 						if (selected == current->size() - 1)
 						{
-							Logger::AddLog("Delete Obeject : " + current->at(selected)->GetGameObject()->GetName());
+							Logger::AddLog("Delete Object : " + current->at(selected)->GetGameObject()->GetName());
 
 							_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
 							current->pop_back();
@@ -954,7 +954,7 @@ public:
 						}
 						else
 						{
-							Logger::AddLog("Delete Obeject : " + current->at(selected)->GetGameObject()->GetName());
+							Logger::AddLog("Delete Object : " + current->at(selected)->GetGameObject()->GetName());
 
 							_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
 							current->erase(current->begin() + selected);
@@ -963,7 +963,7 @@ public:
 					}
 					else
 					{
-						Logger::AddLog("Delete Obeject : " + current->at(selected)->GetGameObject()->GetName());
+						Logger::AddLog("Delete Object : " + current->at(selected)->GetGameObject()->GetName());
 						_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
 						current->erase(current->begin() + selected);
 						show_delete = true;

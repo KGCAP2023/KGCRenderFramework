@@ -227,8 +227,7 @@ public:
 				GameObject* obj = pair.second;
 				HierarchyObject* play_obj = new HierarchyObject(obj);
 				HierarchyObject* dev_obj = FindHierarchyObjectInGamelist(obj->GetName());
-
-				if(dev_obj != nullptr) play_obj->Copy(dev_obj);
+				play_obj->Copy(dev_obj);
 
 				gameTestList.push_back(play_obj);
 
@@ -353,7 +352,7 @@ public:
 							{
 								if (framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
 									can_delete = true;
-								else if(obj->GetComponentSize() == 1 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
+								else if (obj->GetComponentSize() == 1 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 									can_delete = true;
 								else
 									can_delete = false;
@@ -365,6 +364,7 @@ public:
 						{
 							Hobj->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
 							Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
+							Logger::AddLog("Delete Component : Sprite");
 
 						}
 
@@ -417,6 +417,8 @@ public:
 					{
 						Hobj->AddDeleteComponent(Component::Type::RENDERER_MODEL);
 						Hobj->DeleteMappingValue(Component::Type::RENDERER_MODEL);
+						Logger::AddLog("Delete Component : Model");
+
 					}
 
 
@@ -461,6 +463,8 @@ public:
 					{
 						Hobj->AddDeleteComponent(Component::Type::RENDERER_TILEMAP);
 						Hobj->DeleteMappingValue(Component::Type::RENDERER_TILEMAP);
+						Logger::AddLog("Delete Component : TileMap");
+
 					}
 					ImGui::Separator();
 
@@ -498,10 +502,13 @@ public:
 						if (framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 						{
 							delete_script = true;
+
 						}
 						else {
 							Hobj->AddDeleteComponent(Component::Type::SCRIPT);
 							Hobj->DeleteMappingValue(Component::Type::SCRIPT);
+							Logger::AddLog("Delete Component : Script");
+
 						}
 					}
 
@@ -904,7 +911,8 @@ public:
 					show_warning = true;
 				}
 
-
+				std::string Log = name;
+				Logger::AddLog("Add Obeject : " + Log);
 
 				std::memset(name, 0, IM_ARRAYSIZE(name));
 				active = false;
@@ -937,6 +945,8 @@ public:
 					{
 						if (selected == current->size() - 1)
 						{
+							Logger::AddLog("Delete Obeject : " + current->at(selected)->GetGameObject()->GetName());
+
 							_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
 							current->pop_back();
 							selected--;
@@ -944,6 +954,8 @@ public:
 						}
 						else
 						{
+							Logger::AddLog("Delete Obeject : " + current->at(selected)->GetGameObject()->GetName());
+
 							_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
 							current->erase(current->begin() + selected);
 							show_delete = true;
@@ -951,11 +963,14 @@ public:
 					}
 					else
 					{
+						Logger::AddLog("Delete Obeject : " + current->at(selected)->GetGameObject()->GetName());
 						_manager->DestroyGameObject(current->at(selected)->GetGameObject()->GetName());
 						current->erase(current->begin() + selected);
 						show_delete = true;
 					}
+
 				}
+
 
 
 			}
@@ -1067,6 +1082,8 @@ public:
 							SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
 							current->at(selected)->GetGameObject()->AddComponent(render1);
 							component_active = false;
+							Logger::AddLog("Add Sprite");
+
 							break;
 
 						}
@@ -1080,6 +1097,7 @@ public:
 					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
 					current->at(selected)->GetGameObject()->AddComponent(render1);
 					component_active = false;
+					Logger::AddLog("Add Sprite");
 
 				}
 				else
@@ -1127,6 +1145,8 @@ public:
 							//render->Init();
 							current->at(selected)->GetGameObject()->AddComponent(render2);
 							component_active = false;
+							Logger::AddLog("Add Model");
+
 							break;
 
 						}
@@ -1141,6 +1161,7 @@ public:
 					//render->Init();
 					current->at(selected)->GetGameObject()->AddComponent(render2);
 					component_active = false;
+					Logger::AddLog("Add Model");
 
 
 				}
@@ -1190,6 +1211,8 @@ public:
 							//render->Init();
 							current->at(selected)->GetGameObject()->AddComponent(render3);
 							component_active = false;
+							Logger::AddLog("Add TileMap");
+
 							break;
 
 						}
@@ -1205,6 +1228,7 @@ public:
 					current->at(selected)->GetGameObject()->AddComponent(render3);
 					component_active = false;
 
+					Logger::AddLog("Add TileMap");
 
 
 				}
@@ -1237,6 +1261,8 @@ public:
 							Script* script = new Script(scriptObj, (Framework*)framework);
 							scriptObj->AddComponent(script);
 							component_active = false;
+							Logger::AddLog("Add Script");
+
 							break;
 						}
 						}
@@ -1249,6 +1275,7 @@ public:
 					Script* script = new Script(scriptObj, (Framework*)framework);
 					scriptObj->AddComponent(script);
 					component_active = false;
+					Logger::AddLog("Add Script");
 
 
 

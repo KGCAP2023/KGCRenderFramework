@@ -79,8 +79,8 @@ public:
         const size_t slash = FilePath.find_last_of("/\\");
         std::string SelectedFile = FilePath.substr(slash + 1);                      //선택된 파일이름 가져옴
         std::string ext = getFileExtension(FilePath);
-        std::string FileName = SelectedFile.substr(0,SelectedFile.length()-4);      //mp3,obj,jpg,png 이름처리
-        std::string jFileName = SelectedFile.substr(0, SelectedFile.length() - 5);  //jpeg 이름처리
+        std::string FileName = SelectedFile.substr(0,SelectedFile.length()-4);      //mp3,obj,jpg,png 이름처리  size:3
+        std::string jFileName = SelectedFile.substr(0, SelectedFile.length() - 5);  //jpeg 이름처리             size:4
 
         CoTaskMemFree(f_Path);
         f_Files->Release();
@@ -90,21 +90,29 @@ public:
         if (ext._Equal("mp3"))                                                      //오디오 파일
         {
             ResM->LoadAudio(FileName.c_str(), FilePath.c_str());
+            Logger::AddLog(u8"오디오 파일이 추가되었습니다.");                      //오디오 파일 추가 Log
+            Logger::AddLog(u8"오디오 파일:" + FileName);                            //오디오 파일 이름 Log
         }
 
         else if (ext._Equal("obj"))                                                 //모델 파일
         { 
             ResM->LoadModel(FileName, FilePath);
+            Logger::AddLog(u8"모델 파일이 추가되었습니다.");                        //모델 파일 추가 Log
+            Logger::AddLog(u8"모델 파일:" + FileName);                              //모델 파일 이름 Log
         }
 
-        else if (ext._Equal("jpg") || ext._Equal("jpeg") || ext._Equal("png"))      //사진 파일 #1
+        else if (ext._Equal("jpg") || ext._Equal("png"))                            //사진 파일 #1
         {
             ResM->LoadSprite(FileName, FilePath);
+            Logger::AddLog(u8"사진 파일이 추가되었습니다.");                        //사진 파일 추가 Log (jpg, png)
+            Logger::AddLog(u8"사진 파일:" + FileName);                              //사진 파일 이름 Log
         }
 
         else if (ext._Equal("jpeg"))                                                //사진 파일 #2
         {
             ResM->LoadSprite(jFileName, FilePath);
+            Logger::AddLog(u8"사진 파일이 추가되었습니다.");                        //사진 파일 추가 Log (jpeg)
+            Logger::AddLog(u8"사진 파일:" + jFileName);                             //사진 파일 이름 Log
         }
 
         else
@@ -154,8 +162,9 @@ public:
             ImGui::Begin(u8"Resource Manager View", &_isActive, ImGuiWindowFlags_HorizontalScrollbar);
 
             if (ImGui::Button("add"))
-            {                                                           //add 버튼
+            {                                                                   //add 버튼
                 openFile();
+                
             }
             ImGui::SameLine();
            

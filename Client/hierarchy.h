@@ -486,7 +486,7 @@ public:
 					ImGui::InputText("name", script_name, IM_ARRAYSIZE(script_name));
 					ImGui::SameLine();
 
-					if (ImGui::Button("input"))
+					if (ImGui::Button("input")&&script_name[0]!='\0')
 					{
 						
 						std::string s(script_name);

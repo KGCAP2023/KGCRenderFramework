@@ -19,7 +19,8 @@ public:
     IGameObjectManager* ObjM;
     bool _Savewin = false;
     bool _Loadwin = false;
-
+    bool confirm = false;
+    int warning = 0;
 
     char savename[20]="";
     char loadname[20]="";
@@ -48,9 +49,57 @@ public:
     {
 
     }
+    void Warning()
+    {
+
+        switch(warning)
+        {
+            case 1:
+                ImGui::OpenPopup(u8"존재하지 않는 파일명");
+                break;
+            case 2:
+                ImGui::OpenPopup(u8"중복되는 파일");
+                break;
+        }
+
+        if (ImGui::BeginPopupModal(u8"존재하지 않는 파일명", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text(u8"파일이 존재하지 않습니다.");
+            if (ImGui::Button(u8"확인") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+            {
+                ImGui::CloseCurrentPopup();
+                warning = 0;
+            }
+            ImGui::EndPopup();
+        }
+        if (ImGui::BeginPopupModal(u8"중복되는 파일", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text(u8"덮어 씌우시겠습니까?");
+            if (ImGui::Button(u8"네"))
+            {
+                std::ofstream writeFile(savename);
+                if (writeFile.is_open()) {
+                    writeFile << buffer;
+                    writeFile.close();
+                }
+                _Savewin = false;
+                savename[0] = '\0';
+                ImGui::CloseCurrentPopup();
+                warning = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button(u8"아니오"))
+            {
+                ImGui::CloseCurrentPopup();
+                warning = 0;
+            }
+            ImGui::EndPopup();
+        }
+    }
+
     virtual void Render()
     {
-        
+        Warning();
 
 
         if (_isActive)
@@ -93,19 +142,29 @@ public:
                 
                 ImGui::InputTextWithHint("Save filename", "example", savename, IM_ARRAYSIZE(loadname));
                 
-                if (ImGui::Button("Save") && savename!="")
+                if (ImGui::Button("Save") && savename[0] != '\0')
                 {
                     strcat(savename, ".lua");
-                    char path[20] = "../Lua/";
+                    char path[100] = "../Lua/";
                     strcat(path, savename);
                     strcpy(savename, path);
-                    std::ofstream writeFile(savename);
-                    if (writeFile.is_open()) {
-                        writeFile << buffer;
-                        writeFile.close();
+                    if (_access(savename, 0) == 0)
+                    {
+                        warning = 2;
                     }
-                    _Savewin = false;
-                    savename[0] = '\0';
+                    else
+                    {
+                        std::ofstream writeFile(savename);
+                        if (writeFile.is_open()) {
+                            writeFile << buffer;
+                            writeFile.close();
+                        }
+                        confirm = false;
+                        _Savewin = false;
+                        savename[0] = '\0';
+                    }
+                    
+
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Close"))
@@ -122,18 +181,29 @@ public:
                 
                 ImGui::InputTextWithHint("Load filename", "example", loadname, IM_ARRAYSIZE(loadname));
                 
-                if (ImGui::Button("Load") && loadname != "")
+                if (ImGui::Button("Load") && loadname[0] != '\0')
                 {
                     strcat(loadname, ".lua");
-                    char path[20] = "../Lua/";
+                    char path[100] = "../Lua/";
                     strcat(path, loadname);
                     strcpy(loadname, path);
-                    std::ifstream readFile(loadname);
-                    readFile.read(buffer, sizeof(buffer));
-                    int numCharsRead = readFile.gcount();
-                    buffer[numCharsRead] = '\0';
-                    _Loadwin = false;
+                    strcpy(path, "../Lua/");
+                    if (_access(loadname, 0) != -1)
+                    {
+                        std::ifstream readFile(loadname);
+                        readFile.read(buffer, sizeof(buffer));
+                        int numCharsRead = readFile.gcount();
+                        buffer[numCharsRead] = '\0';
+                        _Loadwin = false;
+                    }
+                    else
+                    {
+                        warning = 1;
+                    }
+                    
+
                     loadname[0] = '\0';
+                        
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Close"))

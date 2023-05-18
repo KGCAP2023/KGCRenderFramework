@@ -48,8 +48,11 @@ void GameObjectMapper::RegisterMappingGameObject(lua_State* lua, GameObject* obj
         luaL_Reg GameObjectFunctions[] = {
            "GetName", lua_GameObject_GetName,
            "GetTransform",lua_GameObject_GetTransform,
-           "LoadAnim",lua_GameObject_LoadAnimation,
+           "LoadAnimPreset",lua_GameObject_LoadAnimation,
            "PlayAnim2D",lua_GameObject_PlayAnim2D,
+           "AddAnim2D",lua_GameObject_AddAnimation2D,
+           "IsActive",lua_GameObject_IsActive,
+           "SetActive",lua_GameObject_SetActive,
            nullptr, nullptr
         };
 
@@ -105,6 +108,31 @@ int GameObjectMapper::lua_GameObject_LoadAnimation(lua_State* lua)
     return 0;
 }
 
+int GameObjectMapper::lua_GameObject_AddAnimation2D(lua_State* lua)
+{
+    GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
+    GameObject* obj = (*pptr);
+
+    std::string animationName = luaL_checkstring(lua, 2);
+    int x = luaL_checknumber(lua, 3);
+    int y = luaL_checknumber(lua, 4);
+    int width = luaL_checknumber(lua, 5);
+    int height = luaL_checknumber(lua, 6);
+    int count = luaL_checknumber(lua, 7);
+    float holdtime = luaL_checknumber(lua, 8);
+
+    if (SpriteRenderer* render = dynamic_cast<SpriteRenderer*>(obj->GetComponent(Component::Type::RENDERER_SPRITE)))
+    {
+        Sprite* sp = render->GetSprite();
+
+        if (sp != nullptr)
+        {
+            render->AddAnimation2D(animationName, x, y, width, height, count, holdtime);
+        }
+    }
+    return 0;
+}
+
 int GameObjectMapper::lua_GameObject_PlayAnim2D(lua_State* lua)
 {
     GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
@@ -125,6 +153,27 @@ int GameObjectMapper::lua_GameObject_PlayAnim2D(lua_State* lua)
     return 0;
 }
 
+int GameObjectMapper::lua_GameObject_IsActive(lua_State* lua)
+{
+    GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
+    GameObject* obj = (*pptr);
+    if (obj->IsActive())
+        lua_pushboolean(lua, true);
+    else
+        lua_pushboolean(lua, false);
+    return 1;
+}
+
+int GameObjectMapper::lua_GameObject_SetActive(lua_State* lua)
+{
+    GameObject** pptr = (GameObject**)luaL_checkudata(lua, 1, "GameObjectMetaTable");
+    GameObject* obj = (*pptr);
+
+    bool value = lua_toboolean(lua, 2);
+    obj->SetActive(value);
+    return 0;
+}
+
 void GameObjectMapper::RegisterMappingTransform(lua_State* lua, Transform* obj)
 {
     Transform** pptr = (Transform**)lua_newuserdata(lua, sizeof(Transform*));
@@ -140,6 +189,8 @@ void GameObjectMapper::RegisterMappingTransform(lua_State* lua, Transform* obj)
        "MoveDown",lua_Transform_MoveDown,
        "MoveRight",lua_Transform_MoveRight,
        "MoveLeft",lua_Transform_MoveLeft,
+       "Translate",lua_Transform_Translate,
+       "SetPosition",lua_Transform_SetPosition,
        nullptr, nullptr
     };
 
@@ -182,6 +233,26 @@ int GameObjectMapper::lua_Transform_MoveLeft(lua_State* lua)
     float dt = Framework::getDeltaTime();
     Transform** pptr = (Transform**)luaL_checkudata(lua, 1, "TransformMetaTable");
     (*pptr)->Translate(-speed * dt, 0, 0);
+    return 0;
+}
+
+int GameObjectMapper::lua_Transform_Translate(lua_State* lua)
+{
+    Transform** pptr = (Transform**)luaL_checkudata(lua, 1, "TransformMetaTable");
+    float x = luaL_checknumber(lua, 2);
+    float y = luaL_checknumber(lua, 3);
+    float z = luaL_checknumber(lua, 4);
+    (*pptr)->Translate(x, y, z);
+    return 0;
+}
+
+int GameObjectMapper::lua_Transform_SetPosition(lua_State* lua)
+{
+    Transform** pptr = (Transform**)luaL_checkudata(lua, 1, "TransformMetaTable");
+    float x = luaL_checknumber(lua, 2);
+    float y = luaL_checknumber(lua, 3);
+    float z = luaL_checknumber(lua, 4);
+    (*pptr)->SetPosition(x, y, z);
     return 0;
 }
 

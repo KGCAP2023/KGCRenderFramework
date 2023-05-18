@@ -35,7 +35,7 @@ public:
 	~Script()
 	{
 		std::cout << "[=] Script destructor called" << std::endl;
-		this->clear();
+		if(this->isLoaded) this->clear();
 	}
 
 	//루아 파일경로 설정

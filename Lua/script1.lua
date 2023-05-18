@@ -5,7 +5,7 @@ local trans = obj2:GetTransform();
 function Start()
 
     print(obj2:GetName());
-    obj2:LoadAnim("man");
+    obj2:LoadAnimPreset("man");
 
 end
 

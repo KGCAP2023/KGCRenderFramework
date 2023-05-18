@@ -142,6 +142,7 @@ public:
 	bool delete_sprite = false;
 	bool can_delete = true;
 	bool delete_script = false;
+	bool show_not_exist = false;
 	char name[20]{};
 
 	int g = 0;
@@ -487,14 +488,19 @@ public:
 
 					if (ImGui::Button("input"))
 					{
+						
 						std::string s(script_name);
 						std::string path = "..\\Lua\\";
 						std::string path2 = ".lua";
 						path = path + script_name + path2;
 						std::cout << path;
-						script->SetLuaFilePath(path);
-
-						Logger::AddLog("Set Lua FilePath > " + path);
+						if (_access(path.c_str(), 0) == 0)
+						{
+							script->SetLuaFilePath(path);
+							Logger::AddLog("Set Lua FilePath > " + path);
+						}
+						else
+							show_not_exist = true;
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Script Del"))
@@ -634,6 +640,21 @@ public:
 
 				ImGui::CloseCurrentPopup();
 				show_delete = false;
+
+			}
+			ImGui::EndPopup();
+		}
+		if (show_not_exist) {
+			ImGui::OpenPopup(u8"존재하지 않는 파일");
+		}
+
+		if (ImGui::BeginPopupModal(u8"존재하지 않는 파일", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text(u8"파일이 존재하지 않습니다.");
+			if (ImGui::Button(u8"확인") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+			{
+
+				ImGui::CloseCurrentPopup();
+				show_not_exist = false;
 
 			}
 			ImGui::EndPopup();

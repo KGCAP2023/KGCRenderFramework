@@ -132,7 +132,10 @@ void GraphicManager::RenderFrame()
 	this->cameraComponent->cameraLerp();
 	XMMATRIX vp = cameraComponent->GetViewMatrix() * cameraComponent->GetProjectionMatrix();
 	GameObjectManager* obj = this->framework->currentgameObjManager;
-
+	if (obj->GetMode() == SceneMode::DEV)
+		output = L"개발모드";
+	else if (obj->GetMode() == SceneMode::PLAY)
+		output = L"실행모드";
 
 	{
 		res->spriteBatch->Begin(SpriteSortMode::SpriteSortMode_FrontToBack, res->m_states->NonPremultiplied());

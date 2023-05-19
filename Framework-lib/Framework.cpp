@@ -304,13 +304,16 @@ void Framework::Update()
 								case Component::Type::RENDERER_TILEMAP:
 								{
 									BoundingBox2D* bbox = dynamic_cast<BoundingBox2D*>(dynamic_cast<Renderer*>(c)->GetBoundingBox());
-									int a = bbox->CalculatePointInBoundingBox(mouse.x, mouse.y);
-
-									if (a == 1 && bbox->GetLayerDepth() >= max)
+									if (bbox != nullptr)
 									{
-										selectedObject = kv.second;
-										max = bbox->GetLayerDepth();
-									}									
+										int a = bbox->CalculatePointInBoundingBox(mouse.x, mouse.y);
+
+										if (a == 1 && bbox->GetLayerDepth() >= max)
+										{
+											selectedObject = kv.second;
+											max = bbox->GetLayerDepth();
+										}
+									}
 								}
 								break;
 							}

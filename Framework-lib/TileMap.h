@@ -56,7 +56,7 @@ public:
 
 		XMFLOAT3 pos = XMFLOAT3(0, 0, 0);
 		RECT frame{ (LONG)pos.x + tileX * tileSize, (LONG)pos.y + tileY * tileSize, (LONG)pos.x + (tileX + 1) * tileSize, (LONG)pos.y + (tileY + 1) * tileSize };
-		arr[gridX][gridY] = frame;
+		arr[gridY][gridX] = frame;
 	}
 
 	void Draw(const DirectX::XMMATRIX& viewProjectionMatrix , Transform& t, float layer)

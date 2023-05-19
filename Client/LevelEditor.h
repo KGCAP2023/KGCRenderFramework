@@ -122,9 +122,13 @@ public:
 			if(ImGui::Button("Save This Name") && tilemap_name) {
 				map->Init(tilemap_name, Map_Img, tilemap_width, tilemap_height);
 			
-				for (int k = 0; k < tilemap_size; k++) {
+				for (int k = 0; k < tilemap_height * tilemap_width; k++) {
 					//gridX, gridY가 k / tilemap_width와 k % tilemap_width로 입력
-					map->SelectTile((int)mouse_x[k], (int)mouse_y[k], k / tilemap_width, k % tilemap_width);
+					int a = (int)mouse_x[k];
+					int b = (int)mouse_y[k];
+					int c = k / tilemap_width;
+					int d = k % tilemap_width;
+					map->SelectTile(a, b, d, c);
 				}
 
 				this->ResM->RegisterTileMap(tilemap_name, map);

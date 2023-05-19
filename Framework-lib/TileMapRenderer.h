@@ -13,10 +13,12 @@ public:
 	TileMapRenderer(const TileMapRenderer& rhs, GameObject* owner) : Component(owner)
 	{
 		std::cout << "[=] TileMapRenderer CLONE Process - Copy constructor called" << std::endl;
-		tileMap = rhs.tileMap;
-		bbox = rhs.bbox;
-		res = rhs.res;
-		isSpriteRender = rhs.isSpriteRender;
+		this->type = rhs.type;
+		this->name = rhs.name;
+		this->tileMap = rhs.tileMap;
+		this->bbox = rhs.bbox;
+		this->res = rhs.res;
+		this->isSpriteRender = rhs.isSpriteRender;
 	}
 
 	~TileMapRenderer()

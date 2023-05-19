@@ -15,8 +15,8 @@ public:
 	IGameObjectManager* ObjM;
 	IResourceManager* ResM;
 	ImVector<ImVec2> points;
-	Sprite* image;
-	Sprite* image2;
+	Sprite* Map_Img;
+	Sprite* Emp_Img;
 	bool opt_enable_grid = true;
 	bool Resizable = true;
 	bool TilemapWindow = false;
@@ -25,32 +25,31 @@ public:
 	bool ResetAlert = false;
 	bool AlreadyClosedAlert = false;
 
-	int tilemap_size[2] = {};
-	int tilemap_height, tilemap_width, mouse_cnt, size;
+	int input_size[2] = {};
+	int tilemap_height, tilemap_width, tilemap_size, mouse_cnt;
 	char tilemap_name[20] = {};
 	float* mouse_x = nullptr;
-	float* mouse_y = nullptr;
-	float** mouse_col = nullptr;
+	float* mouse_y = nullptr;	
 	
-	float x_unit, y_unit, width, height;
+	float x_grid_unit, y_grid_unit, width, height;
 
 	//3월 28일 타일맵 예제 + UI 내부에 이미지파일 삽입용 리소스매니저 추가 
 	LevelEditExample(IGameObjectManager* manager, IResourceManager* res, const std::string name) : ILayer(name) {
 		this->ObjM = manager;
 		this->ResM = res;
-		image = ResM->FindSprite("test");
-		image2 = ResM->FindSprite("empty");
-		width = image->GetWidth();
-		height = image->GetHeight();
+		Map_Img = ResM->FindSprite("test");
+		Emp_Img = ResM->FindSprite("empty");
+		width = Map_Img->GetWidth();
+		height = Map_Img->GetHeight();
 
 		//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
-		x_unit = 1 / 9.0f;
-		y_unit = 1 / 12.0f;
+		x_grid_unit = 1 / 9.0f;
+		y_grid_unit = 1 / 12.0f;
 		mouse_cnt = 0;
 
-		tilemap_height = tilemap_size[0];
-		tilemap_width = tilemap_size[1];
-		size = tilemap_height * tilemap_width;
+		tilemap_height = input_size[0];
+		tilemap_width = input_size[1];
+		tilemap_size = tilemap_height * tilemap_width;
 	}
 	virtual ~LevelEditExample()
 	{
@@ -121,9 +120,9 @@ public:
 
 			ImGui::InputText("Tilemap Name", tilemap_name, 20);
 			if(ImGui::Button("Save This Name") && tilemap_name) {
-				map->Init(tilemap_name, image, tilemap_width, tilemap_height);
+				map->Init(tilemap_name, Map_Img, tilemap_width, tilemap_height);
 			
-				for (int k = 0; k < tilemap_height * tilemap_width; k++) {
+				for (int k = 0; k < tilemap_size; k++) {
 					//gridX, gridY가 k / tilemap_width와 k % tilemap_width로 입력
 					map->SelectTile((int)mouse_x[k], (int)mouse_y[k], k / tilemap_width, k % tilemap_width);
 				}
@@ -134,13 +133,14 @@ public:
 				//Save시 맵은 저장되고, 창이 꺼진 뒤 새로운 입력을 위해 기존 저장 내역을 초기화
 				SavemapWindow = false;
 				TilemapWindow = false;
-				for (int i = 0; i < tilemap_width * tilemap_height; i++) {
+				for (int i = 0; i < tilemap_size; i++) {
 					mouse_x[i] = { 0 };
 					mouse_y[i] = { 0 };
 				}
 				mouse_cnt = 0;
 				tilemap_height = 0;
 				tilemap_width = 0;
+				tilemap_size = 0;
 				Resizable = true;
 			}
 			
@@ -157,9 +157,9 @@ public:
 
 			//현재 선택한 타일을 Image 형식으로 출력
 			ImGui::Text("Current Tile");
-			ImGui::Image((void*)image->Get(), ImVec2(125, 125),
-				ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit),
-				ImVec2((int)mouse_x[mouse_cnt - 1] * x_unit + x_unit, (int)mouse_y[mouse_cnt - 1] * y_unit + y_unit));
+			ImGui::Image((void*)Map_Img->Get(), ImVec2(125, 125),
+				ImVec2((int)mouse_x[mouse_cnt - 1] * x_grid_unit, (int)mouse_y[mouse_cnt - 1] * y_grid_unit),
+				ImVec2((int)mouse_x[mouse_cnt - 1] * x_grid_unit + x_grid_unit, (int)mouse_y[mouse_cnt - 1] * y_grid_unit + y_grid_unit));
 		
 			//전체 타일맵을 Image 형식으로 출력
 			ImGui::Text("Tilemap");
@@ -169,12 +169,12 @@ public:
 				for (int j = 0; j < tilemap_width; j++, k++) {
 					ImGui::SameLine();
 					if (mouse_cnt - 1 < 0 || k > mouse_cnt - 1) {
-						ImGui::Image((void*)image2->Get(), ImVec2(50, 50), ImVec2(0,0), ImVec2(10,10));
+						ImGui::Image((void*)Emp_Img->Get(), ImVec2(50, 50), ImVec2(0,0), ImVec2(10,10));
 					}
 					else{
-						ImGui::Image((void*)image->Get(), ImVec2(50, 50),
-							ImVec2((int)mouse_x[k] * x_unit, (int)mouse_y[k] * y_unit),
-							ImVec2((int)mouse_x[k] * x_unit + x_unit, (int)mouse_y[k] * y_unit + y_unit));
+						ImGui::Image((void*)Map_Img->Get(), ImVec2(50, 50),
+							ImVec2((int)mouse_x[k] * x_grid_unit, (int)mouse_y[k] * y_grid_unit),
+							ImVec2((int)mouse_x[k] * x_grid_unit + x_grid_unit, (int)mouse_y[k] * y_grid_unit + y_grid_unit));
 					}
 				}
 				ImGui::Text("");	//줄바꿈을 위해 빈 텍스트 출력
@@ -190,13 +190,14 @@ public:
 				ResetAlert = true;
 				ImGui::End();
 				
-				for (int i = 0; i < tilemap_width * tilemap_height; i++) {
+				for (int i = 0; i < tilemap_size; i++) {
 					mouse_x[i] = { 0 };
 					mouse_y[i] = { 0 };
 				}
 				mouse_cnt = 0;
 				tilemap_height = 0;
 				tilemap_width = 0;
+				tilemap_size = 0;
 				Resizable = true;
 				TilemapWindow = false;
 			}
@@ -227,29 +228,28 @@ public:
 			ImGui::PushItemWidth(100);
 
 			//Resizable이 비활성화되면 인풋에 입력된 숫자를 무시함
-			//동일한 크기의 배열로 내용만 초기화하고 싶을 땐 리셋 후 
-			//다른 크기로 배열을 새로이 만든 뒤, 한번 더 리셋한 다음
-			//다시 원래 원하던 크기의 배열로 생성해야 하는 문제가 있음
-			if (ImGui::InputInt2(" ", tilemap_size) && Resizable) {
-				tilemap_height = tilemap_size[0];
-				tilemap_width = tilemap_size[1];
+			if (ImGui::InputInt2(" ", input_size) && Resizable) {
+				tilemap_height = input_size[0];
+				tilemap_width = input_size[1];
+				tilemap_size = tilemap_height * tilemap_width;
 			}
 
 			if (ImGui::Button("Open Tilemap")) {
 				//new[]로 동적 배열 할당 및 초기화
-				mouse_x = new float[tilemap_height * tilemap_width] { };
-				mouse_y = new float[tilemap_height * tilemap_width] { };
+				mouse_x = new float[tilemap_size] { };
+				mouse_y = new float[tilemap_size] { };
 				
 				if (!Resizable && !TilemapWindow) {
 					AlreadyClosedAlert = true;
 
-					for (int i = 0; i < tilemap_width * tilemap_height; i++) {
+					for (int i = 0; i < tilemap_size; i++) {
 						mouse_x[i] = { 0 };
 						mouse_y[i] = { 0 };
 					}
 					mouse_cnt = 0;
 					tilemap_height = 0;
 					tilemap_width = 0;
+					tilemap_size = 0;
 					Resizable = true;
 				}
 
@@ -283,7 +283,7 @@ public:
 
 			//캔버스 draw_list 창 내부에 이미지 삽입, 배경색과 배경테두리보다 나중에 호출되어 상단에 그려짐 
 			//grid보다 먼저 호출되어 이미지 위에 grid가 그려질 수 있게함
-			draw_list->AddImage((void*)image->Get(), origin, 
+			draw_list->AddImage((void*)Map_Img->Get(), origin, 
 				ImVec2(origin.x + width, origin.y + height), 
 				ImVec2(0, 0), ImVec2(1, 1));
 
@@ -293,7 +293,7 @@ public:
 				points.push_back(mouse_pos_in_canvas);
 
 				//동적 배열의 크기를 초과하지 않는 범위에서 마우스 좌표를 저장
-				if(mouse_cnt < tilemap_width * tilemap_height)	{
+				if(mouse_cnt < tilemap_size)	{
 					//현재 마우스 좌표를 Grid 한 칸 크기인 32픽셀로 나누어 표현
 					mouse_x[mouse_cnt] = mouse_pos_in_canvas.x / 32;
 					mouse_y[mouse_cnt] = mouse_pos_in_canvas.y / 32;

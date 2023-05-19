@@ -95,7 +95,7 @@ int GameObjectMapper::lua_GameObject_LoadAnimation(lua_State* lua)
             render->AddAnimation2D("idle", 0, 0, 172, 188, 1, 20);
         }
     }
-    else if (SkinnedMeshRenderer* render = dynamic_cast<SkinnedMeshRenderer*>(obj->GetComponent(Component::Type::RENDERER_SPRITE)))
+    else if (SkinnedMeshRenderer* render = dynamic_cast<SkinnedMeshRenderer*>(obj->GetComponent(Component::Type::RENDERER_SKINNED_MODEL)))
     {
         std::string name = render->GetName();
         if (name.compare(animationPreset) == 0)

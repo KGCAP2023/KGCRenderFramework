@@ -192,6 +192,7 @@ public:
 				mouse_x[mouse_cnt] = 0;
 				mouse_y[mouse_cnt] = 0;
 			}
+			ImGui::SameLine();
 
 			//동적 배열에 저장된 값과 배열 크기를 모두 초기화, 다시 킬 때 새롭게 값을 받기 위해 카운터도 함께 초기화
 			//5월 8일 초기화 시 창이 아예 닫히도록 변경

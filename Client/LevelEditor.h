@@ -188,9 +188,11 @@ public:
 			ImGui::SameLine();
 
 			if (ImGui::Button("Undo")) {
-				mouse_cnt--;
-				mouse_x[mouse_cnt] = 0;
-				mouse_y[mouse_cnt] = 0;
+				if(mouse_cnt > 0){
+					mouse_cnt--;
+					mouse_x[mouse_cnt] = 0;
+					mouse_y[mouse_cnt] = 0;
+				}
 			}
 			ImGui::SameLine();
 

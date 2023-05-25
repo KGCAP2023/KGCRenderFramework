@@ -187,10 +187,16 @@ public:
 				SavemapWindow = true;
 			ImGui::SameLine();
 
+			if (ImGui::Button("Undo")) {
+				mouse_cnt--;
+				mouse_x[mouse_cnt] = 0;
+				mouse_y[mouse_cnt] = 0;
+			}
+
 			//동적 배열에 저장된 값과 배열 크기를 모두 초기화, 다시 킬 때 새롭게 값을 받기 위해 카운터도 함께 초기화
 			//5월 8일 초기화 시 창이 아예 닫히도록 변경
 			//5월 15일 창의 x버튼으로 창을 껐을 때도 Reset 버튼을 눌렀을 때와 동일하게 창이 종료되도록 변경
-			if (ImGui::Button("Reset Tile")) {
+			if (ImGui::Button("Reset Every Tile")) {
 				ResetAlert = true;
 				ImGui::End();
 				

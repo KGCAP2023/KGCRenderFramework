@@ -371,15 +371,15 @@ public:
 
 					}
 					ImGui::PushItemWidth(100);
-					float x = render4->GetLayerDepth();
+					float spriteLayer = render4->GetLayerDepth();
 					ImGui::Text("Layer");
 					ImGui::SameLine();
-					ImGui::InputFloat("##layer", &x, 0.2);
-					if (x < 0)
-						x = 0;
-					if (x > 1)
-						x = 1;
-					render4->SetLayerDepth(x);
+					ImGui::InputFloat("##layer", &spriteLayer, 0.2);
+					if (spriteLayer < 0)
+						spriteLayer = 0;
+					if (spriteLayer > 1)
+						spriteLayer = 1;
+					render4->SetLayerDepth(spriteLayer);
 					ImGui::Separator();
 
 					break;

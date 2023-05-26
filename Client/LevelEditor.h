@@ -21,6 +21,7 @@ public:
 	bool Resizable = true;
 	bool TilemapWindow = false;
 	bool SavemapWindow = false;
+	bool TilemapOpened = false;
 	bool SaveAlert = false;
 	bool NullName = false;
 	bool ResetAlert = false;

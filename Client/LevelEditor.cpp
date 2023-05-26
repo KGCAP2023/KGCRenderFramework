@@ -52,7 +52,7 @@ void LevelEditExample::Render()
 		ImGui::Text("Change Map");
 		ImGui::SameLine();
 
-		//교체할 이미지 이름을 입력받고 이름이 존재할 시 Map_Img를 해당 이미지로 변경, 너비와 높이, 그리드 값 재계산
+		//교체할 이미지 이름을 입력받고 이름이 존재할 시 Map_Img를 해당 이미지로 변경, 너비와 높이, 그리드 값 최신화
 		ImGui::InputText(" ", Original_Img, 20);
 		ImGui::SameLine();
 		if (ImGui::Button("Change")) {
@@ -97,11 +97,12 @@ void LevelEditExample::Render()
 				Resizable = true;
 			}
 
-
 			//타일맵 선택 창이 켜진 이후에 배열 크기가 변경되지 못하게 막음
+			//5월 26일 이미지를 스크롤을 이용해 선택하지 않도록 창이 켜지기 전 경고 메세지를 출력
 			if (tilemap_height != 0 && tilemap_width != 0) {
 				Resizable = false;
 				TilemapWindow = true;
+				TilemapOpened = true;
 			}
 		}
 		ImGui::PopItemWidth();
@@ -150,9 +151,9 @@ void LevelEditExample::Render()
 		draw_list->PushClipRect(canvas_p0, canvas_p1, true);
 		if (opt_enable_grid) {
 			const float GRID_STEP = 32.0f;
-			for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
+			for (float x = fmodf(scrolling.x, GRID_STEP); x < width; x += GRID_STEP)
 				draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 250));
-			for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
+			for (float y = fmodf(scrolling.y, GRID_STEP); y < height; y += GRID_STEP)
 				draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 250));
 		}
 		for (int n = 0; n < points.Size; n += 2)
@@ -238,7 +239,7 @@ void LevelEditExample::SelectTile()
 				if (mouse_cnt - 1 < 0 || k > mouse_cnt - 1) {
 					ImGui::Image((void*)Emp_Img->Get(), ImVec2(50, 50), ImVec2(0, 0), ImVec2(10, 10));
 				}
-				//사용자가 이미지를 클릭해 정규화된 좌표가 저장된 부분은 해당 좌표가 포함된 이미지를 출력
+				//사용자가 이미지를 클릭해 정규화된 좌표가 저장된 부분은 해당 좌표가 포함된 이미지 그리드를 출력
 				else {
 					ImGui::Image((void*)Map_Img->Get(), ImVec2(50, 50),
 						ImVec2((int)mouse_x[k] * x_grid_unit, (int)mouse_y[k] * y_grid_unit),
@@ -252,7 +253,8 @@ void LevelEditExample::SelectTile()
 			SavemapWindow = true;
 		ImGui::SameLine();
 
-		//배열에 가장 마지막에 입력된 좌표값을 삭제, 클릭된 횟수 또한 한번 줄임
+		//배열에 가장 마지막에 입력된 좌표값을 삭제하고 클릭된 횟수를 -1
+		//배열의 첫번째 값까지만 삭제 가능하도록 if문으로 제한을 걸어둠
 		if (ImGui::Button("Undo")) {
 			if (mouse_cnt > 0) {
 				mouse_cnt--;
@@ -287,6 +289,20 @@ void LevelEditExample::SelectTile()
 
 void LevelEditExample::Alert()
 {
+	//타일맵 선택 시 LevelEditor 창 크기를 이미지가 다 들어가도록 조정하게끔 알림
+	if (TilemapOpened)
+		ImGui::OpenPopup("Alert");
+
+	if(ImGui::BeginPopupModal("Alert", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text(u8"Please Adjust Level Editor Window's Size");
+		ImGui::Text(u8"To Fully Contains The Map Image");
+		if (ImGui::Button("OK") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
+			ImGui::CloseCurrentPopup();
+			TilemapOpened = false;
+		}
+		ImGui::EndPopup();
+	}
+
 	//저장완료 알림
 	if (SaveAlert)
 		ImGui::OpenPopup("Save Map");

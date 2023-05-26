@@ -371,15 +371,15 @@ public:
 
 					}
 					ImGui::PushItemWidth(100);
-					float x = render4->GetLayerDepth();
+					float spriteLayer = render4->GetLayerDepth();
 					ImGui::Text("Layer");
 					ImGui::SameLine();
-					ImGui::InputFloat("##layer", &x, 0.2);
-					if (x < 0)
-						x = 0;
-					if (x > 1)
-						x = 1;
-					render4->SetLayerDepth(x);
+					ImGui::InputFloat("##layer", &spriteLayer, 0.2);
+					if (spriteLayer < 0)
+						spriteLayer = 0;
+					if (spriteLayer > 1)
+						spriteLayer = 1;
+					render4->SetLayerDepth(spriteLayer);
 					ImGui::Separator();
 
 					break;
@@ -467,6 +467,16 @@ public:
 						Logger::AddLog("Delete Component : TileMap");
 
 					}
+					ImGui::PushItemWidth(100);
+					float TileLayer = render6->GetLayerDepth();
+					ImGui::Text("Layer");
+					ImGui::SameLine();
+					ImGui::InputFloat("##layer", &TileLayer, 0.2);
+					if (TileLayer < 0)
+						TileLayer = 0;
+					if (TileLayer > 1)
+						TileLayer = 1;
+					render6->SetLayerDepth(TileLayer);
 					ImGui::Separator();
 
 					break;
@@ -686,7 +696,7 @@ public:
 
 
 		float minScaleValue = 0.01f;
-		float maxScaleValue = 3.0f;
+		float maxScaleValue = 10.0f;
 
 		if (posX < minPosX) {
 			posX = minPosX;
@@ -756,7 +766,7 @@ public:
 		float maxRotValue = 3.16f;
 
 		float minScaleValue = 0.01f;
-		float maxScaleValue = 3.0f;
+		float maxScaleValue = 10.0f;
 
 		/// <summary>
 		/// Pos x , y ,z 에 대한 값이 -100 보다 작거나 100보다 크면 -100 ,100 값으로 치환 시켜주는 곳
@@ -904,15 +914,15 @@ public:
 			ImGui::Text("SCALE");
 			ImGui::Text("X:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale", &scale.x, 0.01, 3);
+			ImGui::SliderFloat(u8"##scale", &scale.x, 0.01, 10);
 			ImGui::SameLine();
 			ImGui::Text("Y:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale1", &scale.y, 0.01, 3);
+			ImGui::SliderFloat(u8"##scale1", &scale.y, 0.01, 10);
 			ImGui::SameLine();
 			ImGui::Text("Z:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale2", &scale.z, 0.01, 3);
+			ImGui::SliderFloat(u8"##scale2", &scale.z, 0.01, 10);
 			ImGui::PopItemWidth();
 
 			ImGui::Separator();
@@ -1361,15 +1371,15 @@ public:
 				ImGui::Text("SCALE");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 				ImGui::PopItemWidth();
 
 
@@ -1410,15 +1420,15 @@ public:
 				ImGui::Text("SCALE");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 3);
+				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 10);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
+				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 10);
 				ImGui::PopItemWidth();
 
 
@@ -1473,7 +1483,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1506,7 +1516,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1560,15 +1570,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1612,15 +1622,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 3);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1663,7 +1673,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1690,7 +1700,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1745,15 +1755,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1794,15 +1804,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 001, 3);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 001, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1863,7 +1873,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1896,7 +1906,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1950,15 +1960,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2002,15 +2012,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.01, 3);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.01, 3);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2054,7 +2064,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2081,7 +2091,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::PopItemWidth();
 
 

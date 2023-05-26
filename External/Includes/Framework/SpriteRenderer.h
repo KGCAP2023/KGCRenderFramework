@@ -129,6 +129,32 @@ public:
 		}
 	}
 
+	float GetWidth()
+	{
+		if (selectedAnimation != nullptr)
+			return selectedAnimation->GetWidth();
+		else
+		{
+			if (sprite != nullptr)
+				return sprite->GetWidth();
+			else
+				return 0;
+		}
+	}
+			
+	float GetHeight()
+	{
+		if (selectedAnimation != nullptr)
+			return selectedAnimation->GetHeight();
+		else
+		{
+			if (sprite != nullptr)
+				return sprite->GetHeight();
+			else
+				return 0;
+		}
+	}
+
 private:
 	float layer = 0.0f;
 	SpriteEffects effects = SpriteEffects_None;

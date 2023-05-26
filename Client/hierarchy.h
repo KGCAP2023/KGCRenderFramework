@@ -2278,12 +2278,10 @@ public:
 
 							if (render9 != nullptr)
 							{
-								a.max.x = a.min.x + render9->GetSprite()->GetWidth()* current->at(Dobj)->GetGameObject()->transform.scale.x;
-								a.max.y = a.min.y + render9->GetSprite()->GetHeight()* current->at(Dobj)->GetGameObject()->transform.scale.x;
+								a.max.x = a.min.x + render9->GetWidth()* current->at(Dobj)->GetGameObject()->transform.scale.x;
+								a.max.y = a.min.y + render9->GetHeight()* current->at(Dobj)->GetGameObject()->transform.scale.x;
 
 							}
-
-
 
 							b.min.x = current->at(Cobj)->GetGameObject()->transform.position.x;
 							b.min.y = current->at(Cobj)->GetGameObject()->transform.position.y;
@@ -2292,8 +2290,8 @@ public:
 
 							if (render10 != nullptr)
 							{
-								b.max.x = b.min.x + render10->GetSprite()->GetWidth() * current->at(Cobj)->GetGameObject()->transform.scale.x;
-								b.max.y = b.min.y + render10->GetSprite()->GetHeight() * current->at(Cobj)->GetGameObject()->transform.scale.x;
+								b.max.x = b.min.x + render10->GetWidth() * current->at(Cobj)->GetGameObject()->transform.scale.x;
+								b.max.y = b.min.y + render10->GetHeight() * current->at(Cobj)->GetGameObject()->transform.scale.x;
 
 							}
 							if (AabbAabbIntersection(a, b) == 1)

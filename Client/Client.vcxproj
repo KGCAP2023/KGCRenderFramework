@@ -159,6 +159,7 @@
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="KGCRenderFramework.cpp" />
+    <ClCompile Include="LevelEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugView.h" />

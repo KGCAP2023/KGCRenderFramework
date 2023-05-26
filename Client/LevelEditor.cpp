@@ -14,13 +14,16 @@ LevelEditExample::LevelEditExample(IGameObjectManager* manager, IResourceManager
 	Emp_Img = ResM->FindSprite("empty");
 	width = Map_Img->GetWidth();
 	height = Map_Img->GetHeight();
+	Changed_Map_Height = 0;
+	Changed_Map_Width = 0;
 
-	//이미지 파일의 크기가 Grid 칸 기준 옆으로 9칸, 아래로 12칸
-	x_grid_unit = 1 / 9.0f;
-	y_grid_unit = 1 / 12.0f;
+	//기본 설정된 Sand.PNG 이미지 파일의 크기는 Grid 칸 기준 옆으로 9칸, 아래로 12칸
+	//Grid는 이미지 파일을 32비트씩으로 나눈 것
+	x_grid_unit = 1 / (width / 32.0f);
+	y_grid_unit = 1 / (height / 32.0f);
 	mouse_cnt = 0;
 
-	//타일맵의 크기는 사용자가 InputInt에 입력하는 숫자 2개로 결정된다.
+	//타일맵의 크기는 사용자가 InputInt에 입력하는 숫자 2개로 결정
 	tilemap_height = input_size[0];
 	tilemap_width = input_size[1];
 	tilemap_size = tilemap_height * tilemap_width;
@@ -54,8 +57,14 @@ void LevelEditExample::Render()
 		ImGui::InputText(" ", Original_Img, 20);
 		ImGui::SameLine();
 		if (ImGui::Button("Change")) {
-			if (ResM->FindSprite(Original_Img) != nullptr)
+			if (ResM->FindSprite(Original_Img) != nullptr) {
 				Map_Img = ResM->FindSprite(Original_Img);
+
+				width = Map_Img->GetWidth();
+				height = Map_Img->GetHeight();
+				x_grid_unit = 1 / (width / 32.0f);
+				y_grid_unit = 1 / (height / 32.0f);
+			}
 		}
 
 		ImGui::Text("Tile Map Size");

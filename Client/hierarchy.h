@@ -2255,7 +2255,7 @@ public:
 
 	void Delete()
 	{
-		if (current->size() >= 2)
+		if (current->size() >= 2 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 		{
 
 			for (int Cobj = 0; Cobj < current->size(); Cobj++)

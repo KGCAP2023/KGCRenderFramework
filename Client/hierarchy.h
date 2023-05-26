@@ -999,7 +999,6 @@ public:
 		/// </summary>
 		Warning();
 		Delete();
-		std::cout << "z";
 		
 		/// 오브젝트 추가하는 창 
 		if (active)

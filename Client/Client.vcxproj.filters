@@ -55,6 +55,9 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>리소스 파일\소스 파일\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="LevelEditor.cpp">
+      <Filter>리소스 파일\소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

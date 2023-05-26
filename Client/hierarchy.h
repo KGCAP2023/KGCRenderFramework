@@ -62,7 +62,17 @@ public:
 	{
 		_delete.push_back(type);
 	}
+	//오브젝트,피오브젝트,일반 상태로 구분 하기 위함
+	void SetObject(std::string object_Type)
+	{
+		this->object_Type = object_Type;
 
+	}
+
+	std::string FindObjectType()
+	{
+		return this->object_Type;
+	}
 	//삭제예정 컴포넌트 일괄삭제 
 	void DeleteComponent()
 	{
@@ -85,11 +95,57 @@ public:
 		this->detail = b;
 	}
 
+
+	/// <summary>
+	/// 충돌 관련 bool 함수 object는 충돌 DeObject는 충돌 받는 object로 noraml는 그냥 상태
+	/// </summary>
+	/// <returns></returns>
+	bool Type_Object()
+	{
+		return object;
+	}
+
+	bool Type_DeObject()
+	{
+		return DeObject;
+	}
+	
+	bool Type_normal()
+	{
+		return normal;
+	}
+
+
+	/// <summary>
+	/// bool 변수  설정	/// 
+	/// </summary>
+	/// <param name="h"></param>
+	/// 
+	/// 
+
+	void Set_Type_Object(bool b)
+	{
+		this->object = b;
+	}
+
+	void Set_Type_DeObject(bool b)
+	{
+		this->DeObject = b;
+	}
+
+	void Set_Type_normal(bool b)
+	{
+		this->normal = b;
+	}
 	void Copy(HierarchyObject* h)
 	{
 		this->map1 = h->map1;
 		strcpy_s(this->script_name, 20 * sizeof(char), h->script_name);
 		this->detail = h->detail;
+		this->object = h->object;
+		this->DeObject = h->DeObject;
+		this->normal = h->normal;
+		this->object_Type = h->object_Type;
 	}
 
 private:
@@ -98,6 +154,11 @@ private:
 	char script_name[20]{};
 	bool detail = false;
 	std::vector<Component::Type> _delete;
+	std::string object_Type;
+	bool object = false;
+	bool DeObject = false;
+	bool normal = false;
+
 };
 static bool testMode = false;
 
@@ -144,6 +205,13 @@ public:
 	bool delete_script = false;
 	bool show_not_exist = false;
 	char name[20]{};
+	int countObject = 0;
+
+	// check object 상태 결정하기
+	bool check_object = false;
+	bool check_DeObject = false;
+	bool check_normal = false;
+	bool One_Object = false;
 
 	int g = 0;
 
@@ -215,7 +283,21 @@ public:
 	}
 	virtual void Update()
 	{
+		Delete();
 
+	}
+	
+	struct AABB
+	{
+		XMFLOAT2 max;
+		XMFLOAT2 min;
+	};
+
+	bool AabbAabbIntersection(AABB a, AABB b)
+	{
+		if (a.max.x < b.min.x || a.min.x > b.max.x) return 0;
+		if (a.max.y < b.min.y || a.min.y > b.max.y) return 0;
+		return 1;
 	}
 
 	void change()
@@ -239,7 +321,6 @@ public:
 		}
 		else
 		{
-			std::cout << 'z';
 			current = &gamelist;
 			// 날려주기
 			gameTestList.clear();
@@ -365,21 +446,71 @@ public:
 						{
 							Hobj->AddDeleteComponent(Component::Type::RENDERER_SPRITE);
 							Hobj->DeleteMappingValue(Component::Type::RENDERER_SPRITE);
+							Hobj->Set_Type_DeObject(false);
+							Hobj->Set_Type_Object(false);
+							Hobj->Set_Type_normal(true);
+
 							Logger::AddLog("Delete Component : Sprite");
 
 						}
 
 					}
 					ImGui::PushItemWidth(100);
-					float x = render4->GetLayerDepth();
+					float spriteLayer = render4->GetLayerDepth();
 					ImGui::Text("Layer");
 					ImGui::SameLine();
-					ImGui::InputFloat("##layer", &x, 0.2);
-					if (x < 0)
-						x = 0;
-					if (x > 1)
-						x = 1;
-					render4->SetLayerDepth(x);
+					ImGui::InputFloat("##layer", &spriteLayer, 0.2);
+					if (spriteLayer < 0)
+						spriteLayer = 0;
+					if (spriteLayer > 1)
+						spriteLayer = 1;
+					render4->SetLayerDepth(spriteLayer);
+
+					check_object = Hobj->Type_Object();
+					check_DeObject = Hobj->Type_DeObject();
+					check_normal = Hobj->Type_normal();
+
+	
+					if (ImGui::Checkbox("Trace Object", &check_object) == 1 && countObject == 0)
+					{
+						for (int kk = 0; kk < current->size(); kk++)
+						{
+							if (current->at(kk)->Type_Object() == true)
+							{
+								int countObject = 1;
+								Hobj->Set_Type_Object(false);
+							}
+
+						}
+						if (countObject == 0)
+						{
+							Hobj->SetObject("object");
+							Hobj->Set_Type_Object(true);
+							Hobj->Set_Type_DeObject(false);
+							Hobj->Set_Type_normal(false);
+						}
+					}
+					ImGui::SameLine();
+					if (ImGui::Checkbox("Target Object", &check_DeObject) == 1)
+					{
+
+						Hobj->SetObject("DeObject");
+						Hobj->Set_Type_Object(false);
+						Hobj->Set_Type_DeObject(true);
+						Hobj->Set_Type_normal(false);
+					}
+					ImGui::SameLine();
+					if (ImGui::Checkbox("default", &check_normal) == 1)
+					{
+
+						Hobj->SetObject("normal");
+						Hobj->Set_Type_Object(false);
+						Hobj->Set_Type_DeObject(false);
+						Hobj->Set_Type_normal(true);
+					}
+
+
+
 					ImGui::Separator();
 
 					break;
@@ -467,6 +598,16 @@ public:
 						Logger::AddLog("Delete Component : TileMap");
 
 					}
+					ImGui::PushItemWidth(100);
+					float TileLayer = render6->GetLayerDepth();
+					ImGui::Text("Layer");
+					ImGui::SameLine();
+					ImGui::InputFloat("##layer", &TileLayer, 0.2);
+					if (TileLayer < 0)
+						TileLayer = 0;
+					if (TileLayer > 1)
+						TileLayer = 1;
+					render6->SetLayerDepth(TileLayer);
 					ImGui::Separator();
 
 					break;
@@ -486,9 +627,9 @@ public:
 					ImGui::InputText("name", script_name, IM_ARRAYSIZE(script_name));
 					ImGui::SameLine();
 
-					if (ImGui::Button("input")&&script_name[0]!='\0')
+					if (ImGui::Button("input") && script_name[0] != '\0')
 					{
-						
+
 						std::string s(script_name);
 						std::string path = "..\\Lua\\";
 						std::string path2 = ".lua";
@@ -686,7 +827,7 @@ public:
 
 
 		float minScaleValue = 0.01f;
-		float maxScaleValue = 3.0f;
+		float maxScaleValue = 10.0f;
 
 		if (posX < minPosX) {
 			posX = minPosX;
@@ -756,7 +897,7 @@ public:
 		float maxRotValue = 3.16f;
 
 		float minScaleValue = 0.01f;
-		float maxScaleValue = 3.0f;
+		float maxScaleValue = 10.0f;
 
 		/// <summary>
 		/// Pos x , y ,z 에 대한 값이 -100 보다 작거나 100보다 크면 -100 ,100 값으로 치환 시켜주는 곳
@@ -853,12 +994,12 @@ public:
 
 	virtual void Render()
 	{
-
 		/// <summary>
 		/// 정리 해둔 팝업 창 뛰우는 코드 모아둔 함수 추가
 		/// </summary>
 		Warning();
-
+		Delete();
+		
 		/// 오브젝트 추가하는 창 
 		if (active)
 		{
@@ -904,15 +1045,15 @@ public:
 			ImGui::Text("SCALE");
 			ImGui::Text("X:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale", &scale.x, 0.01, 3);
+			ImGui::SliderFloat(u8"##scale", &scale.x, 0.01, 10);
 			ImGui::SameLine();
 			ImGui::Text("Y:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale1", &scale.y, 0.01, 3);
+			ImGui::SliderFloat(u8"##scale1", &scale.y, 0.01, 10);
 			ImGui::SameLine();
 			ImGui::Text("Z:");
 			ImGui::SameLine();
-			ImGui::SliderFloat(u8"##scale2", &scale.z, 0.01, 3);
+			ImGui::SliderFloat(u8"##scale2", &scale.z, 0.01, 10);
 			ImGui::PopItemWidth();
 
 			ImGui::Separator();
@@ -995,7 +1136,6 @@ public:
 
 
 			}
-
 
 
 			//object 리스트 보여주는 곳
@@ -1102,7 +1242,10 @@ public:
 							GameObject* temp = current->at(selected)->GetGameObject();
 							SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
 							current->at(selected)->GetGameObject()->AddComponent(render1);
+							current->at(selected)->SetObject("normal");
 							component_active = false;
+							current->at(selected)->GetGameObject()->SetActive(true);
+
 							Logger::AddLog("Add Sprite");
 
 							break;
@@ -1117,6 +1260,8 @@ public:
 					GameObject* temp = current->at(selected)->GetGameObject();
 					SpriteRenderer* render1 = new SpriteRenderer(temp, (ResourceManager*)this->ResM);
 					current->at(selected)->GetGameObject()->AddComponent(render1);
+					current->at(selected)->SetObject("normal");
+					current->at(selected)->GetGameObject()->SetActive(true);
 					component_active = false;
 					Logger::AddLog("Add Sprite");
 
@@ -1361,15 +1506,15 @@ public:
 				ImGui::Text("SCALE");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+				ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+				ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+				ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 				ImGui::PopItemWidth();
 
 
@@ -1410,15 +1555,15 @@ public:
 				ImGui::Text("SCALE");
 				ImGui::Text("X:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+				ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 				ImGui::SameLine();
 				ImGui::Text("Y:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 3);
+				ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 10);
 				ImGui::SameLine();
 				ImGui::Text("Z:");
 				ImGui::SameLine();
-				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
+				ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 10);
 				ImGui::PopItemWidth();
 
 
@@ -1473,7 +1618,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1506,7 +1651,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1560,15 +1705,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1612,15 +1757,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 3);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.1, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1663,7 +1808,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1690,7 +1835,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1745,15 +1890,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1794,15 +1939,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 001, 3);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 001, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 3);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1863,7 +2008,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1896,7 +2041,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -1950,15 +2095,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale1", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale2", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2002,15 +2147,15 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text("X:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Y:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.01, 3);
+						ImGui::InputFloat(u8"##scale4", &obj->transform.scale.y, 0.01, 10);
 						ImGui::SameLine();
 						ImGui::Text("Z:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.01, 3);
+						ImGui::InputFloat(u8"##scale5", &obj->transform.scale.z, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2054,7 +2199,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 3);
+						ImGui::SliderFloat(u8"##scale", &obj->transform.scale.x, 0.01, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2081,7 +2226,7 @@ public:
 						ImGui::Text("SCALE");
 						ImGui::Text(u8"크기:");
 						ImGui::SameLine();
-						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 3);
+						ImGui::InputFloat(u8"##scale3", &obj->transform.scale.x, 0.1, 10);
 						ImGui::PopItemWidth();
 
 
@@ -2108,4 +2253,65 @@ public:
 
 	}
 
+	void Delete()
+	{
+		if (current->size() >= 2 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
+		{
+
+			for (int Cobj = 0; Cobj < current->size(); Cobj++)
+			{
+				if (current->at(Cobj)->FindObjectType().compare("object") == 0)
+				{
+					for (int Dobj = 0; Dobj < current->size(); Dobj++)
+					{
+						if (current->at(Dobj)->FindObjectType().compare("DeObject") == 0)
+						{
+
+
+							AABB a = { {0.0f,0.0f}, {0.0f, 0.0f} }; //max , min
+							AABB b = { {0.0f,0.0f}, {0.0f, 0.0f} };
+							
+							a.min.x = current->at(Dobj)->GetGameObject()->transform.position.x;
+							a.min.y = current->at(Dobj)->GetGameObject()->transform.position.y;
+
+							SpriteRenderer* render9 = dynamic_cast<SpriteRenderer*>(current->at(Dobj)->GetGameObject()->GetComponent(Component::Type::RENDERER_SPRITE));
+
+							if (render9 != nullptr)
+							{
+								a.max.x = a.min.x + render9->GetWidth()* current->at(Dobj)->GetGameObject()->transform.scale.x;
+								a.max.y = a.min.y + render9->GetHeight()* current->at(Dobj)->GetGameObject()->transform.scale.x;
+
+							}
+
+							b.min.x = current->at(Cobj)->GetGameObject()->transform.position.x;
+							b.min.y = current->at(Cobj)->GetGameObject()->transform.position.y;
+
+							SpriteRenderer* render10 = dynamic_cast<SpriteRenderer*>(current->at(Cobj)->GetGameObject()->GetComponent(Component::Type::RENDERER_SPRITE));
+
+							if (render10 != nullptr)
+							{
+								b.max.x = b.min.x + render10->GetWidth() * current->at(Cobj)->GetGameObject()->transform.scale.x;
+								b.max.y = b.min.y + render10->GetHeight() * current->at(Cobj)->GetGameObject()->transform.scale.x;
+
+							}
+							if (AabbAabbIntersection(a, b) == 1)
+							{
+
+								current->at(Dobj)->GetGameObject()->SetActive(false);
+
+							}
+							if (AabbAabbIntersection(a, b) == 0)
+							{
+
+								current->at(Dobj)->GetGameObject()->SetActive(true);
+
+							}
+
+						}
+
+					}
+				}
+			}
+		}
+	}
 };

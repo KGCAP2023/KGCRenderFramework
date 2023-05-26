@@ -467,6 +467,16 @@ public:
 						Logger::AddLog("Delete Component : TileMap");
 
 					}
+					ImGui::PushItemWidth(100);
+					float TileLayer = render6->GetLayerDepth();
+					ImGui::Text("Layer");
+					ImGui::SameLine();
+					ImGui::InputFloat("##layer", &TileLayer, 0.2);
+					if (TileLayer < 0)
+						TileLayer = 0;
+					if (TileLayer > 1)
+						TileLayer = 1;
+					render6->SetLayerDepth(TileLayer);
 					ImGui::Separator();
 
 					break;

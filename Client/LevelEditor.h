@@ -27,7 +27,7 @@ public:
 	bool AlreadyClosedAlert = false;
 
 	int input_size[2] = {};
-	int tilemap_height, tilemap_width, tilemap_size, mouse_cnt, Changed_Map_Width, Changed_Map_Height;
+	int tilemap_height, tilemap_width, tilemap_size, mouse_cnt;
 	char Original_Img[20] = {};
 	char tilemap_name[20] = {};
 	float* mouse_x = nullptr;

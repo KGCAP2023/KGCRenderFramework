@@ -14,8 +14,6 @@ LevelEditExample::LevelEditExample(IGameObjectManager* manager, IResourceManager
 	Emp_Img = ResM->FindSprite("empty");
 	width = Map_Img->GetWidth();
 	height = Map_Img->GetHeight();
-	Changed_Map_Height = 0;
-	Changed_Map_Width = 0;
 
 	//기본 설정된 Sand.PNG 이미지 파일의 크기는 Grid 칸 기준 옆으로 9칸, 아래로 12칸
 	//Grid는 이미지 파일을 32비트씩으로 나눈 것
@@ -54,6 +52,7 @@ void LevelEditExample::Render()
 		ImGui::Text("Change Map");
 		ImGui::SameLine();
 
+		//교체할 이미지 이름을 입력받고 이름이 존재할 시 Map_Img를 해당 이미지로 변경, 너비와 높이, 그리드 값 재계산
 		ImGui::InputText(" ", Original_Img, 20);
 		ImGui::SameLine();
 		if (ImGui::Button("Change")) {
@@ -67,7 +66,7 @@ void LevelEditExample::Render()
 			}
 		}
 
-		ImGui::Text("Tile Map Size");
+		ImGui::Text("Tilemap Size");
 		ImGui::SameLine();
 
 		//Resizable이 비활성화되면 인풋에 입력된 숫자를 무시함
@@ -76,6 +75,7 @@ void LevelEditExample::Render()
 			tilemap_width = input_size[1];
 			tilemap_size = tilemap_height * tilemap_width;
 		}
+		ImGui::SameLine();
 
 		if (ImGui::Button("Open Tilemap")) {
 			//new[]로 동적 배열 할당 및 초기화
@@ -159,6 +159,8 @@ void LevelEditExample::Render()
 			draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
 		draw_list->PopClipRect();
 
+		//작은 창 내에서도 이미지를 전부 볼 수 있도록 스크롤 기능을 넣기 위해 이미지 크기만큼의 더미 ui를 집어넣음
+		ImGui::Dummy(ImVec2(width, height - 373.0f));
 		ImGui::End();
 	}
 }

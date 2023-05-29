@@ -2255,8 +2255,7 @@ public:
 
 	void Delete()
 	{
-		if (current->size() >= 2 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
-		{
+		
 
 			for (int Cobj = 0; Cobj < current->size(); Cobj++)
 			{
@@ -2300,11 +2299,14 @@ public:
 								current->at(Dobj)->GetGameObject()->SetActive(false);
 
 							}
-							if (AabbAabbIntersection(a, b) == 0)
+							if (current->size() >= 2 && framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
 							{
+								if (AabbAabbIntersection(a, b) == 0)
+								{
 
-								current->at(Dobj)->GetGameObject()->SetActive(true);
+									current->at(Dobj)->GetGameObject()->SetActive(true);
 
+								}
 							}
 
 						}
@@ -2313,5 +2315,5 @@ public:
 				}
 			}
 		}
-	}
+	
 };

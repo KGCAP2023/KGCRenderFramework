@@ -2293,11 +2293,14 @@ public:
 								b.max.y = b.min.y + render10->GetHeight() * current->at(Cobj)->GetGameObject()->transform.scale.x;
 
 							}
-							if (AabbAabbIntersection(a, b) == 1)
+							if (current->size() >= 2 && framework->GetCurrentGameObjectManager()->GetMode() == SceneMode::PLAY)
 							{
+								if (AabbAabbIntersection(a, b) == 1)
+								{
 
-								current->at(Dobj)->GetGameObject()->SetActive(false);
+									current->at(Dobj)->GetGameObject()->SetActive(false);
 
+								}
 							}
 							if (current->size() >= 2 && framework->GetCurrentGameObjectManager()->GetMode() != SceneMode::PLAY)
 							{

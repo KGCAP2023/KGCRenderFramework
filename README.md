@@ -6,6 +6,8 @@
 
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)![Lua](https://img.shields.io/badge/lua%20Script-%232C2D72.svg?style=for-the-badge&logo=lua&logoColor=white)![DirectX11](https://img.shields.io/badge/DirectX%2011-%230064BF.svg?style=for-the-badge&logoColor=white)![Assimp](https://img.shields.io/badge/Assimp-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)![FMOD](https://img.shields.io/badge/FMOD-9999FF.svg?style=for-the-badge&logo=Adobe%20Audition&logoColor=white)
 
+![ui1](./Misc/main2.png)
+
 2023.03.02 ~ 2023.06.14 
 
 2023 경기대학교 AI컴퓨터공학 산학협력 프로젝트 캡스톤 디자인 경진대회 - 졸업시켜조 (금상 수상)
@@ -22,13 +24,17 @@
 
 이 프로젝트에서는 Lua Script 함수와 C++ 코드 내의 함수를 매핑하여, 마치 **Unity MonoBehaviour**의 Start()와 Update() 함수 같은 기능을 스크립트 내에서 제공합니다. 이는 런타임에서 핫스왑을 통해 동적 디버깅이 가능하도록 설계하였습니다. 
 또한, 스크립트에서 호출하는 함수를 로우 코드화하여 코드의 복잡성을 줄이고, IoC(제어의 역전) 원칙을 적용해 보다 관점 지향적인 개발 환경을 제공하도록 설계하였습니다.
-
-![ui1](./Misc/main2.png)
 ![ui2](./Misc/main1.png)
 
 ## 📽️ 프로젝트 시연 영상
 
 [2023년도 캡스톤 디자인 졸업시켜조](https://youtu.be/IOTC4dQy9ts?si=V_iuRMskvEUy49-L)
+
+
+
+## 📂 스크립트 가이드라인
+
+[로우코드 기반 스크립트 가이드라인 PDF](./docs/스크립트 가이드라인.pdf)
 
 
 

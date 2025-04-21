@@ -1,12 +1,10 @@
 # KGCRenderFramework
 
-### 개발에 대한 진입장벽을 낮추기 위한 로우 코드 기반 프레임워크
-
--------------------------------------
-
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)![Lua](https://img.shields.io/badge/lua%20Script-%232C2D72.svg?style=for-the-badge&logo=lua&logoColor=white)![DirectX11](https://img.shields.io/badge/DirectX%2011-%230064BF.svg?style=for-the-badge&logoColor=white)![Assimp](https://img.shields.io/badge/Assimp-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)![FMOD](https://img.shields.io/badge/FMOD-9999FF.svg?style=for-the-badge&logo=Adobe%20Audition&logoColor=white)
 
 ![ui1](./Misc/main2.png)
+
+### 개발에 대한 진입장벽을 낮추기 위한 로우 코드 기반 프레임워크
 
 2023.03.02 ~ 2023.06.14 
 
